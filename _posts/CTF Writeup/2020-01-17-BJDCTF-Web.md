@@ -2,7 +2,7 @@
 layout: post
 title: BJDCTF Web Writeup
 data: 2020-01-17
-categories: Writeup
+categories: Writeups
 tags: 
  - CTF
  - Writeup

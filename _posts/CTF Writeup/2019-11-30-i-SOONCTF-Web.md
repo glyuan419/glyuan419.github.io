@@ -2,7 +2,7 @@
 layout: post
 title: i-SOONCTF Web Writeup
 data: 2019-11-30
-categories: Writeup
+categories: Writeups
 tags: 
  - CTF
  - Writeup

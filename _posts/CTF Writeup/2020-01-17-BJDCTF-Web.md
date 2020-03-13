@@ -23,6 +23,8 @@ description:
 
 作为第一道Web题，并没有很快地做出来。首先请求头也是一种和服务器交互的方式，然后看到非标准的响应头理应想到发出类似的请求。可能还是思路不够灵活，或者经验太少。
 
+****
+
 # easy_upload
 
 ## 解题思路
@@ -35,6 +37,8 @@ description:
 
 一道极为基础的文件上传和包含，然而还是过了好久才在别人的提示下恍然大悟。简单来讲就是忘记了url的内容，还是基本功不够熟练。
 
+****
+
 # Hidden secrets
 
 ## 解题思路
@@ -42,6 +46,8 @@ description:
 打开是个登录界面，不过似乎有个重定向，看到了一闪而过的flag。抓包看看，是个假flag，不过继续抓，会看到这样的响应头：`password: d0970714757783e6cf17b26fb8e2298f`，看着像个md5。那试试用这个密码登录，然后密码错误。再把这个md5解密一下，是112233，登录成功。
 
 不过新跳转的页面说我还没有登录，应该是cookie的问题，查看一下发现cookie也是一个md5，那就把刚刚那个换上，就成功了，在源码中找到flag。
+
+****
 
 # easy_md5
 
@@ -80,6 +86,8 @@ md5碰撞，或者再提交数组，获得flag。
 ## 备注
 
 这次记住了，用提交数组的方式绕过md5检验。
+
+****
 
 # Mark loves cat
 
@@ -127,6 +135,8 @@ echo "the flag is: ".$flag;
 
 后来突然想到可以直接将GET数组覆盖成字符串，这样就跳过了第三个foreach，使get参数为这样：`temp=flag&flag=temp&_GET=foo`。然而这样就引发了刚刚第一个提到的过滤。那正好利用一下POST，同时添加post参数为：`_POST[flag]=bar`。完事。
 
+****
+
 # 这序列化也太简单了吧
 
 ## 解题思路
@@ -154,6 +164,8 @@ $new = unserialize($exp);
 ```
 
 构造个file属性为/flag的对象，序列化后修改成员属性绕过__wakeup()就结束了。
+
+****
 
 # ZJCTF，就这？
 
@@ -195,6 +207,8 @@ else{
 
 这是一个grep_replace()命令执行漏洞，可以利用`\S*=${}`执行PHP函数，构造payload：`\S*=${getFlag()}&cmd=system('cat /flag');`，获得flag。
 
+****
+
 # The Mystery of IP
 
 ## 解题思路
@@ -205,7 +219,7 @@ else{
 
 可以利用{if xxx()}{/if}执行PHP函数，于是构造payload：{if system("cat /flag")}{/if}，获得flag。
 
-# Cookie is subtle
+****
 
 # easy_serialize
 
@@ -305,42 +319,7 @@ echo serialize($b);
 
 然后放到config，sid=Change，__get()方法会将它作为方法执行，然后base64解码得到flag。另外扫目录可以看到又flag.php文件。
 
-# 又是套娃奥
-
-## 解题思路
-
-放出了源码：
-
-```php
-<?php
-
-highlight_file(__FILE__);
-
-error_reporting(0);
-
-$file = $_GET['file'];
-
-echo "Do you Like taowa<br>";
-
-if(isset($_GET['handsomeyds'])){
-                if(';' === preg_replace('/[a-z|\_]+\((?R)?\)/', NULL, $_GET['handsomeyds'])) {
-                        if (!preg_match('/et|na|nt|ss|info|dec|flip|bin|hex|oct|pi|al|po/i', $_GET['handsomeyds'])) {
-                                eval($_GET['handsomeyds']);
-                        }
-                        else{
-                                die("you cannot use the function");
-                        }
-                }
-                else{
-                        die("you cannot do this");
-                }
-        }
-        else{
-                echo "have a try";
-        }
-```
-
-一开始没做过滤好像，直接用无参函数就可以过：`eval(array_rand(array_flip(getallheaders())))`，再加个请求头。后来过滤了一些函数，就整不了了。
+****
 
 # easy_search
 
@@ -391,6 +370,3 @@ if(isset($_GET['handsomeyds'])){
 第一个对md5的检验，好像只能爆破，好在明文数字不是很大。然后会保存到shtml文件中，可能是个SSI注入，就是不清楚怎么获得文件路径，难道是爆破？
 
 然后实际操作一下，说我的请求头错了，意识到响应头可能有信息。抓包看看，果然，是文件路径。然后访问stml文件，试试SSI注入，发现没什么过滤，直接用`<!--exec cmd="">`执行命令，获得flag。
-
-# Ezphp
-

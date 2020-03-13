@@ -72,6 +72,8 @@ if (preg_match("/ls|bash|tac|nl|more|less|head|wget|tail|vi|cat|od|grep|sed|bzmo
 1. 读文件：php、ca\t、rev
 2. md5碰撞
 
+****
+
 # easy_serialize_php
 
 ## 解题思路

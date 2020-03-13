@@ -1,12 +1,13 @@
 ---
 layout: post
-title: Bypass open_basedir
+title: 绕过open_basedir限制
 data: 2020-01-14
 categories: Notes
 tags: 
  - PHP
  - Execution
 description:
+excerpt_separator: ""
 ---
 
 # open_basedir简介

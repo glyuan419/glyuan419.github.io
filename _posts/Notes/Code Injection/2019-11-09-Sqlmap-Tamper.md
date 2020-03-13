@@ -1,11 +1,12 @@
 ---
 layout: post
-title: Sqlmap Tamper
+title: Sqlmap Tamper脚本使用
 data: 2019-11-09
 categories: Notes
 tags: 
  - Sqlmap
 description:
+excerpt_separator: ""
 ---
 
 # Tamper 介绍

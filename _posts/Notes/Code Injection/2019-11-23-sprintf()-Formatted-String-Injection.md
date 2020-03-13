@@ -6,6 +6,7 @@ categories: Notes
 tags: 
  - Injection
 description:
+excerpt_separator: ""
 ---
 
 # sprintf()函数

@@ -1,12 +1,13 @@
 ---
 layout: post
-title: SQL Injection
+title: SQL注入总结
 data: 2020-02-16
 categories: Notes
 tags: 
  - SQL
  - Injection
 description:
+excerpt_separator: ""
 ---
 
 # 注入的基本步骤

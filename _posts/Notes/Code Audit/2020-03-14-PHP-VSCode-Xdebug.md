@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 使用VSCode+Xdebug辅助审计PHP代码
+title: 使用VSCode+Xdebug
 data: 2020-03-14
 categories: Notes
 tags: 
@@ -11,7 +11,7 @@ excerpt_separator: <!-- more -->
 
 ---
 
-关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间，当然现在回过头看起来好像也没什么难度。就像装其它软件的时候，看来我还是没怎么学会啊。
+关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间。
 
 <!-- more -->
 

@@ -2,7 +2,9 @@
 layout: post
 title: 使用VSCode+Xdebug
 data: 2020-03-14
-categories: Notes
+categories: 
+ - Notes
+ - Notes-Code Audit
 tags: 
  - PHP
  - IDE

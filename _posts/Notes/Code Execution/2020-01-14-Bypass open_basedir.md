@@ -2,9 +2,7 @@
 layout: post
 title: 绕过open_basedir限制
 data: 2020-01-14
-categories: 
- - Notes
- - Notes-Execution
+categories: Notes
 tags: 
  - PHP
  - Execution

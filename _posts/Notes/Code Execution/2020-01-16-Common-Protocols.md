@@ -2,9 +2,7 @@
 layout: post
 title: 常见的协议
 data: 2020-01-16
-categories: 
- - Notes
- - Notes-Execution
+categories: Notes
 tags: 
  - Web
 description:

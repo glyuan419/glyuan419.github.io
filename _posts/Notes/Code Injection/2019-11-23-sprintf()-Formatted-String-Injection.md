@@ -2,9 +2,7 @@
 layout: post
 title: sprintf()格式化字符串注入
 data: 2019-11-23
-categories: 
- - Notes
- - Notes-Injection
+categories: Notes
 tags: 
  - Injection
 description:

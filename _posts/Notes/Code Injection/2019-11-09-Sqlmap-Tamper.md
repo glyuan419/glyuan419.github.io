@@ -2,9 +2,7 @@
 layout: post
 title: Sqlmap Tamper脚本使用
 data: 2019-11-09
-categories: 
- - Notes
- - Notes-Injection
+categories: Notes
 tags: 
  - Sqlmap
 description:

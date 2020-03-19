@@ -2,9 +2,7 @@
 layout: post
 title: SQL注入总结
 data: 2020-02-16
-categories: 
- - Notes
- - Notes-Injection
+categories: Notes
 tags: 
  - SQL
  - Injection

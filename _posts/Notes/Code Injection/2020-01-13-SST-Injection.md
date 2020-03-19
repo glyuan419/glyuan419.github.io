@@ -2,9 +2,7 @@
 layout: post
 title: SST注入总结
 data: 2020-01-13
-categories: 
- - Notes
- - Notes-Injection
+categories: Notes
 tags: 
  - SST
  - Injection

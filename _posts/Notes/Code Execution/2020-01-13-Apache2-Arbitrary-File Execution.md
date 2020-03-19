@@ -2,7 +2,9 @@
 layout: post
 title: Apache2任意文件执行
 data: 2020-01-13
-categories: Notes
+categories: 
+ - Notes
+ - Notes-Execution
 tags: 
  - Apache2
  - Execution

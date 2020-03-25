@@ -2,10 +2,10 @@
 layout: post
 title: BJDCTF 2nd Web Writeup
 data: 2020-03-23
-categories: writeups
+categories: Writeups
 tags: 
  - CTF
- - writeup
+ - Writeup
 description: 
 excerpt_separator: <!-- more -->
 ---

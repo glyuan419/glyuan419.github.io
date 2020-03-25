@@ -1,0 +1,1123 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="CTF,Writeup," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上传给小姐姐的照片 题目描述 点击链接页面显示如下： 解题思路 看起来是个文件上传，先尝试随便上传个PHP文件试试，返回内容为：已经有一个叫pic的照片了，换个名字再上传吧。。利用BurpSuite抓包，发现URL中带有一个’fliename’参数，其默认值为’pic’。修改一下再次上传，发现成功了，页面显示如下： 查看源码，发现有上传后的文件的链接，点击后显示了PHP文件执行后的内容。说明这个文件上传漏洞没做什么过滤。 编写文件读取的木马脚本，如下所示： &amp;lt;?php $fp = fopen(&quot;../flag.php&quot;, &quot;r&quot;); echo fread($fp, filesize(&quot;../flag.php&quot;)); fclose($fp); ?&amp;gt; 再次上传，却返回了：你的照片不是jpg，png，gif格式的，小姐姐看不了！。很疑惑，不过用BurpSuite重复上传相同的文件，发现这种返回会随机。多次上传，直到上传成功。 点击返回的文件的链接，在源码中找到flag。 备注 返回你的照片不是jpg，png，gif格式的，小姐姐看不了！的情况在后来很少出现了，也不确定是不是随机出现的。 看官方Writeup要先扫描目录会发现”.index.php.swp”文件，之后在进行代码审计，所以之前的思路应该是有问题的。 真的真的需要一个目录扫描工具了。 checkinA 题目描述 打开链接之后是个聊天室，可以在左下的输入框输入信息： 解题思路 随便输入点什么，提示为：Please change your nickname; [/name nickname]，要先改个名。 改名后输入’help’会有提示，可以输入’/more’查看更多帮助。 输入’/more’提示可以输入’/flag’。 输入’/flag’就显示了flag。 备注 不太清楚是什么原理，反正就是出了。 有一个进阶版，Chickin，好像是远程代码执行漏洞。 unctf_easyphp 题目描述 一道PHP代码审计，页面显示如下： &amp;lt;?php $a = @$_GET[&apos;x&apos;]; if(substr_count($a,&quot;(&quot;)&amp;gt;1 || substr_count($a,&quot;)&quot;)&amp;gt;1){ die(&quot;only one fun&quot;); } if(strpos($a, &apos;$_GET&apos;)!==False || strpos($a,&apos;$_POST&apos;)!==False || strpos($a,&apos;$_COOKIE&apos;)!==False || strpos($a,&quot;*&quot;)!==False){ die(&quot;No No No&quot;); } $left = strpos($a, &quot;(&quot;); $right = strpos($a, &quot;)&quot;); $len = $right-$left; $cmd = substr($a,$left+2,$len-3); if(strpos($cmd, &quot;cat&quot;)!==0 &amp;amp;&amp;amp; strpos($cmd,&quot;cat&quot;)!==1 &amp;amp;&amp;amp; strpos($a, &quot;cat&quot;)!== False){ if(strlen($cmd)&amp;gt;13) { echo &quot;too long&quot;; }else { echo eval($a); } }else{ highlight_file(__FILE__); } ?&amp;gt; 解题思路 看看PHP的思路，接受一个GET型参数，但要求其中’(‘和’)’符号各自出现不能超过一次，而且不能出现’$_GET_‘等字段…（懒得描述了） 第一反应Payload为system(&apos;cat flag.php&apos;);，不过有问题，’cat’字段不能出现在括号内的前二和三位，增加两个空格之后又发现’$cmd’的长度刚好超了一位。 注意到前面对’$_GET’字段的检验，联想到可以利用’$_REQUEST’数组来读取一个新增加的GET参数，用于读取文件。对’cat’的检查可以用增加一个内容为’cat’的字符串的方式来绕过。此时Payload缩短为eval(&quot;$\_REQUEST[&apos;y&apos;]&quot;);&quot;cat&quot;;，又超了两位，难受。 注意到PHP有一个弱类型的利用，”$_REQUEST[‘1’]”可以利用”$_REQUEST[1]”读取，长度刚刚好。此时Payload为： ?x=eval(&quot;$_REQUEST[1]&quot;);&quot;cat&quot;;&amp;amp;1=system(&quot;cat flag.php&quot;); 提交获得flag。 备注 也不知道该备注点儿啥，好像也没什么新的知识点，几个函数没见过查查也就知道了，多用点心就完事了。不过PHP弱类型转换好像挺常见的。 WEB1 题目描述 打开网页出现弹窗： 解题思路 根据弹窗内容要检查备份文件，直接访问”index.php.bak”没什么反应。使用目录扫描工具获得一个叫做”www.zip”的文件。 解压后是个叫作”www”的文件，不清楚是什么类型，不过直接用strings命令可以看到它备份了”index.php”，其内容如下： &amp;lt;?php error_reporting(0); include(&quot;f2f86a5c7e623b54e4685fcc8c503596.php&quot;); $UN=@$_GET[&apos;un&apos;]; $CTF=@$_POST[&apos;ctf&apos;]; if($UN==0 and $UN){ echo $flag_ahead; } if(is_numeric($CTF)){ exit(); } if($CTF&amp;gt;87654321){ echo $flag_behind; } ?&amp;gt; 根据其内容构造Payload，即可获得flag。 备注 好像省赛就有一道可以用目录扫描做的题… 光坂镇的小诗1 题目描述 打开网页真的是一首小诗： 解题思路 源码长这样： 就是SQL注入随便输入一个单引号试试： 看着像宽字节注入，用”%df”试试，成功了，然后就没有了，正常的爆数据库。 备注 group_concat()和concat()分别可以用来合并行和列。 这好像不是上传 题目描述 打开页面显示如下： 解题思路 在源码中找到了这个：&amp;lt;!-- &amp;lt;a href=&quot;./index.php?filename=something.php&quot;&amp;gt;&amp;lt;/a&amp;gt; --&amp;gt;，好像可以读取文件。 尝试读一下”index.php”，页面就开始不断地输出上面那张图的内容。后来反应过来是一个文件包含，递归地包含了”index.php”文件的内容。 然后尝试访问一下”something.php”文件，说让我访问”upload.php”,访问发现是个文件上传。上传成功后会返回文件路径，但只能上传TXT文件，而且会被强制改名： 文件上传、重命名、文件包含，应该联想到利用”phar://”协议绕过。不过当在”index.php”使用”phar://”协议的时候却被禁止了： 说明”upload.php”或许也提供了文件包含接口。可以尝试利用”php://filter”读取”upload.php”的内容，获得接口后上传文件即可读取flag内容。 备注 要亲自实现一下”phar://”协议绕过。 unctf_Simple_Calc_1 题目描述 有两个提示： Hint1:XFF伪造 Hint2:用 SQLMAP 到处跑跑试试- -？ 打开页面真的是个计算器： 解题思路 点击右上角的”信息”，可以发现使用计算机的次数被记录了。 猜测可能是服务器记录了我的IP的访问次数，结合提示，这是一个XFF的SQL注入。 抓包可以发现，每次刷新页面都会额外产生一个访问”/backend/”的请求，返回的就是使用次数。因为我的Hackbar不能用，直接在Burpsuite中尝试注入。用XFF伪造一个新的IP访问， 多次访问，确实次数增加了，然后开始注入测试。Payload为：127.0.0.10&apos; or &apos;1&apos;=&apos;1时功能正常，结合Sqlmap爆数据库。 备注 首先是要准备一个Hackbar。 其次继续学习Sqlmap脚本。">
+<meta name="keywords" content="CTF, Writeup">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNCTF Web Writeup">
+<meta property="og:url" content="http://localhost:4000/writeups/2019/10/20/UNCTF-Web/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="上传给小姐姐的照片 题目描述 点击链接页面显示如下： 解题思路 看起来是个文件上传，先尝试随便上传个PHP文件试试，返回内容为：已经有一个叫pic的照片了，换个名字再上传吧。。利用BurpSuite抓包，发现URL中带有一个’fliename’参数，其默认值为’pic’。修改一下再次上传，发现成功了，页面显示如下： 查看源码，发现有上传后的文件的链接，点击后显示了PHP文件执行后的内容。说明这个文件上传漏洞没做什么过滤。 编写文件读取的木马脚本，如下所示： &amp;lt;?php $fp = fopen(&quot;../flag.php&quot;, &quot;r&quot;); echo fread($fp, filesize(&quot;../flag.php&quot;)); fclose($fp); ?&amp;gt; 再次上传，却返回了：你的照片不是jpg，png，gif格式的，小姐姐看不了！。很疑惑，不过用BurpSuite重复上传相同的文件，发现这种返回会随机。多次上传，直到上传成功。 点击返回的文件的链接，在源码中找到flag。 备注 返回你的照片不是jpg，png，gif格式的，小姐姐看不了！的情况在后来很少出现了，也不确定是不是随机出现的。 看官方Writeup要先扫描目录会发现”.index.php.swp”文件，之后在进行代码审计，所以之前的思路应该是有问题的。 真的真的需要一个目录扫描工具了。 checkinA 题目描述 打开链接之后是个聊天室，可以在左下的输入框输入信息： 解题思路 随便输入点什么，提示为：Please change your nickname; [/name nickname]，要先改个名。 改名后输入’help’会有提示，可以输入’/more’查看更多帮助。 输入’/more’提示可以输入’/flag’。 输入’/flag’就显示了flag。 备注 不太清楚是什么原理，反正就是出了。 有一个进阶版，Chickin，好像是远程代码执行漏洞。 unctf_easyphp 题目描述 一道PHP代码审计，页面显示如下： &amp;lt;?php $a = @$_GET[&apos;x&apos;]; if(substr_count($a,&quot;(&quot;)&amp;gt;1 || substr_count($a,&quot;)&quot;)&amp;gt;1){ die(&quot;only one fun&quot;); } if(strpos($a, &apos;$_GET&apos;)!==False || strpos($a,&apos;$_POST&apos;)!==False || strpos($a,&apos;$_COOKIE&apos;)!==False || strpos($a,&quot;*&quot;)!==False){ die(&quot;No No No&quot;); } $left = strpos($a, &quot;(&quot;); $right = strpos($a, &quot;)&quot;); $len = $right-$left; $cmd = substr($a,$left+2,$len-3); if(strpos($cmd, &quot;cat&quot;)!==0 &amp;amp;&amp;amp; strpos($cmd,&quot;cat&quot;)!==1 &amp;amp;&amp;amp; strpos($a, &quot;cat&quot;)!== False){ if(strlen($cmd)&amp;gt;13) { echo &quot;too long&quot;; }else { echo eval($a); } }else{ highlight_file(__FILE__); } ?&amp;gt; 解题思路 看看PHP的思路，接受一个GET型参数，但要求其中’(‘和’)’符号各自出现不能超过一次，而且不能出现’$_GET_‘等字段…（懒得描述了） 第一反应Payload为system(&apos;cat flag.php&apos;);，不过有问题，’cat’字段不能出现在括号内的前二和三位，增加两个空格之后又发现’$cmd’的长度刚好超了一位。 注意到前面对’$_GET’字段的检验，联想到可以利用’$_REQUEST’数组来读取一个新增加的GET参数，用于读取文件。对’cat’的检查可以用增加一个内容为’cat’的字符串的方式来绕过。此时Payload缩短为eval(&quot;$\_REQUEST[&apos;y&apos;]&quot;);&quot;cat&quot;;，又超了两位，难受。 注意到PHP有一个弱类型的利用，”$_REQUEST[‘1’]”可以利用”$_REQUEST[1]”读取，长度刚刚好。此时Payload为： ?x=eval(&quot;$_REQUEST[1]&quot;);&quot;cat&quot;;&amp;amp;1=system(&quot;cat flag.php&quot;); 提交获得flag。 备注 也不知道该备注点儿啥，好像也没什么新的知识点，几个函数没见过查查也就知道了，多用点心就完事了。不过PHP弱类型转换好像挺常见的。 WEB1 题目描述 打开网页出现弹窗： 解题思路 根据弹窗内容要检查备份文件，直接访问”index.php.bak”没什么反应。使用目录扫描工具获得一个叫做”www.zip”的文件。 解压后是个叫作”www”的文件，不清楚是什么类型，不过直接用strings命令可以看到它备份了”index.php”，其内容如下： &amp;lt;?php error_reporting(0); include(&quot;f2f86a5c7e623b54e4685fcc8c503596.php&quot;); $UN=@$_GET[&apos;un&apos;]; $CTF=@$_POST[&apos;ctf&apos;]; if($UN==0 and $UN){ echo $flag_ahead; } if(is_numeric($CTF)){ exit(); } if($CTF&amp;gt;87654321){ echo $flag_behind; } ?&amp;gt; 根据其内容构造Payload，即可获得flag。 备注 好像省赛就有一道可以用目录扫描做的题… 光坂镇的小诗1 题目描述 打开网页真的是一首小诗： 解题思路 源码长这样： 就是SQL注入随便输入一个单引号试试： 看着像宽字节注入，用”%df”试试，成功了，然后就没有了，正常的爆数据库。 备注 group_concat()和concat()分别可以用来合并行和列。 这好像不是上传 题目描述 打开页面显示如下： 解题思路 在源码中找到了这个：&amp;lt;!-- &amp;lt;a href=&quot;./index.php?filename=something.php&quot;&amp;gt;&amp;lt;/a&amp;gt; --&amp;gt;，好像可以读取文件。 尝试读一下”index.php”，页面就开始不断地输出上面那张图的内容。后来反应过来是一个文件包含，递归地包含了”index.php”文件的内容。 然后尝试访问一下”something.php”文件，说让我访问”upload.php”,访问发现是个文件上传。上传成功后会返回文件路径，但只能上传TXT文件，而且会被强制改名： 文件上传、重命名、文件包含，应该联想到利用”phar://”协议绕过。不过当在”index.php”使用”phar://”协议的时候却被禁止了： 说明”upload.php”或许也提供了文件包含接口。可以尝试利用”php://filter”读取”upload.php”的内容，获得接口后上传文件即可读取flag内容。 备注 要亲自实现一下”phar://”协议绕过。 unctf_Simple_Calc_1 题目描述 有两个提示： Hint1:XFF伪造 Hint2:用 SQLMAP 到处跑跑试试- -？ 打开页面真的是个计算器： 解题思路 点击右上角的”信息”，可以发现使用计算机的次数被记录了。 猜测可能是服务器记录了我的IP的访问次数，结合提示，这是一个XFF的SQL注入。 抓包可以发现，每次刷新页面都会额外产生一个访问”/backend/”的请求，返回的就是使用次数。因为我的Hackbar不能用，直接在Burpsuite中尝试注入。用XFF伪造一个新的IP访问， 多次访问，确实次数增加了，然后开始注入测试。Payload为：127.0.0.10&apos; or &apos;1&apos;=&apos;1时功能正常，结合Sqlmap爆数据库。 备注 首先是要准备一个Hackbar。 其次继续学习Sqlmap脚本。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-24 18:55:24.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-24 19:16:02.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-24 19:35:05.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 15:25:45.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 16:06:36.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 16:07:45.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 15:56:20.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 16:10:45.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 19:57:51.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 20:00:37.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-27 12:47:24.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 19:20:05.png">
+<meta property="og:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 19:27:53.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNCTF Web Writeup">
+<meta name="twitter:description" content="上传给小姐姐的照片 题目描述 点击链接页面显示如下： 解题思路 看起来是个文件上传，先尝试随便上传个PHP文件试试，返回内容为：已经有一个叫pic的照片了，换个名字再上传吧。。利用BurpSuite抓包，发现URL中带有一个’fliename’参数，其默认值为’pic’。修改一下再次上传，发现成功了，页面显示如下： 查看源码，发现有上传后的文件的链接，点击后显示了PHP文件执行后的内容。说明这个文件上传漏洞没做什么过滤。 编写文件读取的木马脚本，如下所示： &amp;lt;?php $fp = fopen(&quot;../flag.php&quot;, &quot;r&quot;); echo fread($fp, filesize(&quot;../flag.php&quot;)); fclose($fp); ?&amp;gt; 再次上传，却返回了：你的照片不是jpg，png，gif格式的，小姐姐看不了！。很疑惑，不过用BurpSuite重复上传相同的文件，发现这种返回会随机。多次上传，直到上传成功。 点击返回的文件的链接，在源码中找到flag。 备注 返回你的照片不是jpg，png，gif格式的，小姐姐看不了！的情况在后来很少出现了，也不确定是不是随机出现的。 看官方Writeup要先扫描目录会发现”.index.php.swp”文件，之后在进行代码审计，所以之前的思路应该是有问题的。 真的真的需要一个目录扫描工具了。 checkinA 题目描述 打开链接之后是个聊天室，可以在左下的输入框输入信息： 解题思路 随便输入点什么，提示为：Please change your nickname; [/name nickname]，要先改个名。 改名后输入’help’会有提示，可以输入’/more’查看更多帮助。 输入’/more’提示可以输入’/flag’。 输入’/flag’就显示了flag。 备注 不太清楚是什么原理，反正就是出了。 有一个进阶版，Chickin，好像是远程代码执行漏洞。 unctf_easyphp 题目描述 一道PHP代码审计，页面显示如下： &amp;lt;?php $a = @$_GET[&apos;x&apos;]; if(substr_count($a,&quot;(&quot;)&amp;gt;1 || substr_count($a,&quot;)&quot;)&amp;gt;1){ die(&quot;only one fun&quot;); } if(strpos($a, &apos;$_GET&apos;)!==False || strpos($a,&apos;$_POST&apos;)!==False || strpos($a,&apos;$_COOKIE&apos;)!==False || strpos($a,&quot;*&quot;)!==False){ die(&quot;No No No&quot;); } $left = strpos($a, &quot;(&quot;); $right = strpos($a, &quot;)&quot;); $len = $right-$left; $cmd = substr($a,$left+2,$len-3); if(strpos($cmd, &quot;cat&quot;)!==0 &amp;amp;&amp;amp; strpos($cmd,&quot;cat&quot;)!==1 &amp;amp;&amp;amp; strpos($a, &quot;cat&quot;)!== False){ if(strlen($cmd)&amp;gt;13) { echo &quot;too long&quot;; }else { echo eval($a); } }else{ highlight_file(__FILE__); } ?&amp;gt; 解题思路 看看PHP的思路，接受一个GET型参数，但要求其中’(‘和’)’符号各自出现不能超过一次，而且不能出现’$_GET_‘等字段…（懒得描述了） 第一反应Payload为system(&apos;cat flag.php&apos;);，不过有问题，’cat’字段不能出现在括号内的前二和三位，增加两个空格之后又发现’$cmd’的长度刚好超了一位。 注意到前面对’$_GET’字段的检验，联想到可以利用’$_REQUEST’数组来读取一个新增加的GET参数，用于读取文件。对’cat’的检查可以用增加一个内容为’cat’的字符串的方式来绕过。此时Payload缩短为eval(&quot;$\_REQUEST[&apos;y&apos;]&quot;);&quot;cat&quot;;，又超了两位，难受。 注意到PHP有一个弱类型的利用，”$_REQUEST[‘1’]”可以利用”$_REQUEST[1]”读取，长度刚刚好。此时Payload为： ?x=eval(&quot;$_REQUEST[1]&quot;);&quot;cat&quot;;&amp;amp;1=system(&quot;cat flag.php&quot;); 提交获得flag。 备注 也不知道该备注点儿啥，好像也没什么新的知识点，几个函数没见过查查也就知道了，多用点心就完事了。不过PHP弱类型转换好像挺常见的。 WEB1 题目描述 打开网页出现弹窗： 解题思路 根据弹窗内容要检查备份文件，直接访问”index.php.bak”没什么反应。使用目录扫描工具获得一个叫做”www.zip”的文件。 解压后是个叫作”www”的文件，不清楚是什么类型，不过直接用strings命令可以看到它备份了”index.php”，其内容如下： &amp;lt;?php error_reporting(0); include(&quot;f2f86a5c7e623b54e4685fcc8c503596.php&quot;); $UN=@$_GET[&apos;un&apos;]; $CTF=@$_POST[&apos;ctf&apos;]; if($UN==0 and $UN){ echo $flag_ahead; } if(is_numeric($CTF)){ exit(); } if($CTF&amp;gt;87654321){ echo $flag_behind; } ?&amp;gt; 根据其内容构造Payload，即可获得flag。 备注 好像省赛就有一道可以用目录扫描做的题… 光坂镇的小诗1 题目描述 打开网页真的是一首小诗： 解题思路 源码长这样： 就是SQL注入随便输入一个单引号试试： 看着像宽字节注入，用”%df”试试，成功了，然后就没有了，正常的爆数据库。 备注 group_concat()和concat()分别可以用来合并行和列。 这好像不是上传 题目描述 打开页面显示如下： 解题思路 在源码中找到了这个：&amp;lt;!-- &amp;lt;a href=&quot;./index.php?filename=something.php&quot;&amp;gt;&amp;lt;/a&amp;gt; --&amp;gt;，好像可以读取文件。 尝试读一下”index.php”，页面就开始不断地输出上面那张图的内容。后来反应过来是一个文件包含，递归地包含了”index.php”文件的内容。 然后尝试访问一下”something.php”文件，说让我访问”upload.php”,访问发现是个文件上传。上传成功后会返回文件路径，但只能上传TXT文件，而且会被强制改名： 文件上传、重命名、文件包含，应该联想到利用”phar://”协议绕过。不过当在”index.php”使用”phar://”协议的时候却被禁止了： 说明”upload.php”或许也提供了文件包含接口。可以尝试利用”php://filter”读取”upload.php”的内容，获得接口后上传文件即可读取flag内容。 备注 要亲自实现一下”phar://”协议绕过。 unctf_Simple_Calc_1 题目描述 有两个提示： Hint1:XFF伪造 Hint2:用 SQLMAP 到处跑跑试试- -？ 打开页面真的是个计算器： 解题思路 点击右上角的”信息”，可以发现使用计算机的次数被记录了。 猜测可能是服务器记录了我的IP的访问次数，结合提示，这是一个XFF的SQL注入。 抓包可以发现，每次刷新页面都会额外产生一个访问”/backend/”的请求，返回的就是使用次数。因为我的Hackbar不能用，直接在Burpsuite中尝试注入。用XFF伪造一个新的IP访问， 多次访问，确实次数增加了，然后开始注入测试。Payload为：127.0.0.10&apos; or &apos;1&apos;=&apos;1时功能正常，结合Sqlmap爆数据库。 备注 首先是要准备一个Hackbar。 其次继续学习Sqlmap脚本。">
+<meta name="twitter:image" content="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-24 18:55:24.png">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>UNCTF Web Writeup | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/writeups/2019/10/20/UNCTF-Web/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            UNCTF Web Writeup
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-20T00:00:00+08:00">
+                2019-10-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Writeups" itemprop="url" rel="index">
+                    <span itemprop="name">Writeups</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <h1 id="上传给小姐姐的照片">上传给小姐姐的照片</h1>
+
+<h2 id="题目描述">题目描述</h2>
+
+<p>点击链接页面显示如下：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-24 18:55:24.png" alt="屏幕截图 2019-10-24 18:55:24" /></p>
+
+<h2 id="解题思路">解题思路</h2>
+
+<p>看起来是个文件上传，先尝试随便上传个PHP文件试试，返回内容为：<code class="highlighter-rouge">已经有一个叫pic的照片了，换个名字再上传吧。</code>。利用BurpSuite抓包，发现URL中带有一个’fliename’参数，其默认值为’pic’。修改一下再次上传，发现成功了，页面显示如下：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-24 19:16:02.png" alt="屏幕截图 2019-10-24 19:16:02" /></p>
+
+<p>查看源码，发现有上传后的文件的链接，点击后显示了PHP文件执行后的内容。说明这个文件上传漏洞没做什么过滤。</p>
+
+<p>编写文件读取的木马脚本，如下所示：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$fp</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s2">"../flag.php"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nb">fread</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span> <span class="nb">filesize</span><span class="p">(</span><span class="s2">"../flag.php"</span><span class="p">));</span>
+<span class="nb">fclose</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>再次上传，却返回了：<code class="highlighter-rouge">你的照片不是jpg，png，gif格式的，小姐姐看不了！</code>。很疑惑，不过用BurpSuite重复上传相同的文件，发现这种返回会随机。多次上传，直到上传成功。</p>
+
+<p>点击返回的文件的链接，在源码中找到flag。</p>
+
+<h2 id="备注">备注</h2>
+
+<ol>
+  <li>返回<code class="highlighter-rouge">你的照片不是jpg，png，gif格式的，小姐姐看不了！</code>的情况在后来很少出现了，也不确定是不是随机出现的。</li>
+  <li>看官方Writeup要先扫描目录会发现”.index.php.swp”文件，之后在进行代码审计，所以之前的思路应该是有问题的。</li>
+  <li>真的真的需要一个目录扫描工具了。</li>
+</ol>
+
+<hr />
+
+<h1 id="checkina">checkinA</h1>
+
+<h2 id="题目描述-1">题目描述</h2>
+
+<p>打开链接之后是个聊天室，可以在左下的输入框输入信息：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-24 19:35:05.png" alt="屏幕截图 2019-10-24 19:35:05" /></p>
+
+<h2 id="解题思路-1">解题思路</h2>
+
+<p>随便输入点什么，提示为：<code class="highlighter-rouge">Please change your nickname; [/name nickname]</code>，要先改个名。</p>
+
+<p>改名后输入’help’会有提示，可以输入’/more’查看更多帮助。</p>
+
+<p>输入’/more’提示可以输入’/flag’。</p>
+
+<p>输入’/flag’就显示了flag。</p>
+
+<h2 id="备注-1">备注</h2>
+
+<ol>
+  <li>不太清楚是什么原理，反正就是出了。</li>
+  <li>有一个进阶版，Chickin，好像是远程代码执行漏洞。</li>
+</ol>
+
+<hr />
+
+<h1 id="unctf_easyphp">unctf_easyphp</h1>
+
+<h2 id="题目描述-2">题目描述</h2>
+
+<p>一道PHP代码审计，页面显示如下：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+    <span class="nv">$a</span> <span class="o">=</span> <span class="o">@</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'x'</span><span class="p">];</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">substr_count</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="s2">"("</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="o">||</span> <span class="nb">substr_count</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="s2">")"</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">){</span>
+        <span class="k">die</span><span class="p">(</span><span class="s2">"only one fun"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span> <span class="s1">'$_GET'</span><span class="p">)</span><span class="o">!==</span><span class="nx">False</span> <span class="o">||</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="s1">'$_POST'</span><span class="p">)</span><span class="o">!==</span><span class="nx">False</span> <span class="o">||</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="s1">'$_COOKIE'</span><span class="p">)</span><span class="o">!==</span><span class="nx">False</span> <span class="o">||</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="s2">"*"</span><span class="p">)</span><span class="o">!==</span><span class="nx">False</span><span class="p">){</span>
+        <span class="k">die</span><span class="p">(</span><span class="s2">"No No No"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$left</span> <span class="o">=</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span> <span class="s2">"("</span><span class="p">);</span>
+    <span class="nv">$right</span> <span class="o">=</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span> <span class="s2">")"</span><span class="p">);</span>
+    <span class="nv">$len</span> <span class="o">=</span> <span class="nv">$right</span><span class="o">-</span><span class="nv">$left</span><span class="p">;</span>
+    <span class="nv">$cmd</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="nv">$left</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="nv">$len</span><span class="o">-</span><span class="mi">3</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">,</span> <span class="s2">"cat"</span><span class="p">)</span><span class="o">!==</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">,</span><span class="s2">"cat"</span><span class="p">)</span><span class="o">!==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span> <span class="s2">"cat"</span><span class="p">)</span><span class="o">!==</span> <span class="nx">False</span><span class="p">){</span>
+    
+    <span class="k">if</span><span class="p">(</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">13</span><span class="p">)</span>
+        <span class="p">{</span>        
+            <span class="k">echo</span> <span class="s2">"too long"</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span>
+        <span class="p">{</span>
+            <span class="k">echo</span> <span class="k">eval</span><span class="p">(</span><span class="nv">$a</span><span class="p">);</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="nb">highlight_file</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="解题思路-2">解题思路</h2>
+
+<p>看看PHP的思路，接受一个GET型参数，但要求其中’(‘和’)’符号各自出现不能超过一次，而且不能出现’$_GET_‘等字段…（懒得描述了）</p>
+
+<p>第一反应Payload为<code class="highlighter-rouge">system('cat flag.php');</code>，不过有问题，’cat’字段不能出现在括号内的前二和三位，增加两个空格之后又发现’$cmd’的长度刚好超了一位。</p>
+
+<p>注意到前面对’$_GET’字段的检验，联想到可以利用’$_REQUEST’数组来读取一个新增加的GET参数，用于读取文件。对’cat’的检查可以用增加一个内容为’cat’的字符串的方式来绕过。此时Payload缩短为<code class="highlighter-rouge">eval("$\_REQUEST['y']");"cat";</code>，又超了两位，难受。</p>
+
+<p>注意到PHP有一个弱类型的利用，”$_REQUEST[‘1’]”可以利用”$_REQUEST[1]”读取，长度刚刚好。此时Payload为：</p>
+
+<p><code class="highlighter-rouge">?x=eval("$_REQUEST[1]");"cat";&amp;1=system("cat flag.php");</code></p>
+
+<p>提交获得flag。</p>
+
+<h2 id="备注-2">备注</h2>
+
+<ol>
+  <li>也不知道该备注点儿啥，好像也没什么新的知识点，几个函数没见过查查也就知道了，多用点心就完事了。不过PHP弱类型转换好像挺常见的。</li>
+</ol>
+
+<hr />
+
+<h1 id="web1">WEB1</h1>
+
+<h2 id="题目描述-3">题目描述</h2>
+
+<p>打开网页出现弹窗：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 15:25:45.png" alt="屏幕截图 2019-10-26 15:25:45" /></p>
+
+<h2 id="解题思路-3">解题思路</h2>
+
+<p>根据弹窗内容要检查备份文件，直接访问”index.php.bak”没什么反应。使用目录扫描工具获得一个叫做”www.zip”的文件。</p>
+
+<p>解压后是个叫作”www”的文件，不清楚是什么类型，不过直接用<code class="highlighter-rouge">strings</code>命令可以看到它备份了”index.php”，其内容如下：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">include</span><span class="p">(</span><span class="s2">"f2f86a5c7e623b54e4685fcc8c503596.php"</span><span class="p">);</span>
+<span class="nv">$UN</span><span class="o">=@</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'un'</span><span class="p">];</span>
+<span class="nv">$CTF</span><span class="o">=@</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'ctf'</span><span class="p">];</span>
+<span class="k">if</span><span class="p">(</span><span class="nv">$UN</span><span class="o">==</span><span class="mi">0</span> <span class="k">and</span> <span class="nv">$UN</span><span class="p">){</span>
+    <span class="k">echo</span> <span class="nv">$flag_ahead</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">if</span><span class="p">(</span><span class="nb">is_numeric</span><span class="p">(</span><span class="nv">$CTF</span><span class="p">)){</span>
+    <span class="k">exit</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">if</span><span class="p">(</span><span class="nv">$CTF</span><span class="o">&gt;</span><span class="mi">87654321</span><span class="p">){</span>
+    <span class="k">echo</span> <span class="nv">$flag_behind</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>根据其内容构造Payload，即可获得flag。</p>
+
+<h2 id="备注-3">备注</h2>
+
+<ol>
+  <li>好像省赛就有一道可以用目录扫描做的题…</li>
+</ol>
+
+<hr />
+
+<h1 id="光坂镇的小诗1">光坂镇的小诗1</h1>
+
+<h2 id="题目描述-4">题目描述</h2>
+
+<p>打开网页真的是一首小诗：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 16:06:36.png" alt="屏幕截图 2019-10-26 16:06:36" /></p>
+
+<h2 id="解题思路-4">解题思路</h2>
+
+<p>源码长这样：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 16:07:45.png" alt="屏幕截图 2019-10-26 16:07:45" /></p>
+
+<p>就是SQL注入随便输入一个单引号试试：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 15:56:20.png" alt="屏幕截图 2019-11-13 15:56:20" /></p>
+
+<p>看着像宽字节注入，用”%df”试试，成功了，然后就没有了，正常的爆数据库。</p>
+
+<h2 id="备注-4">备注</h2>
+
+<ol>
+  <li><code class="highlighter-rouge">group_concat()</code>和<code class="highlighter-rouge">concat()</code>分别可以用来合并行和列。</li>
+</ol>
+
+<hr />
+
+<h1 id="这好像不是上传">这好像不是上传</h1>
+
+<h2 id="题目描述-5">题目描述</h2>
+
+<p>打开页面显示如下：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-26 16:10:45.png" alt="屏幕截图 2019-10-26 16:10:45" /></p>
+
+<h2 id="解题思路-5">解题思路</h2>
+
+<p>在源码中找到了这个：<code class="highlighter-rouge">&lt;!-- &lt;a href="./index.php?filename=something.php"&gt;&lt;/a&gt; --&gt;</code>，好像可以读取文件。</p>
+
+<p>尝试读一下”index.php”，页面就开始不断地输出上面那张图的内容。后来反应过来是一个文件包含，递归地包含了”index.php”文件的内容。</p>
+
+<p>然后尝试访问一下”something.php”文件，说让我访问”upload.php”,访问发现是个文件上传。上传成功后会返回文件路径，但只能上传TXT文件，而且会被强制改名：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 19:57:51.png" alt="屏幕截图 2019-11-13 19:57:51" /></p>
+
+<p>文件上传、重命名、文件包含，应该联想到利用”phar://”协议绕过。不过当在”index.php”使用”phar://”协议的时候却被禁止了：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 20:00:37.png" alt="屏幕截图 2019-11-13 20:00:37" /></p>
+
+<p>说明”upload.php”或许也提供了文件包含接口。可以尝试利用”php://filter”读取”upload.php”的内容，获得接口后上传文件即可读取flag内容。</p>
+
+<h2 id="备注-5">备注</h2>
+
+<ol>
+  <li>要亲自实现一下”phar://”协议绕过。</li>
+</ol>
+
+<hr />
+
+<h1 id="unctf_simple_calc_1">unctf_Simple_Calc_1</h1>
+
+<h2 id="题目描述-6">题目描述</h2>
+
+<p>有两个提示：</p>
+
+<blockquote>
+  <p>Hint1:XFF伪造</p>
+
+  <p>Hint2:用 SQLMAP 到处跑跑试试- -？</p>
+</blockquote>
+
+<p>打开页面真的是个计算器：</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-10-27 12:47:24.png" alt="屏幕截图 2019-10-27 12:47:24" /></p>
+
+<h2 id="解题思路-6">解题思路</h2>
+
+<p>点击右上角的”信息”，可以发现使用计算机的次数被记录了。</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 19:20:05.png" alt="屏幕截图 2019-11-13 19:20:05" /></p>
+
+<p>猜测可能是服务器记录了我的IP的访问次数，结合提示，这是一个XFF的SQL注入。</p>
+
+<p>抓包可以发现，每次刷新页面都会额外产生一个访问”/backend/”的请求，返回的就是使用次数。因为我的Hackbar不能用，直接在Burpsuite中尝试注入。用XFF伪造一个新的IP访问，</p>
+
+<p><img src="/uploads/posts/2019-10-20-UNCTF-Web/屏幕截图 2019-11-13 19:27:53.png" alt="屏幕截图 2019-11-13 19:27:53" /></p>
+
+<p>多次访问，确实次数增加了，然后开始注入测试。Payload为：<code class="highlighter-rouge">127.0.0.10' or  '1'='1</code>时功能正常，结合Sqlmap爆数据库。</p>
+
+<h2 id="备注-6">备注</h2>
+
+<ol>
+  <li>首先是要准备一个Hackbar。</li>
+  <li>其次继续学习Sqlmap脚本。</li>
+</ol>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/CTF" rel="tag"># CTF</a>
+          
+            
+            <a href="/tag/#/Writeup" rel="tag"># Writeup</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/notes/2019/11/09/Sqlmap-Tamper/" rel="next" title="Sqlmap Tamper脚本使用">
+                <i class="fa fa-chevron-left"></i> Sqlmap Tamper脚本使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/notes/2019/09/21/Linux-Process/" rel="prev" title="Linux进程管理">
+                Linux进程管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#上传给小姐姐的照片"> <span class="nav-number">1</span> <span class="nav-text">上传给小姐姐的照片</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述"> <span class="nav-number">1.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路"> <span class="nav-number">1.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注"> <span class="nav-number">1.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#checkina"> <span class="nav-number">2</span> <span class="nav-text">checkinA</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-1"> <span class="nav-number">2.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-1"> <span class="nav-number">2.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-1"> <span class="nav-number">2.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#unctf_easyphp"> <span class="nav-number">3</span> <span class="nav-text">unctf_easyphp</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-2"> <span class="nav-number">3.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-2"> <span class="nav-number">3.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-2"> <span class="nav-number">3.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#web1"> <span class="nav-number">4</span> <span class="nav-text">WEB1</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-3"> <span class="nav-number">4.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-3"> <span class="nav-number">4.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-3"> <span class="nav-number">4.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#光坂镇的小诗1"> <span class="nav-number">5</span> <span class="nav-text">光坂镇的小诗1</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-4"> <span class="nav-number">5.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-4"> <span class="nav-number">5.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-4"> <span class="nav-number">5.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#这好像不是上传"> <span class="nav-number">6</span> <span class="nav-text">这好像不是上传</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-5"> <span class="nav-number">6.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-5"> <span class="nav-number">6.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-5"> <span class="nav-number">6.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#unctf_simple_calc_1"> <span class="nav-number">7</span> <span class="nav-text">unctf_Simple_Calc_1</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-6"> <span class="nav-number">7.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-6"> <span class="nav-number">7.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-6"> <span class="nav-number">7.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

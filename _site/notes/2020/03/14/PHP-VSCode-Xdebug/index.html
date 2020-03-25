@@ -1,0 +1,973 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="PHP,IDE," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间。">
+<meta name="keywords" content="PHP, IDE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用VSCode+Xdebug">
+<meta property="og:url" content="http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间。">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用VSCode+Xdebug">
+<meta name="twitter:description" content="关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间。">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>使用VSCode+Xdebug | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            使用VSCode+Xdebug
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-14T00:00:00+08:00">
+                2020-03-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Notes" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <p>关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间。</p>
+
+<!-- more -->
+
+<h1 id="php安装xdebug插件">PHP安装Xdebug插件</h1>
+
+<p>主要是要适配PHP的版本，其实只要把PHP的信息提交到Xdebug官网，后台就会自动返回详细的安装步骤。我这里还是记录一下吧。</p>
+
+<h2 id="安装步骤">安装步骤</h2>
+
+<ol>
+  <li>
+    <p>在Terminal输入以下命令，并将输出完全粘贴到Xdebug官网的向导中：</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code> php <span class="nt">-i</span>
+</code></pre></td></tr></tbody></table></div>    </div>
+
+    <p>官网返回了我的PHP主要信息：</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13</pre></td><td class="code"><pre class="highlight"><code> Xdebug installed: 2.9.3
+ Server API: Command Line Interface
+ Windows: no
+ Zend Server: no
+ PHP Version: 7.2.24-0
+ Zend API nr: 320170718
+ PHP API nr: 20170718
+ Debug Build: no
+ Thread Safe Build: no
+ OPcache Loaded: no
+ Configuration File Path: /etc/php/7.2/cli
+ Configuration File: /etc/php/7.2/cli/php.ini
+ Extensions directory: /usr/lib/php/20170718
+</code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+  <li>
+    <p>根据提示下载并解压相应的源码包</p>
+  </li>
+  <li>
+    <p>安装编译PHP扩展所需要的软件，用如下命令：</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code> apt-get install php-dev autoconf automake
+</code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+  <li>
+    <p>运行phpize：</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code> phpize
+</code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+  <li>
+    <p>配置并编译Xdebug源码</p>
+  </li>
+  <li>
+    <p>将目录modules/下生成的文件xdebug.so复制到扩展目录（见PHP信息）</p>
+  </li>
+  <li>
+    <p>向PHP配置文件中加入如下信息（见PHP信息）：</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code> zend_extension = {PHP扩展目录}/xdebug.so
+</code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+  <li>
+    <p>根据需要更新其它的PHP配置文件</p>
+  </li>
+</ol>
+
+<h2 id="备注">备注</h2>
+
+<ol>
+  <li><code class="highlighter-rouge">php -i</code>返回的内容与<code class="highlighter-rouge">phpinfo()</code>相同，包含了PHP版本、配置文件位置等重要信息</li>
+  <li>php.ini是PHP的配置文件，PHP可能有多个配置文件，以针对不同的服务，如Apache2服务、Command Line等</li>
+  <li>php-dev是一个依赖库，是开发、编译PHP扩展的必要组件。</li>
+  <li>autoconf、automake是用于自动配置和编译源码的工具</li>
+  <li>phpize是一个PHP扩展安装工具，可以根据源码生成配置文件</li>
+  <li>Zend引擎是PHP的内核</li>
+</ol>
+
+<hr />
+
+<h1 id="安装vscode插件">安装VSCode插件</h1>
+
+<h2 id="php-debug">PHP Debug</h2>
+
+<p>这个扩展是一个在VSCode和Xdebug之间的适配器。</p>
+
+<h2 id="php-intellisense">PHP IntelliSense</h2>
+
+<p>PHP智能感知，提供了语法提示、定义跳转等功能。</p>
+
+<hr />
+
+<h1 id="利用vscode调试">利用VSCode调试</h1>
+
+<ol>
+  <li>
+    <p>在VSCode中打开目标文件和其所在的目录</p>
+  </li>
+  <li>
+    <p>第一次使用需要配置launch.json文件，插入如下内容：</p>
+
+    <div class="language-json highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16</pre></td><td class="code"><pre class="highlight"><code><span class="w"> </span><span class="s2">"configurations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+     </span><span class="p">{</span><span class="w">
+         </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Listen for XDebug"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"php"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"request"</span><span class="p">:</span><span class="w"> </span><span class="s2">"launch"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">9000</span><span class="w">
+     </span><span class="p">},</span><span class="w">
+     </span><span class="p">{</span><span class="w">
+         </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Launch currently open script"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"php"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"request"</span><span class="p">:</span><span class="w"> </span><span class="s2">"launch"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"program"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${file}"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"cwd"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${fileDirname}"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">9000</span><span class="w">
+     </span><span class="p">}</span><span class="w">
+ </span><span class="p">]</span><span class="w">
+</span></code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+  <li>
+    <p>以上内容配置了两个功能，”Listen for XDebug”和”Launch currently open script”。前者启动后将监视PHP的CLI或其它服务，PHP服务运行后程序将在断点处停止。后者则直接在VSCode中运行PHP程序。</p>
+  </li>
+</ol>
+
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/PHP" rel="tag"># PHP</a>
+          
+            
+            <a href="/tag/#/IDE" rel="tag"># IDE</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/23/BJDCTF-2nd-Web/" rel="next" title="Bjdctf 2nd Web">
+                <i class="fa fa-chevron-left"></i> Bjdctf 2nd Web
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/writeups/2020/02/29/V&NCTF-Web/" rel="prev" title="V&N Web Writeup">
+                V&N Web Writeup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#php安装xdebug插件"> <span class="nav-number">1</span> <span class="nav-text">PHP安装Xdebug插件</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#安装步骤"> <span class="nav-number">1.1</span> <span class="nav-text">安装步骤</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注"> <span class="nav-number">1.2</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#安装vscode插件"> <span class="nav-number">2</span> <span class="nav-text">安装VSCode插件</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#php-debug"> <span class="nav-number">2.1</span> <span class="nav-text">PHP Debug</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#php-intellisense"> <span class="nav-number">2.2</span> <span class="nav-text">PHP IntelliSense</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#利用vscode调试"> <span class="nav-number">3</span> <span class="nav-text">利用VSCode调试</span> </a> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

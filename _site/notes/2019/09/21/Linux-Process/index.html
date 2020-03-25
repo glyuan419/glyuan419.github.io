@@ -1,0 +1,1073 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是进程 进程用来表示正在运行的程序。在Linux内核中维护着一张表，记录了当前系统中运行的所以进程的各种信息。内核中一些重要的进程的信息如下： 进程的内存地址 进程当前的状态 进程正在使用的资源 进程的优先级（谦让度） 进程的属主 进程的属性 一个进程包含了多个属性参数，决定了进程被处理的先后顺序、能够访问的资源等。下面介绍几个常用参数。 PID：进程的ID号 Linux使用进程的唯一ID来标示进程，称作PID。同样用户与系统进行交互时也使用PID，而不是进程名。 PPID：父进程的ID 除了在系统引导时由内核自主创建并安装的那几个进程，Linux中所有的进程都必须由另一个进程创建。这样就出现了父进程的概念，使用PPID来表示。 UID和EUID：真实和有效的用户ID 只有进程的创建者和root用户才可以对进程进行操作，Linux使用UID来标示进程的创建者。 Linux还为进程保存了一个“有效用户ID”，称作EUID，用来表示进程对于文件和资源的访问权限。 GID和EGID：真实和有效的组ID 与UID和EUID类似的还有GID和EGID，分别表示真实组ID和有效组ID。 谦让度和优先级 进程的优先级决定了其收到CPU“有优待”的程度。优先级高的进程能够被更早地处理，并获得更多的处理器时间。Linux内核会综合考虑一个进程的各种因素来决定其优先级，包括进程已经消耗的CPU时间、进程已经等待的时间等。在绝大多数情况下，决定进程何时被处理是内核的事情，不需要用户插手。 用户可以设置进程的“谦让度”来影响内核的决定。顾名思义，谦让度高往往会获得更高的优先级。 监视进程：ps命令 使用ps命令来监视系统进程。如下命令将显示当前系统上运行的所有进程的信息。 $ ps aux ps命令将返回一个表格，以下是表格的表头字段和具体含义： 字段 含义 USER 进程的创建者 PID 进程的ID %CPU 进程的CPU占用率 %MEM 进程的内存占用率 VSZ 进程占用的训内存大小 RSS 内存中页的数量（页是管理内存的单位，PC上通常为4K） TTY 进程所在终端的ID STAT 进程的状态 START 进程启动的时间 TIME 进程已占用的CPU时间 COMMAND 命令和参数 以下是STAT字段支持的参数： 参数 含义 R 正在运行/可运行 D 睡眠中（不可被唤醒，通常是在等待I/O设备） S 睡眠中（可被唤醒） T 停止（由于收到信号或被跟踪） Z 僵进程（已经结束而没有释放系统资源的进程） 以下是STAT字段支持的附加标志： 附加标志 含义 &amp;lt; 进程拥有比普通优先级高的优先级 N 进程拥有比普通优先级低的优先级 L 有些页面被锁在内存中 s 会话的先导进程 ps命令的另一组选项lau可以提供父进程ID（PPID）和谦让度（NI）。 即时跟踪进程信息：top命令 ps命令可以一次性给出当前系统中进程信息的快照，但这样缺乏时效性。管理员可能要通过不停使用ps命令来更新信息。Linux提供了top命令用于即时跟踪系统中的进程情况。 以下命令会即时显示系统进程信息。 $ top top命令的返回信息会占满一页，并即时更新，依据CPU的使用率排序。可使用命令q退出程序。 查看占用文件的进程：lsof命令 可以使用lsof命令来查看占用某个文件的进程。以下命令将显示占用了foo.txt文件的进程的信息。 $ lsof foo.txt 向进程发送信号：kill命令 使用kill命令可杀死指定进程。如下命令将会终止PID为1234的进程。 $ kill 1234 kill命令不只可被用于杀死进程，实际上它是一条用于和进程通讯的命令，它可以接受很多参数。实例kill -l来查看其具体接受的参数。 kill 1234命令等同于kill -TERM 1234或者kill -SIGTERM 1234。 调整进程的谦让度：nice和renice命令 使用nice命令可以某一指定谦让度启动一个进程。如下命令会启动foo进程，并将其谦让度增量设为2。 $ nice -n 2 foo -n参数用于设置谦让度增量。 也可以使用renice命令来调整已运行进程的谦让度。下面命令会将PID为1234的进程的谦让度调整为12。 $ renice +12 -p 1234 -p参数用于接受进程ID。进程的谦让度继承自父进程，由此引伸出了谦让度增量的概念。进程的属主可以自由提高进程的谦让度，但若想降低谦让度则需要root权限。">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux进程管理">
+<meta property="og:url" content="http://localhost:4000/notes/2019/09/21/Linux-Process/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="什么是进程 进程用来表示正在运行的程序。在Linux内核中维护着一张表，记录了当前系统中运行的所以进程的各种信息。内核中一些重要的进程的信息如下： 进程的内存地址 进程当前的状态 进程正在使用的资源 进程的优先级（谦让度） 进程的属主 进程的属性 一个进程包含了多个属性参数，决定了进程被处理的先后顺序、能够访问的资源等。下面介绍几个常用参数。 PID：进程的ID号 Linux使用进程的唯一ID来标示进程，称作PID。同样用户与系统进行交互时也使用PID，而不是进程名。 PPID：父进程的ID 除了在系统引导时由内核自主创建并安装的那几个进程，Linux中所有的进程都必须由另一个进程创建。这样就出现了父进程的概念，使用PPID来表示。 UID和EUID：真实和有效的用户ID 只有进程的创建者和root用户才可以对进程进行操作，Linux使用UID来标示进程的创建者。 Linux还为进程保存了一个“有效用户ID”，称作EUID，用来表示进程对于文件和资源的访问权限。 GID和EGID：真实和有效的组ID 与UID和EUID类似的还有GID和EGID，分别表示真实组ID和有效组ID。 谦让度和优先级 进程的优先级决定了其收到CPU“有优待”的程度。优先级高的进程能够被更早地处理，并获得更多的处理器时间。Linux内核会综合考虑一个进程的各种因素来决定其优先级，包括进程已经消耗的CPU时间、进程已经等待的时间等。在绝大多数情况下，决定进程何时被处理是内核的事情，不需要用户插手。 用户可以设置进程的“谦让度”来影响内核的决定。顾名思义，谦让度高往往会获得更高的优先级。 监视进程：ps命令 使用ps命令来监视系统进程。如下命令将显示当前系统上运行的所有进程的信息。 $ ps aux ps命令将返回一个表格，以下是表格的表头字段和具体含义： 字段 含义 USER 进程的创建者 PID 进程的ID %CPU 进程的CPU占用率 %MEM 进程的内存占用率 VSZ 进程占用的训内存大小 RSS 内存中页的数量（页是管理内存的单位，PC上通常为4K） TTY 进程所在终端的ID STAT 进程的状态 START 进程启动的时间 TIME 进程已占用的CPU时间 COMMAND 命令和参数 以下是STAT字段支持的参数： 参数 含义 R 正在运行/可运行 D 睡眠中（不可被唤醒，通常是在等待I/O设备） S 睡眠中（可被唤醒） T 停止（由于收到信号或被跟踪） Z 僵进程（已经结束而没有释放系统资源的进程） 以下是STAT字段支持的附加标志： 附加标志 含义 &amp;lt; 进程拥有比普通优先级高的优先级 N 进程拥有比普通优先级低的优先级 L 有些页面被锁在内存中 s 会话的先导进程 ps命令的另一组选项lau可以提供父进程ID（PPID）和谦让度（NI）。 即时跟踪进程信息：top命令 ps命令可以一次性给出当前系统中进程信息的快照，但这样缺乏时效性。管理员可能要通过不停使用ps命令来更新信息。Linux提供了top命令用于即时跟踪系统中的进程情况。 以下命令会即时显示系统进程信息。 $ top top命令的返回信息会占满一页，并即时更新，依据CPU的使用率排序。可使用命令q退出程序。 查看占用文件的进程：lsof命令 可以使用lsof命令来查看占用某个文件的进程。以下命令将显示占用了foo.txt文件的进程的信息。 $ lsof foo.txt 向进程发送信号：kill命令 使用kill命令可杀死指定进程。如下命令将会终止PID为1234的进程。 $ kill 1234 kill命令不只可被用于杀死进程，实际上它是一条用于和进程通讯的命令，它可以接受很多参数。实例kill -l来查看其具体接受的参数。 kill 1234命令等同于kill -TERM 1234或者kill -SIGTERM 1234。 调整进程的谦让度：nice和renice命令 使用nice命令可以某一指定谦让度启动一个进程。如下命令会启动foo进程，并将其谦让度增量设为2。 $ nice -n 2 foo -n参数用于设置谦让度增量。 也可以使用renice命令来调整已运行进程的谦让度。下面命令会将PID为1234的进程的谦让度调整为12。 $ renice +12 -p 1234 -p参数用于接受进程ID。进程的谦让度继承自父进程，由此引伸出了谦让度增量的概念。进程的属主可以自由提高进程的谦让度，但若想降低谦让度则需要root权限。">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux进程管理">
+<meta name="twitter:description" content="什么是进程 进程用来表示正在运行的程序。在Linux内核中维护着一张表，记录了当前系统中运行的所以进程的各种信息。内核中一些重要的进程的信息如下： 进程的内存地址 进程当前的状态 进程正在使用的资源 进程的优先级（谦让度） 进程的属主 进程的属性 一个进程包含了多个属性参数，决定了进程被处理的先后顺序、能够访问的资源等。下面介绍几个常用参数。 PID：进程的ID号 Linux使用进程的唯一ID来标示进程，称作PID。同样用户与系统进行交互时也使用PID，而不是进程名。 PPID：父进程的ID 除了在系统引导时由内核自主创建并安装的那几个进程，Linux中所有的进程都必须由另一个进程创建。这样就出现了父进程的概念，使用PPID来表示。 UID和EUID：真实和有效的用户ID 只有进程的创建者和root用户才可以对进程进行操作，Linux使用UID来标示进程的创建者。 Linux还为进程保存了一个“有效用户ID”，称作EUID，用来表示进程对于文件和资源的访问权限。 GID和EGID：真实和有效的组ID 与UID和EUID类似的还有GID和EGID，分别表示真实组ID和有效组ID。 谦让度和优先级 进程的优先级决定了其收到CPU“有优待”的程度。优先级高的进程能够被更早地处理，并获得更多的处理器时间。Linux内核会综合考虑一个进程的各种因素来决定其优先级，包括进程已经消耗的CPU时间、进程已经等待的时间等。在绝大多数情况下，决定进程何时被处理是内核的事情，不需要用户插手。 用户可以设置进程的“谦让度”来影响内核的决定。顾名思义，谦让度高往往会获得更高的优先级。 监视进程：ps命令 使用ps命令来监视系统进程。如下命令将显示当前系统上运行的所有进程的信息。 $ ps aux ps命令将返回一个表格，以下是表格的表头字段和具体含义： 字段 含义 USER 进程的创建者 PID 进程的ID %CPU 进程的CPU占用率 %MEM 进程的内存占用率 VSZ 进程占用的训内存大小 RSS 内存中页的数量（页是管理内存的单位，PC上通常为4K） TTY 进程所在终端的ID STAT 进程的状态 START 进程启动的时间 TIME 进程已占用的CPU时间 COMMAND 命令和参数 以下是STAT字段支持的参数： 参数 含义 R 正在运行/可运行 D 睡眠中（不可被唤醒，通常是在等待I/O设备） S 睡眠中（可被唤醒） T 停止（由于收到信号或被跟踪） Z 僵进程（已经结束而没有释放系统资源的进程） 以下是STAT字段支持的附加标志： 附加标志 含义 &amp;lt; 进程拥有比普通优先级高的优先级 N 进程拥有比普通优先级低的优先级 L 有些页面被锁在内存中 s 会话的先导进程 ps命令的另一组选项lau可以提供父进程ID（PPID）和谦让度（NI）。 即时跟踪进程信息：top命令 ps命令可以一次性给出当前系统中进程信息的快照，但这样缺乏时效性。管理员可能要通过不停使用ps命令来更新信息。Linux提供了top命令用于即时跟踪系统中的进程情况。 以下命令会即时显示系统进程信息。 $ top top命令的返回信息会占满一页，并即时更新，依据CPU的使用率排序。可使用命令q退出程序。 查看占用文件的进程：lsof命令 可以使用lsof命令来查看占用某个文件的进程。以下命令将显示占用了foo.txt文件的进程的信息。 $ lsof foo.txt 向进程发送信号：kill命令 使用kill命令可杀死指定进程。如下命令将会终止PID为1234的进程。 $ kill 1234 kill命令不只可被用于杀死进程，实际上它是一条用于和进程通讯的命令，它可以接受很多参数。实例kill -l来查看其具体接受的参数。 kill 1234命令等同于kill -TERM 1234或者kill -SIGTERM 1234。 调整进程的谦让度：nice和renice命令 使用nice命令可以某一指定谦让度启动一个进程。如下命令会启动foo进程，并将其谦让度增量设为2。 $ nice -n 2 foo -n参数用于设置谦让度增量。 也可以使用renice命令来调整已运行进程的谦让度。下面命令会将PID为1234的进程的谦让度调整为12。 $ renice +12 -p 1234 -p参数用于接受进程ID。进程的谦让度继承自父进程，由此引伸出了谦让度增量的概念。进程的属主可以自由提高进程的谦让度，但若想降低谦让度则需要root权限。">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>Linux进程管理 | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/notes/2019/09/21/Linux-Process/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            Linux进程管理
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-21T00:00:00+08:00">
+                2019-09-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Notes" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <h1 id="什么是进程">什么是进程</h1>
+
+<p>进程用来表示正在运行的程序。在Linux内核中维护着一张表，记录了当前系统中运行的所以进程的各种信息。内核中一些重要的进程的信息如下：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>进程的内存地址</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>进程当前的状态</td>
+    </tr>
+    <tr>
+      <td>进程正在使用的资源</td>
+    </tr>
+    <tr>
+      <td>进程的优先级（谦让度）</td>
+    </tr>
+    <tr>
+      <td>进程的属主</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="进程的属性">进程的属性</h1>
+
+<p>一个进程包含了多个属性参数，决定了进程被处理的先后顺序、能够访问的资源等。下面介绍几个常用参数。</p>
+
+<h2 id="pid进程的id号">PID：进程的ID号</h2>
+
+<p>Linux使用进程的唯一ID来标示进程，称作PID。同样用户与系统进行交互时也使用PID，而不是进程名。</p>
+
+<h2 id="ppid父进程的id">PPID：父进程的ID</h2>
+
+<p>除了在系统引导时由内核自主创建并安装的那几个进程，Linux中所有的进程都必须由另一个进程创建。这样就出现了父进程的概念，使用PPID来表示。</p>
+
+<h2 id="uid和euid真实和有效的用户id">UID和EUID：真实和有效的用户ID</h2>
+
+<p>只有进程的创建者和root用户才可以对进程进行操作，Linux使用UID来标示进程的创建者。</p>
+
+<p>Linux还为进程保存了一个“有效用户ID”，称作EUID，用来表示进程对于文件和资源的访问权限。</p>
+
+<h2 id="gid和egid真实和有效的组id">GID和EGID：真实和有效的组ID</h2>
+
+<p>与UID和EUID类似的还有GID和EGID，分别表示真实组ID和有效组ID。</p>
+
+<h2 id="谦让度和优先级">谦让度和优先级</h2>
+
+<p>进程的优先级决定了其收到CPU“有优待”的程度。优先级高的进程能够被更早地处理，并获得更多的处理器时间。Linux内核会综合考虑一个进程的各种因素来决定其优先级，包括进程已经消耗的CPU时间、进程已经等待的时间等。在绝大多数情况下，决定进程何时被处理是内核的事情，不需要用户插手。</p>
+
+<p>用户可以设置进程的“谦让度”来影响内核的决定。顾名思义，谦让度高往往会获得更高的优先级。</p>
+
+<h1 id="监视进程ps命令">监视进程：ps命令</h1>
+
+<p>使用ps命令来监视系统进程。如下命令将显示当前系统上运行的所有进程的信息。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>ps aux
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>ps命令将返回一个表格，以下是表格的表头字段和具体含义：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>字段</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>USER</td>
+      <td>进程的创建者</td>
+    </tr>
+    <tr>
+      <td>PID</td>
+      <td>进程的ID</td>
+    </tr>
+    <tr>
+      <td>%CPU</td>
+      <td>进程的CPU占用率</td>
+    </tr>
+    <tr>
+      <td>%MEM</td>
+      <td>进程的内存占用率</td>
+    </tr>
+    <tr>
+      <td>VSZ</td>
+      <td>进程占用的训内存大小</td>
+    </tr>
+    <tr>
+      <td>RSS</td>
+      <td>内存中页的数量（页是管理内存的单位，PC上通常为4K）</td>
+    </tr>
+    <tr>
+      <td>TTY</td>
+      <td>进程所在终端的ID</td>
+    </tr>
+    <tr>
+      <td>STAT</td>
+      <td>进程的状态</td>
+    </tr>
+    <tr>
+      <td>START</td>
+      <td>进程启动的时间</td>
+    </tr>
+    <tr>
+      <td>TIME</td>
+      <td>进程已占用的CPU时间</td>
+    </tr>
+    <tr>
+      <td>COMMAND</td>
+      <td>命令和参数</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>以下是STAT字段支持的参数：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>参数</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>R</td>
+      <td>正在运行/可运行</td>
+    </tr>
+    <tr>
+      <td>D</td>
+      <td>睡眠中（不可被唤醒，通常是在等待I/O设备）</td>
+    </tr>
+    <tr>
+      <td>S</td>
+      <td>睡眠中（可被唤醒）</td>
+    </tr>
+    <tr>
+      <td>T</td>
+      <td>停止（由于收到信号或被跟踪）</td>
+    </tr>
+    <tr>
+      <td>Z</td>
+      <td>僵进程（已经结束而没有释放系统资源的进程）</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>以下是STAT字段支持的附加标志：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>附加标志</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>&lt;</td>
+      <td>进程拥有比普通优先级高的优先级</td>
+    </tr>
+    <tr>
+      <td>N</td>
+      <td>进程拥有比普通优先级低的优先级</td>
+    </tr>
+    <tr>
+      <td>L</td>
+      <td>有些页面被锁在内存中</td>
+    </tr>
+    <tr>
+      <td>s</td>
+      <td>会话的先导进程</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>ps命令的另一组选项lau可以提供父进程ID（PPID）和谦让度（NI）。</p>
+
+<h1 id="即时跟踪进程信息top命令">即时跟踪进程信息：top命令</h1>
+
+<p>ps命令可以一次性给出当前系统中进程信息的快照，但这样缺乏时效性。管理员可能要通过不停使用ps命令来更新信息。Linux提供了top命令用于即时跟踪系统中的进程情况。</p>
+
+<p>以下命令会即时显示系统进程信息。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>top
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>top命令的返回信息会占满一页，并即时更新，依据CPU的使用率排序。可使用命令q退出程序。</p>
+
+<h1 id="查看占用文件的进程lsof命令">查看占用文件的进程：lsof命令</h1>
+
+<p>可以使用lsof命令来查看占用某个文件的进程。以下命令将显示占用了foo.txt文件的进程的信息。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>lsof foo.txt
+</code></pre></td></tr></tbody></table></div></div>
+
+<h1 id="向进程发送信号kill命令">向进程发送信号：kill命令</h1>
+
+<p>使用kill命令可杀死指定进程。如下命令将会终止PID为1234的进程。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">kill </span>1234
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>kill命令不只可被用于杀死进程，实际上它是一条用于和进程通讯的命令，它可以接受很多参数。实例<code class="highlighter-rouge">kill -l</code>来查看其具体接受的参数。</p>
+
+<p><code class="highlighter-rouge">kill 1234</code>命令等同于<code class="highlighter-rouge">kill -TERM 1234</code>或者<code class="highlighter-rouge">kill -SIGTERM 1234</code>。</p>
+
+<h1 id="调整进程的谦让度nice和renice命令">调整进程的谦让度：nice和renice命令</h1>
+
+<p>使用nice命令可以某一指定谦让度启动一个进程。如下命令会启动foo进程，并将其谦让度增量设为2。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>nice <span class="nt">-n</span> 2 foo
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>-n参数用于设置谦让度增量。</p>
+
+<p>也可以使用renice命令来调整已运行进程的谦让度。下面命令会将PID为1234的进程的谦让度调整为12。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>renice +12 <span class="nt">-p</span> 1234
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>-p参数用于接受进程ID。进程的谦让度继承自父进程，由此引伸出了谦让度增量的概念。进程的属主可以自由提高进程的谦让度，但若想降低谦让度则需要root权限。</p>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/Linux" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/writeups/2019/10/20/UNCTF-Web/" rel="next" title="UNCTF Web Writeup">
+                <i class="fa fa-chevron-left"></i> UNCTF Web Writeup
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/notes/2019/09/20/Linux-Disk/" rel="prev" title="Linux磁盘管理">
+                Linux磁盘管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#什么是进程"> <span class="nav-number">1</span> <span class="nav-text">什么是进程</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#进程的属性"> <span class="nav-number">2</span> <span class="nav-text">进程的属性</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#pid进程的id号"> <span class="nav-number">2.1</span> <span class="nav-text">PID：进程的ID号</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#ppid父进程的id"> <span class="nav-number">2.2</span> <span class="nav-text">PPID：父进程的ID</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#uid和euid真实和有效的用户id"> <span class="nav-number">2.3</span> <span class="nav-text">UID和EUID：真实和有效的用户ID</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#gid和egid真实和有效的组id"> <span class="nav-number">2.4</span> <span class="nav-text">GID和EGID：真实和有效的组ID</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#谦让度和优先级"> <span class="nav-number">2.5</span> <span class="nav-text">谦让度和优先级</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#监视进程ps命令"> <span class="nav-number">3</span> <span class="nav-text">监视进程：ps命令</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#即时跟踪进程信息top命令"> <span class="nav-number">4</span> <span class="nav-text">即时跟踪进程信息：top命令</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#查看占用文件的进程lsof命令"> <span class="nav-number">5</span> <span class="nav-text">查看占用文件的进程：lsof命令</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#向进程发送信号kill命令"> <span class="nav-number">6</span> <span class="nav-text">向进程发送信号：kill命令</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#调整进程的谦让度nice和renice命令"> <span class="nav-number">7</span> <span class="nav-text">调整进程的谦让度：nice和renice命令</span> </a> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

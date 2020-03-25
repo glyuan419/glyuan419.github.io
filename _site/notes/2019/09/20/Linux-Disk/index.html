@@ -1,0 +1,1028 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于硬盘 硬盘根据不同的接口主要可分为IDE、SCSI、SATA三类，使用IDE接口的设备被称作hd，使用SCSI和SATA接口的设备被称作sd，以英文字母标示顺序，以sd为例，第一块硬盘被称作sda，第二块被称作sdb，以此类推。 Linux规定一个硬盘最多有4个主分区，分别被命名为sda1、sda2、sda3和sda4。逻辑分区则从5开始标示，逐个递增1，数量没有限制。 一个硬盘上最多有4个分区，即主分区和扩展分区，若主分区有4个则不设扩展分区。扩展分区不直接使用，在其上可划分若干个逻辑分区以供使用。 Linux文件系统 在Windows下，有NTFS和FAT两种文件系统，Linux下也有自己的文件系统。 ext3fs系统和ext4fs系统 ext4fs(Fourth Extended File System)是对ext3fs(Third Extended File System)的扩展和改善。ext4fs改良了日志功能，也大大地增加了文件系统的可靠性。 日志功能是基于灾难恢复的需求而诞生的。文件系统预留一块区域来保存日志文件，当对文件进行写操作时，所有修改先写入日志文件，随后才会做出实际修改。这样当系统崩溃后就可以根据日志来恢复文件系统。 常用文件系统的表示方法 以下是常用文件系统的表示方法： 表示方法 描述 ext2 Linux的ext2文件系统 ext3 Linux的ext3文件系统 ext4 Linux的ext4文件系统 vfat Windows的FAT16/FAT32文件系统 ntfs Windows的NTFS文件系统 iso9660 CD-ROM光盘的标准文件系统 swap分区 swap不是文件系统，它是Linux下的一个分区，称作交换分区，作用类似于虚拟内存。即当物理内存不够用时，临时使用虚拟内存来放置一部分不常用的信息。 挂载文件系统 Linux下设备的表示方法 Linux下所有的设备都被当作文件来操作，每个设备都被映射为一个特殊文件，称作“设备文件”，被放置在/dev目录下，对上层引用而言所有的设备操作都通过文件读写实现。 这些文件大多是块设备文件和字符设备文件，块设备可以随机地读写，如硬盘，字符设备只能按顺序地接受字符流，如打印机。 用户不能通过直接通过操作文件访问存储设备，所有的存储设备在使用前都要挂载到某个目录下，然后就可以像操作目录一样使用这个设备了。 挂载文件系统 挂载是指由操作系统使一个存储设备上的计算机文件和目录可供用户通过计算机文件系统访问的一个过程。 通过mount命令可以挂载文件系统。如下命令会将sda3硬盘分区挂载到/foo目录下。 $ mount /dev/sda3 /foo mount会自动检测设备上的文件系统，并以相应的类型进行挂载。可以使用-r或-w选择，分别指定以只读或是读写模式挂载设备，-w是默认选项。 卸载文件系统 使用umount命令来卸载文件系统。如下命令将会卸载/dev/sda3上的文件系统。 $ umount /dev/sda3 文件系统只有在没有被使用的情况下才可以被卸载，使用-r参数，可以在设备正忙时以只读方式重新挂载文件系统。 查看磁盘的使用情况 检查和修复文件系统 在磁盘上建立文件系统 使用USB设备 压缩工具 gzip工具 使用gzip命令来压缩文件。以下命令会将foo文件压缩为foo.gz文件。 $ gzip foo 使用gunzip命令来解压文件。以下命令会将foo.gz文件解压为foo文件。 $ gunzip foo.gz 解压时仅支持.gz、.Z、-gz、.z和-z这样的扩展名。 可以使用-l选项来查看压缩文件的压缩效果。-t选项来测试压缩文件的完整性，文件完整则不会有任何返回。增加-v选项以在详细模式下获得返回信息。 bzip2工具 bzip2提供了更高的压缩率。文件压缩的语法与gzip相同，它也包含了与gzip相同的-t和-v选项。解压使用-d选项或使用bunzip2命令。以下两条命令均可解压foo.bz2文件为foo文件。 $ bzip2 -d foo.bz2 $ bunzip foo.bz2 如果压缩文件不以.bz2、.bz、.tbz2、.tbz或.bzip2结尾，解压得到的文件将增加“.out”作为扩展名。 存档工具 tar工具 使用tar命令来打包文件。以下命令会将当前目录下的foo子目录打包为bar.tar文件。 $ tar -c -f bar.tar foo 以下是tar命令常用的选项： 选项 描述 -c 打包文件的选项 -x 解开文件的选项 -f 指定归档文件的文件名 -v 显示该命令的执行过程 -w 每次将单个文件加入或抽出时询问用户意见 -z 打包文件后或解开文件前使用gzip压缩或解压文件 -j 打包文件后或解开文件前使用bzip2压缩或解压文件 安装硬盘和分区 高级硬盘管理 备份工作和系统">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux磁盘管理">
+<meta property="og:url" content="http://localhost:4000/notes/2019/09/20/Linux-Disk/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="关于硬盘 硬盘根据不同的接口主要可分为IDE、SCSI、SATA三类，使用IDE接口的设备被称作hd，使用SCSI和SATA接口的设备被称作sd，以英文字母标示顺序，以sd为例，第一块硬盘被称作sda，第二块被称作sdb，以此类推。 Linux规定一个硬盘最多有4个主分区，分别被命名为sda1、sda2、sda3和sda4。逻辑分区则从5开始标示，逐个递增1，数量没有限制。 一个硬盘上最多有4个分区，即主分区和扩展分区，若主分区有4个则不设扩展分区。扩展分区不直接使用，在其上可划分若干个逻辑分区以供使用。 Linux文件系统 在Windows下，有NTFS和FAT两种文件系统，Linux下也有自己的文件系统。 ext3fs系统和ext4fs系统 ext4fs(Fourth Extended File System)是对ext3fs(Third Extended File System)的扩展和改善。ext4fs改良了日志功能，也大大地增加了文件系统的可靠性。 日志功能是基于灾难恢复的需求而诞生的。文件系统预留一块区域来保存日志文件，当对文件进行写操作时，所有修改先写入日志文件，随后才会做出实际修改。这样当系统崩溃后就可以根据日志来恢复文件系统。 常用文件系统的表示方法 以下是常用文件系统的表示方法： 表示方法 描述 ext2 Linux的ext2文件系统 ext3 Linux的ext3文件系统 ext4 Linux的ext4文件系统 vfat Windows的FAT16/FAT32文件系统 ntfs Windows的NTFS文件系统 iso9660 CD-ROM光盘的标准文件系统 swap分区 swap不是文件系统，它是Linux下的一个分区，称作交换分区，作用类似于虚拟内存。即当物理内存不够用时，临时使用虚拟内存来放置一部分不常用的信息。 挂载文件系统 Linux下设备的表示方法 Linux下所有的设备都被当作文件来操作，每个设备都被映射为一个特殊文件，称作“设备文件”，被放置在/dev目录下，对上层引用而言所有的设备操作都通过文件读写实现。 这些文件大多是块设备文件和字符设备文件，块设备可以随机地读写，如硬盘，字符设备只能按顺序地接受字符流，如打印机。 用户不能通过直接通过操作文件访问存储设备，所有的存储设备在使用前都要挂载到某个目录下，然后就可以像操作目录一样使用这个设备了。 挂载文件系统 挂载是指由操作系统使一个存储设备上的计算机文件和目录可供用户通过计算机文件系统访问的一个过程。 通过mount命令可以挂载文件系统。如下命令会将sda3硬盘分区挂载到/foo目录下。 $ mount /dev/sda3 /foo mount会自动检测设备上的文件系统，并以相应的类型进行挂载。可以使用-r或-w选择，分别指定以只读或是读写模式挂载设备，-w是默认选项。 卸载文件系统 使用umount命令来卸载文件系统。如下命令将会卸载/dev/sda3上的文件系统。 $ umount /dev/sda3 文件系统只有在没有被使用的情况下才可以被卸载，使用-r参数，可以在设备正忙时以只读方式重新挂载文件系统。 查看磁盘的使用情况 检查和修复文件系统 在磁盘上建立文件系统 使用USB设备 压缩工具 gzip工具 使用gzip命令来压缩文件。以下命令会将foo文件压缩为foo.gz文件。 $ gzip foo 使用gunzip命令来解压文件。以下命令会将foo.gz文件解压为foo文件。 $ gunzip foo.gz 解压时仅支持.gz、.Z、-gz、.z和-z这样的扩展名。 可以使用-l选项来查看压缩文件的压缩效果。-t选项来测试压缩文件的完整性，文件完整则不会有任何返回。增加-v选项以在详细模式下获得返回信息。 bzip2工具 bzip2提供了更高的压缩率。文件压缩的语法与gzip相同，它也包含了与gzip相同的-t和-v选项。解压使用-d选项或使用bunzip2命令。以下两条命令均可解压foo.bz2文件为foo文件。 $ bzip2 -d foo.bz2 $ bunzip foo.bz2 如果压缩文件不以.bz2、.bz、.tbz2、.tbz或.bzip2结尾，解压得到的文件将增加“.out”作为扩展名。 存档工具 tar工具 使用tar命令来打包文件。以下命令会将当前目录下的foo子目录打包为bar.tar文件。 $ tar -c -f bar.tar foo 以下是tar命令常用的选项： 选项 描述 -c 打包文件的选项 -x 解开文件的选项 -f 指定归档文件的文件名 -v 显示该命令的执行过程 -w 每次将单个文件加入或抽出时询问用户意见 -z 打包文件后或解开文件前使用gzip压缩或解压文件 -j 打包文件后或解开文件前使用bzip2压缩或解压文件 安装硬盘和分区 高级硬盘管理 备份工作和系统">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux磁盘管理">
+<meta name="twitter:description" content="关于硬盘 硬盘根据不同的接口主要可分为IDE、SCSI、SATA三类，使用IDE接口的设备被称作hd，使用SCSI和SATA接口的设备被称作sd，以英文字母标示顺序，以sd为例，第一块硬盘被称作sda，第二块被称作sdb，以此类推。 Linux规定一个硬盘最多有4个主分区，分别被命名为sda1、sda2、sda3和sda4。逻辑分区则从5开始标示，逐个递增1，数量没有限制。 一个硬盘上最多有4个分区，即主分区和扩展分区，若主分区有4个则不设扩展分区。扩展分区不直接使用，在其上可划分若干个逻辑分区以供使用。 Linux文件系统 在Windows下，有NTFS和FAT两种文件系统，Linux下也有自己的文件系统。 ext3fs系统和ext4fs系统 ext4fs(Fourth Extended File System)是对ext3fs(Third Extended File System)的扩展和改善。ext4fs改良了日志功能，也大大地增加了文件系统的可靠性。 日志功能是基于灾难恢复的需求而诞生的。文件系统预留一块区域来保存日志文件，当对文件进行写操作时，所有修改先写入日志文件，随后才会做出实际修改。这样当系统崩溃后就可以根据日志来恢复文件系统。 常用文件系统的表示方法 以下是常用文件系统的表示方法： 表示方法 描述 ext2 Linux的ext2文件系统 ext3 Linux的ext3文件系统 ext4 Linux的ext4文件系统 vfat Windows的FAT16/FAT32文件系统 ntfs Windows的NTFS文件系统 iso9660 CD-ROM光盘的标准文件系统 swap分区 swap不是文件系统，它是Linux下的一个分区，称作交换分区，作用类似于虚拟内存。即当物理内存不够用时，临时使用虚拟内存来放置一部分不常用的信息。 挂载文件系统 Linux下设备的表示方法 Linux下所有的设备都被当作文件来操作，每个设备都被映射为一个特殊文件，称作“设备文件”，被放置在/dev目录下，对上层引用而言所有的设备操作都通过文件读写实现。 这些文件大多是块设备文件和字符设备文件，块设备可以随机地读写，如硬盘，字符设备只能按顺序地接受字符流，如打印机。 用户不能通过直接通过操作文件访问存储设备，所有的存储设备在使用前都要挂载到某个目录下，然后就可以像操作目录一样使用这个设备了。 挂载文件系统 挂载是指由操作系统使一个存储设备上的计算机文件和目录可供用户通过计算机文件系统访问的一个过程。 通过mount命令可以挂载文件系统。如下命令会将sda3硬盘分区挂载到/foo目录下。 $ mount /dev/sda3 /foo mount会自动检测设备上的文件系统，并以相应的类型进行挂载。可以使用-r或-w选择，分别指定以只读或是读写模式挂载设备，-w是默认选项。 卸载文件系统 使用umount命令来卸载文件系统。如下命令将会卸载/dev/sda3上的文件系统。 $ umount /dev/sda3 文件系统只有在没有被使用的情况下才可以被卸载，使用-r参数，可以在设备正忙时以只读方式重新挂载文件系统。 查看磁盘的使用情况 检查和修复文件系统 在磁盘上建立文件系统 使用USB设备 压缩工具 gzip工具 使用gzip命令来压缩文件。以下命令会将foo文件压缩为foo.gz文件。 $ gzip foo 使用gunzip命令来解压文件。以下命令会将foo.gz文件解压为foo文件。 $ gunzip foo.gz 解压时仅支持.gz、.Z、-gz、.z和-z这样的扩展名。 可以使用-l选项来查看压缩文件的压缩效果。-t选项来测试压缩文件的完整性，文件完整则不会有任何返回。增加-v选项以在详细模式下获得返回信息。 bzip2工具 bzip2提供了更高的压缩率。文件压缩的语法与gzip相同，它也包含了与gzip相同的-t和-v选项。解压使用-d选项或使用bunzip2命令。以下两条命令均可解压foo.bz2文件为foo文件。 $ bzip2 -d foo.bz2 $ bunzip foo.bz2 如果压缩文件不以.bz2、.bz、.tbz2、.tbz或.bzip2结尾，解压得到的文件将增加“.out”作为扩展名。 存档工具 tar工具 使用tar命令来打包文件。以下命令会将当前目录下的foo子目录打包为bar.tar文件。 $ tar -c -f bar.tar foo 以下是tar命令常用的选项： 选项 描述 -c 打包文件的选项 -x 解开文件的选项 -f 指定归档文件的文件名 -v 显示该命令的执行过程 -w 每次将单个文件加入或抽出时询问用户意见 -z 打包文件后或解开文件前使用gzip压缩或解压文件 -j 打包文件后或解开文件前使用bzip2压缩或解压文件 安装硬盘和分区 高级硬盘管理 备份工作和系统">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>Linux磁盘管理 | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/notes/2019/09/20/Linux-Disk/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            Linux磁盘管理
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-20T00:00:00+08:00">
+                2019-09-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Notes" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <h1 id="关于硬盘">关于硬盘</h1>
+
+<p>硬盘根据不同的接口主要可分为IDE、SCSI、SATA三类，使用IDE接口的设备被称作hd，使用SCSI和SATA接口的设备被称作sd，以英文字母标示顺序，以sd为例，第一块硬盘被称作sda，第二块被称作sdb，以此类推。</p>
+
+<p>Linux规定一个硬盘最多有4个主分区，分别被命名为sda1、sda2、sda3和sda4。逻辑分区则从5开始标示，逐个递增1，数量没有限制。</p>
+
+<p>一个硬盘上最多有4个分区，即主分区和扩展分区，若主分区有4个则不设扩展分区。扩展分区不直接使用，在其上可划分若干个逻辑分区以供使用。</p>
+
+<h1 id="linux文件系统">Linux文件系统</h1>
+
+<p>在Windows下，有NTFS和FAT两种文件系统，Linux下也有自己的文件系统。</p>
+
+<h2 id="ext3fs系统和ext4fs系统">ext3fs系统和ext4fs系统</h2>
+
+<p>ext4fs(Fourth Extended File System)是对ext3fs(Third Extended File System)的扩展和改善。ext4fs改良了日志功能，也大大地增加了文件系统的可靠性。</p>
+
+<p>日志功能是基于灾难恢复的需求而诞生的。文件系统预留一块区域来保存日志文件，当对文件进行写操作时，所有修改先写入日志文件，随后才会做出实际修改。这样当系统崩溃后就可以根据日志来恢复文件系统。</p>
+
+<h2 id="常用文件系统的表示方法">常用文件系统的表示方法</h2>
+
+<p>以下是常用文件系统的表示方法：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>表示方法</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ext2</td>
+      <td>Linux的ext2文件系统</td>
+    </tr>
+    <tr>
+      <td>ext3</td>
+      <td>Linux的ext3文件系统</td>
+    </tr>
+    <tr>
+      <td>ext4</td>
+      <td>Linux的ext4文件系统</td>
+    </tr>
+    <tr>
+      <td>vfat</td>
+      <td>Windows的FAT16/FAT32文件系统</td>
+    </tr>
+    <tr>
+      <td>ntfs</td>
+      <td>Windows的NTFS文件系统</td>
+    </tr>
+    <tr>
+      <td>iso9660</td>
+      <td>CD-ROM光盘的标准文件系统</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="swap分区">swap分区</h2>
+
+<p>swap不是文件系统，它是Linux下的一个分区，称作交换分区，作用类似于虚拟内存。即当物理内存不够用时，临时使用虚拟内存来放置一部分不常用的信息。</p>
+
+<h1 id="挂载文件系统">挂载文件系统</h1>
+
+<h2 id="linux下设备的表示方法">Linux下设备的表示方法</h2>
+
+<p>Linux下所有的设备都被当作文件来操作，每个设备都被映射为一个特殊文件，称作“设备文件”，被放置在/dev目录下，对上层引用而言所有的设备操作都通过文件读写实现。</p>
+
+<p>这些文件大多是块设备文件和字符设备文件，块设备可以随机地读写，如硬盘，字符设备只能按顺序地接受字符流，如打印机。</p>
+
+<p>用户不能通过直接通过操作文件访问存储设备，所有的存储设备在使用前都要挂载到某个目录下，然后就可以像操作目录一样使用这个设备了。</p>
+
+<h2 id="挂载文件系统-1">挂载文件系统</h2>
+
+<p>挂载是指由操作系统使一个存储设备上的计算机文件和目录可供用户通过计算机文件系统访问的一个过程。</p>
+
+<p>通过mount命令可以挂载文件系统。如下命令会将sda3硬盘分区挂载到/foo目录下。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>mount /dev/sda3 /foo
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>mount会自动检测设备上的文件系统，并以相应的类型进行挂载。可以使用-r或-w选择，分别指定以只读或是读写模式挂载设备，-w是默认选项。</p>
+
+<h2 id="卸载文件系统">卸载文件系统</h2>
+
+<p>使用umount命令来卸载文件系统。如下命令将会卸载/dev/sda3上的文件系统。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>umount /dev/sda3
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>文件系统只有在没有被使用的情况下才可以被卸载，使用-r参数，可以在设备正忙时以只读方式重新挂载文件系统。</p>
+
+<h1 id="查看磁盘的使用情况">查看磁盘的使用情况</h1>
+
+<h1 id="检查和修复文件系统">检查和修复文件系统</h1>
+
+<h1 id="在磁盘上建立文件系统">在磁盘上建立文件系统</h1>
+
+<h1 id="使用usb设备">使用USB设备</h1>
+
+<h1 id="压缩工具">压缩工具</h1>
+
+<h2 id="gzip工具">gzip工具</h2>
+
+<p>使用gzip命令来压缩文件。以下命令会将foo文件压缩为foo.gz文件。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>gzip foo
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>使用gunzip命令来解压文件。以下命令会将foo.gz文件解压为foo文件。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>gunzip foo.gz
+</code></pre></td></tr></tbody></table></div></div>
+<p>解压时仅支持.gz、.Z、-gz、.z和-z这样的扩展名。</p>
+
+<p>可以使用-l选项来查看压缩文件的压缩效果。-t选项来测试压缩文件的完整性，文件完整则不会有任何返回。增加-v选项以在详细模式下获得返回信息。</p>
+
+<h2 id="bzip2工具">bzip2工具</h2>
+
+<p>bzip2提供了更高的压缩率。文件压缩的语法与gzip相同，它也包含了与gzip相同的-t和-v选项。解压使用-d选项或使用bunzip2命令。以下两条命令均可解压foo.bz2文件为foo文件。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>bzip2 <span class="nt">-d</span> foo.bz2
+<span class="nv">$ </span>bunzip foo.bz2
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>如果压缩文件不以.bz2、.bz、.tbz2、.tbz或.bzip2结尾，解压得到的文件将增加“.out”作为扩展名。</p>
+
+<h1 id="存档工具">存档工具</h1>
+
+<h2 id="tar工具">tar工具</h2>
+
+<p>使用tar命令来打包文件。以下命令会将当前目录下的foo子目录打包为bar.tar文件。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">tar</span> <span class="nt">-c</span> <span class="nt">-f</span> bar.tar foo
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>以下是tar命令常用的选项：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>选项</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-c</td>
+      <td>打包文件的选项</td>
+    </tr>
+    <tr>
+      <td>-x</td>
+      <td>解开文件的选项</td>
+    </tr>
+    <tr>
+      <td>-f</td>
+      <td>指定归档文件的文件名</td>
+    </tr>
+    <tr>
+      <td>-v</td>
+      <td>显示该命令的执行过程</td>
+    </tr>
+    <tr>
+      <td>-w</td>
+      <td>每次将单个文件加入或抽出时询问用户意见</td>
+    </tr>
+    <tr>
+      <td>-z</td>
+      <td>打包文件后或解开文件前使用gzip压缩或解压文件</td>
+    </tr>
+    <tr>
+      <td>-j</td>
+      <td>打包文件后或解开文件前使用bzip2压缩或解压文件</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="安装硬盘和分区">安装硬盘和分区</h1>
+
+<h1 id="高级硬盘管理">高级硬盘管理</h1>
+
+<h1 id="备份工作和系统">备份工作和系统</h1>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/Linux" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/notes/2019/09/21/Linux-Process/" rel="next" title="Linux进程管理">
+                <i class="fa fa-chevron-left"></i> Linux进程管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/notes/2019/09/19/Linux-Package/" rel="prev" title="Linux软件包管理">
+                Linux软件包管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#关于硬盘"> <span class="nav-number">1</span> <span class="nav-text">关于硬盘</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#linux文件系统"> <span class="nav-number">2</span> <span class="nav-text">Linux文件系统</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#ext3fs系统和ext4fs系统"> <span class="nav-number">2.1</span> <span class="nav-text">ext3fs系统和ext4fs系统</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#常用文件系统的表示方法"> <span class="nav-number">2.2</span> <span class="nav-text">常用文件系统的表示方法</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#swap分区"> <span class="nav-number">2.3</span> <span class="nav-text">swap分区</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#挂载文件系统"> <span class="nav-number">3</span> <span class="nav-text">挂载文件系统</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#linux下设备的表示方法"> <span class="nav-number">3.1</span> <span class="nav-text">Linux下设备的表示方法</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#挂载文件系统-1"> <span class="nav-number">3.2</span> <span class="nav-text">挂载文件系统</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#卸载文件系统"> <span class="nav-number">3.3</span> <span class="nav-text">卸载文件系统</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#查看磁盘的使用情况"> <span class="nav-number">4</span> <span class="nav-text">查看磁盘的使用情况</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#检查和修复文件系统"> <span class="nav-number">5</span> <span class="nav-text">检查和修复文件系统</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#在磁盘上建立文件系统"> <span class="nav-number">6</span> <span class="nav-text">在磁盘上建立文件系统</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#使用usb设备"> <span class="nav-number">7</span> <span class="nav-text">使用USB设备</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#压缩工具"> <span class="nav-number">8</span> <span class="nav-text">压缩工具</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#gzip工具"> <span class="nav-number">8.1</span> <span class="nav-text">gzip工具</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#bzip2工具"> <span class="nav-number">8.2</span> <span class="nav-text">bzip2工具</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#存档工具"> <span class="nav-number">9</span> <span class="nav-text">存档工具</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#tar工具"> <span class="nav-number">9.1</span> <span class="nav-text">tar工具</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#安装硬盘和分区"> <span class="nav-number">10</span> <span class="nav-text">安装硬盘和分区</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#高级硬盘管理"> <span class="nav-number">11</span> <span class="nav-text">高级硬盘管理</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#备份工作和系统"> <span class="nav-number">12</span> <span class="nav-text">备份工作和系统</span> </a> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

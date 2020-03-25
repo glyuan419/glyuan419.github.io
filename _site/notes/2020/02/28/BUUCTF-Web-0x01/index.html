@@ -1,0 +1,1218 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="BUUCTF,Writeup," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[HCTF 2018]WarmUp 题目描述 根据注释中提示获得源码： &amp;lt;?php highlight_file(__FILE__); class emmm { public static function checkFile(&amp;amp;$page) { $whitelist = [&quot;source&quot;=&amp;gt;&quot;source.php&quot;,&quot;hint&quot;=&amp;gt;&quot;hint.php&quot;]; if (! isset($page) || !is_string($page)) { echo &quot;you can&apos;t see it&quot;; return false; } if (in_array($page, $whitelist)) { return true; } $_page = mb_substr( $page, 0, mb_strpos($page . &apos;?&apos;, &apos;?&apos;) ); if (in_array($_page, $whitelist)) { return true; } $_page = urldecode($page); $_page = mb_substr( $_page, 0, mb_strpos($_page . &apos;?&apos;, &apos;?&apos;) ); if (in_array($_page, $whitelist)) { return true; } echo &quot;you can&apos;t see it&quot;; return false; } } if (! empty($_REQUEST[&apos;file&apos;]) &amp;amp;&amp;amp; is_string($_REQUEST[&apos;file&apos;]) &amp;amp;&amp;amp; emmm::checkFile($_REQUEST[&apos;file&apos;]) ) { include $_REQUEST[&apos;file&apos;]; exit; } else { echo &quot;&amp;lt;br&amp;gt;&amp;lt;img src=\&quot;https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot; /&amp;gt;&quot;; } ?&amp;gt; 解题思路 简单讲就是file参数中如果包含?，就可以截断，然后URL编码一下绕过服务器的语法。然后根据hint.php的文件位置提示，读flag。 备注 Terminal的cd命令会严格检查路径中每一个目录是否存在，不过PHP函数中的URL不会检查。 [护网杯 2018]easy_tornado 题目描述 有三条提示： flag in /fllllllllllllag render md5(cookie_secret+md5(filename)) URL中存在filename和filehash两个参数，可以读文件。 解题思路 简单来讲就是读文件，不过需要知道cookie_secret。结合提示render和题目中的tornado猜测可能存在模板注入，然后读一下cookie_secret Payload：/error?msg= 然后构造hash，读文件。 备注 render()是Python的一个渲染函数，也就是一种模板。 Tornado是一个Python框架，用于Web服务。 /error路由是Tornado的错误处理。 [HCTF 2018]admin 题目描述 打开网站是一个简单的欢迎界面，提供了登录和注册的功能，然后源码中有提示： &amp;lt;!-- you are not admin --&amp;gt; 可能是需要管理员账号登录。随便注册一个账号登录，多了两个功能，发帖和修改密码。不过虽然显示发帖成功，但/post路由却显示404，应该是没有这个功能了。 解题思路 根据提供的功能基本确定是二次注入了，然后注意到在修改密码页面的源码中有一个Github的链接，是网站框架的源码，一个Flask项目，然后代码审计。 这题有三种解法： Unicode欺骗 条件竞争 Flask session伪造 [RoarCTF 2019]Easy Calc 题目描述 就是一个计算器的功能，输入公式，返回一个结果。 解题思路 看一下页面源码，说设置了WAF，还有这样一段JS代码： $(&apos;#calc&apos;).submit(function(){ $.ajax({ url:&quot;calc.php?num=&quot;+encodeURIComponent($(&quot;#content&quot;).val()), type:&apos;GET&apos;, success:function(data){ $(&quot;#result&quot;).html(`&amp;lt;div class=&quot;alert alert-success&quot;&amp;gt; &amp;lt;strong&amp;gt;答案:&amp;lt;/strong&amp;gt;${data} &amp;lt;/div&amp;gt;`); }, error:function(){ alert(&quot;这啥?算不来!&quot;); } }) return false; }) 直接访问calc.php，给出了源码： &amp;lt;?php error_reporting(0); if(!isset($_GET[&apos;num&apos;])){ show_source(__FILE__); }else{ $str = $_GET[&apos;num&apos;]; $blacklist = [&apos; &apos;, &apos;\t&apos;, &apos;\r&apos;, &apos; &apos;, &apos;\&apos;&apos;, &apos;&quot;&apos;, &apos;`&apos;, &apos;\[&apos;, &apos;\]&apos;,&apos;\$&apos;,&apos;\&apos;,&apos;\^&apos;]; foreach ($blacklist as $blackitem) { if (preg_match(&apos;/&apos; . $blackitem . &apos;/m&apos;, $str)) { die(&quot;what are you want to do?&quot;); } } eval(&apos;echo &apos;.$str.&apos;;&apos;); } ?&amp;gt; 黑名单很粗糙，绕一下，却返回了404。奇怪，再回头看看，应该是除了黑名单外，还在网站上设置了WAF。 利用PHP查询字符串解析特性，参数前加个空格绕过，获得flag。 备注 PHP会将查询字符串转换为$_GET等关联数组，这个过程中调用了parse_str()。 parse_str()会删除两端的空白符，并将一些字符换为下划线，如：”%20foo%20bar%00”=&amp;gt;”foo_bar”。 [强网杯 2019]高明的黑客 题目描述 说网站被黑客入侵了，源码被打包成了压缩文件。那就下载来看看，有三千多个PHP文件，名字都看着是随机的。看看内容倒是有很多这样的代码： if(&apos;_Vqq2pPks&apos; == &apos;VnbX5_X5N&apos;) eval($_GET[&apos;_Vqq2pPks&apos;] ?? &apos; &apos;); 基本上都是无效的。 解题思路 应该是这些PHP文件中有可用的Shell，然后写个脚本测试一遍。 [SUCTF 2019]CheckIn 题目描述 一个文件上传界面，随便传一个文件，返回： exif_imagetype:not image! 解题思路 继续测试，发现php之类的后缀都被禁了。尝试上传.htaccess文件，还是不行。那就试着上传.user.ini文件，成功了。不过上传evil.jpg文件时，说文件内容中包含了”&amp;lt;?”，绕过一下，然后读文件。 [极客大挑战 2019]Havefun 题目描述 一道莫名其妙的水题： &amp;lt;!-- $cat=$_GET[&apos;cat&apos;]; echo $cat; if($cat==&apos;dog&apos;){ echo &apos;Syc{cat_cat_cat_cat}&apos;; } --&amp;gt; #">
+<meta name="keywords" content="BUUCTF, Writeup">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BUUCTF Web Training 0x01">
+<meta property="og:url" content="http://localhost:4000/notes/2020/02/28/BUUCTF-Web-0x01/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="[HCTF 2018]WarmUp 题目描述 根据注释中提示获得源码： &amp;lt;?php highlight_file(__FILE__); class emmm { public static function checkFile(&amp;amp;$page) { $whitelist = [&quot;source&quot;=&amp;gt;&quot;source.php&quot;,&quot;hint&quot;=&amp;gt;&quot;hint.php&quot;]; if (! isset($page) || !is_string($page)) { echo &quot;you can&apos;t see it&quot;; return false; } if (in_array($page, $whitelist)) { return true; } $_page = mb_substr( $page, 0, mb_strpos($page . &apos;?&apos;, &apos;?&apos;) ); if (in_array($_page, $whitelist)) { return true; } $_page = urldecode($page); $_page = mb_substr( $_page, 0, mb_strpos($_page . &apos;?&apos;, &apos;?&apos;) ); if (in_array($_page, $whitelist)) { return true; } echo &quot;you can&apos;t see it&quot;; return false; } } if (! empty($_REQUEST[&apos;file&apos;]) &amp;amp;&amp;amp; is_string($_REQUEST[&apos;file&apos;]) &amp;amp;&amp;amp; emmm::checkFile($_REQUEST[&apos;file&apos;]) ) { include $_REQUEST[&apos;file&apos;]; exit; } else { echo &quot;&amp;lt;br&amp;gt;&amp;lt;img src=\&quot;https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot; /&amp;gt;&quot;; } ?&amp;gt; 解题思路 简单讲就是file参数中如果包含?，就可以截断，然后URL编码一下绕过服务器的语法。然后根据hint.php的文件位置提示，读flag。 备注 Terminal的cd命令会严格检查路径中每一个目录是否存在，不过PHP函数中的URL不会检查。 [护网杯 2018]easy_tornado 题目描述 有三条提示： flag in /fllllllllllllag render md5(cookie_secret+md5(filename)) URL中存在filename和filehash两个参数，可以读文件。 解题思路 简单来讲就是读文件，不过需要知道cookie_secret。结合提示render和题目中的tornado猜测可能存在模板注入，然后读一下cookie_secret Payload：/error?msg= 然后构造hash，读文件。 备注 render()是Python的一个渲染函数，也就是一种模板。 Tornado是一个Python框架，用于Web服务。 /error路由是Tornado的错误处理。 [HCTF 2018]admin 题目描述 打开网站是一个简单的欢迎界面，提供了登录和注册的功能，然后源码中有提示： &amp;lt;!-- you are not admin --&amp;gt; 可能是需要管理员账号登录。随便注册一个账号登录，多了两个功能，发帖和修改密码。不过虽然显示发帖成功，但/post路由却显示404，应该是没有这个功能了。 解题思路 根据提供的功能基本确定是二次注入了，然后注意到在修改密码页面的源码中有一个Github的链接，是网站框架的源码，一个Flask项目，然后代码审计。 这题有三种解法： Unicode欺骗 条件竞争 Flask session伪造 [RoarCTF 2019]Easy Calc 题目描述 就是一个计算器的功能，输入公式，返回一个结果。 解题思路 看一下页面源码，说设置了WAF，还有这样一段JS代码： $(&apos;#calc&apos;).submit(function(){ $.ajax({ url:&quot;calc.php?num=&quot;+encodeURIComponent($(&quot;#content&quot;).val()), type:&apos;GET&apos;, success:function(data){ $(&quot;#result&quot;).html(`&amp;lt;div class=&quot;alert alert-success&quot;&amp;gt; &amp;lt;strong&amp;gt;答案:&amp;lt;/strong&amp;gt;${data} &amp;lt;/div&amp;gt;`); }, error:function(){ alert(&quot;这啥?算不来!&quot;); } }) return false; }) 直接访问calc.php，给出了源码： &amp;lt;?php error_reporting(0); if(!isset($_GET[&apos;num&apos;])){ show_source(__FILE__); }else{ $str = $_GET[&apos;num&apos;]; $blacklist = [&apos; &apos;, &apos;\t&apos;, &apos;\r&apos;, &apos; &apos;, &apos;\&apos;&apos;, &apos;&quot;&apos;, &apos;`&apos;, &apos;\[&apos;, &apos;\]&apos;,&apos;\$&apos;,&apos;\&apos;,&apos;\^&apos;]; foreach ($blacklist as $blackitem) { if (preg_match(&apos;/&apos; . $blackitem . &apos;/m&apos;, $str)) { die(&quot;what are you want to do?&quot;); } } eval(&apos;echo &apos;.$str.&apos;;&apos;); } ?&amp;gt; 黑名单很粗糙，绕一下，却返回了404。奇怪，再回头看看，应该是除了黑名单外，还在网站上设置了WAF。 利用PHP查询字符串解析特性，参数前加个空格绕过，获得flag。 备注 PHP会将查询字符串转换为$_GET等关联数组，这个过程中调用了parse_str()。 parse_str()会删除两端的空白符，并将一些字符换为下划线，如：”%20foo%20bar%00”=&amp;gt;”foo_bar”。 [强网杯 2019]高明的黑客 题目描述 说网站被黑客入侵了，源码被打包成了压缩文件。那就下载来看看，有三千多个PHP文件，名字都看着是随机的。看看内容倒是有很多这样的代码： if(&apos;_Vqq2pPks&apos; == &apos;VnbX5_X5N&apos;) eval($_GET[&apos;_Vqq2pPks&apos;] ?? &apos; &apos;); 基本上都是无效的。 解题思路 应该是这些PHP文件中有可用的Shell，然后写个脚本测试一遍。 [SUCTF 2019]CheckIn 题目描述 一个文件上传界面，随便传一个文件，返回： exif_imagetype:not image! 解题思路 继续测试，发现php之类的后缀都被禁了。尝试上传.htaccess文件，还是不行。那就试着上传.user.ini文件，成功了。不过上传evil.jpg文件时，说文件内容中包含了”&amp;lt;?”，绕过一下，然后读文件。 [极客大挑战 2019]Havefun 题目描述 一道莫名其妙的水题： &amp;lt;!-- $cat=$_GET[&apos;cat&apos;]; echo $cat; if($cat==&apos;dog&apos;){ echo &apos;Syc{cat_cat_cat_cat}&apos;; } --&amp;gt; #">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BUUCTF Web Training 0x01">
+<meta name="twitter:description" content="[HCTF 2018]WarmUp 题目描述 根据注释中提示获得源码： &amp;lt;?php highlight_file(__FILE__); class emmm { public static function checkFile(&amp;amp;$page) { $whitelist = [&quot;source&quot;=&amp;gt;&quot;source.php&quot;,&quot;hint&quot;=&amp;gt;&quot;hint.php&quot;]; if (! isset($page) || !is_string($page)) { echo &quot;you can&apos;t see it&quot;; return false; } if (in_array($page, $whitelist)) { return true; } $_page = mb_substr( $page, 0, mb_strpos($page . &apos;?&apos;, &apos;?&apos;) ); if (in_array($_page, $whitelist)) { return true; } $_page = urldecode($page); $_page = mb_substr( $_page, 0, mb_strpos($_page . &apos;?&apos;, &apos;?&apos;) ); if (in_array($_page, $whitelist)) { return true; } echo &quot;you can&apos;t see it&quot;; return false; } } if (! empty($_REQUEST[&apos;file&apos;]) &amp;amp;&amp;amp; is_string($_REQUEST[&apos;file&apos;]) &amp;amp;&amp;amp; emmm::checkFile($_REQUEST[&apos;file&apos;]) ) { include $_REQUEST[&apos;file&apos;]; exit; } else { echo &quot;&amp;lt;br&amp;gt;&amp;lt;img src=\&quot;https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot; /&amp;gt;&quot;; } ?&amp;gt; 解题思路 简单讲就是file参数中如果包含?，就可以截断，然后URL编码一下绕过服务器的语法。然后根据hint.php的文件位置提示，读flag。 备注 Terminal的cd命令会严格检查路径中每一个目录是否存在，不过PHP函数中的URL不会检查。 [护网杯 2018]easy_tornado 题目描述 有三条提示： flag in /fllllllllllllag render md5(cookie_secret+md5(filename)) URL中存在filename和filehash两个参数，可以读文件。 解题思路 简单来讲就是读文件，不过需要知道cookie_secret。结合提示render和题目中的tornado猜测可能存在模板注入，然后读一下cookie_secret Payload：/error?msg= 然后构造hash，读文件。 备注 render()是Python的一个渲染函数，也就是一种模板。 Tornado是一个Python框架，用于Web服务。 /error路由是Tornado的错误处理。 [HCTF 2018]admin 题目描述 打开网站是一个简单的欢迎界面，提供了登录和注册的功能，然后源码中有提示： &amp;lt;!-- you are not admin --&amp;gt; 可能是需要管理员账号登录。随便注册一个账号登录，多了两个功能，发帖和修改密码。不过虽然显示发帖成功，但/post路由却显示404，应该是没有这个功能了。 解题思路 根据提供的功能基本确定是二次注入了，然后注意到在修改密码页面的源码中有一个Github的链接，是网站框架的源码，一个Flask项目，然后代码审计。 这题有三种解法： Unicode欺骗 条件竞争 Flask session伪造 [RoarCTF 2019]Easy Calc 题目描述 就是一个计算器的功能，输入公式，返回一个结果。 解题思路 看一下页面源码，说设置了WAF，还有这样一段JS代码： $(&apos;#calc&apos;).submit(function(){ $.ajax({ url:&quot;calc.php?num=&quot;+encodeURIComponent($(&quot;#content&quot;).val()), type:&apos;GET&apos;, success:function(data){ $(&quot;#result&quot;).html(`&amp;lt;div class=&quot;alert alert-success&quot;&amp;gt; &amp;lt;strong&amp;gt;答案:&amp;lt;/strong&amp;gt;${data} &amp;lt;/div&amp;gt;`); }, error:function(){ alert(&quot;这啥?算不来!&quot;); } }) return false; }) 直接访问calc.php，给出了源码： &amp;lt;?php error_reporting(0); if(!isset($_GET[&apos;num&apos;])){ show_source(__FILE__); }else{ $str = $_GET[&apos;num&apos;]; $blacklist = [&apos; &apos;, &apos;\t&apos;, &apos;\r&apos;, &apos; &apos;, &apos;\&apos;&apos;, &apos;&quot;&apos;, &apos;`&apos;, &apos;\[&apos;, &apos;\]&apos;,&apos;\$&apos;,&apos;\&apos;,&apos;\^&apos;]; foreach ($blacklist as $blackitem) { if (preg_match(&apos;/&apos; . $blackitem . &apos;/m&apos;, $str)) { die(&quot;what are you want to do?&quot;); } } eval(&apos;echo &apos;.$str.&apos;;&apos;); } ?&amp;gt; 黑名单很粗糙，绕一下，却返回了404。奇怪，再回头看看，应该是除了黑名单外，还在网站上设置了WAF。 利用PHP查询字符串解析特性，参数前加个空格绕过，获得flag。 备注 PHP会将查询字符串转换为$_GET等关联数组，这个过程中调用了parse_str()。 parse_str()会删除两端的空白符，并将一些字符换为下划线，如：”%20foo%20bar%00”=&amp;gt;”foo_bar”。 [强网杯 2019]高明的黑客 题目描述 说网站被黑客入侵了，源码被打包成了压缩文件。那就下载来看看，有三千多个PHP文件，名字都看着是随机的。看看内容倒是有很多这样的代码： if(&apos;_Vqq2pPks&apos; == &apos;VnbX5_X5N&apos;) eval($_GET[&apos;_Vqq2pPks&apos;] ?? &apos; &apos;); 基本上都是无效的。 解题思路 应该是这些PHP文件中有可用的Shell，然后写个脚本测试一遍。 [SUCTF 2019]CheckIn 题目描述 一个文件上传界面，随便传一个文件，返回： exif_imagetype:not image! 解题思路 继续测试，发现php之类的后缀都被禁了。尝试上传.htaccess文件，还是不行。那就试着上传.user.ini文件，成功了。不过上传evil.jpg文件时，说文件内容中包含了”&amp;lt;?”，绕过一下，然后读文件。 [极客大挑战 2019]Havefun 题目描述 一道莫名其妙的水题： &amp;lt;!-- $cat=$_GET[&apos;cat&apos;]; echo $cat; if($cat==&apos;dog&apos;){ echo &apos;Syc{cat_cat_cat_cat}&apos;; } --&amp;gt; #">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>BUUCTF Web Training 0x01 | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/notes/2020/02/28/BUUCTF-Web-0x01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            BUUCTF Web Training 0x01
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-28T00:00:00+08:00">
+                2020-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Notes" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <h1 id="hctf-2018warmup">[HCTF 2018]WarmUp</h1>
+
+<h2 id="题目描述">题目描述</h2>
+
+<p>根据注释中提示获得源码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33<br/>34<br/>35<br/>36<br/>37<br/>38<br/>39<br/>40<br/>41<br/>42<br/>43<br/>44<br/>45<br/>46<br/>47<br/>48<br/>49</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+    <span class="nb">highlight_file</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
+    <span class="k">class</span> <span class="nc">emmm</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">checkFile</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$page</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="nv">$whitelist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"source"</span><span class="o">=&gt;</span><span class="s2">"source.php"</span><span class="p">,</span><span class="s2">"hint"</span><span class="o">=&gt;</span><span class="s2">"hint.php"</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$page</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$page</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">echo</span> <span class="s2">"you can't see it"</span><span class="p">;</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$page</span><span class="p">,</span> <span class="nv">$whitelist</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nv">$_page</span> <span class="o">=</span> <span class="nb">mb_substr</span><span class="p">(</span>
+                <span class="nv">$page</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="nb">mb_strpos</span><span class="p">(</span><span class="nv">$page</span> <span class="o">.</span> <span class="s1">'?'</span><span class="p">,</span> <span class="s1">'?'</span><span class="p">)</span>
+            <span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$_page</span><span class="p">,</span> <span class="nv">$whitelist</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nv">$_page</span> <span class="o">=</span> <span class="nb">urldecode</span><span class="p">(</span><span class="nv">$page</span><span class="p">);</span>
+            <span class="nv">$_page</span> <span class="o">=</span> <span class="nb">mb_substr</span><span class="p">(</span>
+                <span class="nv">$_page</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="nb">mb_strpos</span><span class="p">(</span><span class="nv">$_page</span> <span class="o">.</span> <span class="s1">'?'</span><span class="p">,</span> <span class="s1">'?'</span><span class="p">)</span>
+            <span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$_page</span><span class="p">,</span> <span class="nv">$whitelist</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">echo</span> <span class="s2">"you can't see it"</span><span class="p">;</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="k">empty</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])</span>
+        <span class="o">&amp;&amp;</span> <span class="nb">is_string</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])</span>
+        <span class="o">&amp;&amp;</span> <span class="nx">emmm</span><span class="o">::</span><span class="na">checkFile</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])</span>
+    <span class="p">)</span> <span class="p">{</span>
+        <span class="k">include</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'file'</span><span class="p">];</span>
+        <span class="k">exit</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"&lt;br&gt;&lt;img src=</span><span class="se">\"</span><span class="s2">https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg</span><span class="se">\"</span><span class="s2"> /&gt;"</span><span class="p">;</span>
+    <span class="p">}</span>  
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="解题思路">解题思路</h2>
+
+<p>简单讲就是file参数中如果包含<code class="highlighter-rouge">?</code>，就可以截断，然后URL编码一下绕过服务器的语法。然后根据hint.php的文件位置提示，读flag。</p>
+
+<h2 id="备注">备注</h2>
+
+<ol>
+  <li>Terminal的cd命令会严格检查路径中每一个目录是否存在，不过PHP函数中的URL不会检查。</li>
+</ol>
+
+<hr />
+
+<h1 id="护网杯-2018easy_tornado">[护网杯 2018]easy_tornado</h1>
+
+<h2 id="题目描述-1">题目描述</h2>
+
+<p>有三条提示：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code>flag in /fllllllllllllag
+render
+md5(cookie_secret+md5(filename))
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>URL中存在filename和filehash两个参数，可以读文件。</p>
+
+<h2 id="解题思路-1">解题思路</h2>
+
+<p>简单来讲就是读文件，不过需要知道cookie_secret。结合提示render和题目中的tornado猜测可能存在模板注入，然后读一下cookie_secret</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>Payload：/error?msg=
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>然后构造hash，读文件。</p>
+
+<h2 id="备注-1">备注</h2>
+
+<ol>
+  <li>render()是Python的一个渲染函数，也就是一种模板。</li>
+  <li>Tornado是一个Python框架，用于Web服务。</li>
+  <li>/error路由是Tornado的错误处理。</li>
+</ol>
+
+<hr />
+
+<h1 id="hctf-2018admin">[HCTF 2018]admin</h1>
+
+<h2 id="题目描述-2">题目描述</h2>
+
+<p>打开网站是一个简单的欢迎界面，提供了登录和注册的功能，然后源码中有提示：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="c">&lt;!-- you are not admin --&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>可能是需要管理员账号登录。随便注册一个账号登录，多了两个功能，发帖和修改密码。不过虽然显示发帖成功，但<code class="highlighter-rouge">/post</code>路由却显示404，应该是没有这个功能了。</p>
+
+<h2 id="解题思路-2">解题思路</h2>
+
+<p>根据提供的功能基本确定是二次注入了，然后注意到在修改密码页面的源码中有一个Github的链接，是网站框架的源码，一个Flask项目，然后代码审计。</p>
+
+<p>这题有三种解法：</p>
+
+<h3 id="unicode欺骗">Unicode欺骗</h3>
+
+<h3 id="条件竞争">条件竞争</h3>
+
+<h3 id="flask-session伪造">Flask session伪造</h3>
+
+<hr />
+
+<h1 id="roarctf-2019easy-calc">[RoarCTF 2019]Easy Calc</h1>
+
+<h2 id="题目描述-3">题目描述</h2>
+
+<p>就是一个计算器的功能，输入公式，返回一个结果。</p>
+
+<h2 id="解题思路-3">解题思路</h2>
+
+<p>看一下页面源码，说设置了WAF，还有这样一段JS代码：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15</pre></td><td class="code"><pre class="highlight"><code><span class="nx">$</span><span class="p">(</span><span class="s1">'#calc'</span><span class="p">).</span><span class="nx">submit</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+        <span class="na">url</span><span class="p">:</span><span class="s2">"calc.php?num="</span><span class="o">+</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s2">"#content"</span><span class="p">).</span><span class="nx">val</span><span class="p">()),</span>
+        <span class="na">type</span><span class="p">:</span><span class="s1">'GET'</span><span class="p">,</span>
+        <span class="na">success</span><span class="p">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s2">"#result"</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">`&lt;div class="alert alert-success"&gt;
+        &lt;strong&gt;答案:&lt;/strong&gt;</span><span class="p">${</span><span class="nx">data</span><span class="p">}</span><span class="s2">
+        &lt;/div&gt;`</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="na">error</span><span class="p">:</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="s2">"这啥?算不来!"</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">})</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>直接访问calc.php，给出了源码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'num'</span><span class="p">])){</span>
+    <span class="nb">show_source</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
+<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="nv">$str</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'num'</span><span class="p">];</span>
+        <span class="nv">$blacklist</span> <span class="o">=</span> <span class="p">[</span><span class="s1">' '</span><span class="p">,</span> <span class="s1">'\t'</span><span class="p">,</span> <span class="s1">'\r'</span><span class="p">,</span> <span class="s1">'\n'</span><span class="p">,</span> <span class="s1">'</div></div>
+
+<p>黑名单很粗糙，绕一下，却返回了404。奇怪，再回头看看，应该是除了黑名单外，还在网站上设置了WAF。</p>
+
+<p>利用PHP查询字符串解析特性，参数前加个空格绕过，获得flag。</p>
+
+<h2 id="备注-2">备注</h2>
+
+<ol>
+  <li>PHP会将查询字符串转换为$_GET等关联数组，这个过程中调用了parse_str()。</li>
+  <li>parse_str()会删除两端的空白符，并将一些字符换为下划线，如：”%20foo%20bar%00”=&gt;”foo_bar”。</li>
+</ol>
+
+<hr />
+
+<h1 id="强网杯-2019高明的黑客">[强网杯 2019]高明的黑客</h1>
+
+<h2 id="题目描述-4">题目描述</h2>
+
+<p>说网站被黑客入侵了，源码被打包成了压缩文件。那就下载来看看，有三千多个PHP文件，名字都看着是随机的。看看内容倒是有很多这样的代码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code>    <span class="k">if</span><span class="p">(</span><span class="s1">'_Vqq2pPks'</span> <span class="o">==</span> <span class="s1">'VnbX5_X5N'</span><span class="p">)</span>
+     <span class="k">eval</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'_Vqq2pPks'</span><span class="p">]</span> <span class="o">??</span> <span class="s1">' '</span><span class="p">);</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>基本上都是无效的。</p>
+
+<h2 id="解题思路-4">解题思路</h2>
+
+<p>应该是这些PHP文件中有可用的Shell，然后写个脚本测试一遍。</p>
+
+<hr />
+
+<h1 id="suctf-2019checkin">[SUCTF 2019]CheckIn</h1>
+
+<h2 id="题目描述-5">题目描述</h2>
+
+<p>一个文件上传界面，随便传一个文件，返回：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>exif_imagetype:not image!
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="解题思路-5">解题思路</h2>
+
+<p>继续测试，发现php之类的后缀都被禁了。尝试上传.htaccess文件，还是不行。那就试着上传.user.ini文件，成功了。不过上传evil.jpg文件时，说文件内容中包含了”&lt;?”，绕过一下，然后读文件。</p>
+
+<hr />
+
+<h1 id="极客大挑战-2019havefun">[极客大挑战 2019]Havefun</h1>
+
+<h2 id="题目描述-6">题目描述</h2>
+
+<p>一道莫名其妙的水题：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7</pre></td><td class="code"><pre class="highlight"><code><span class="c">&lt;!--
+$cat=$_GET['cat'];
+echo $cat;
+if($cat=='dog'){
+	echo 'Syc{cat_cat_cat_cat}';
+}
+--&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<hr />
+
+<p>#</p>
+'</span><span class="p">,</span> <span class="s1">'"'</span><span class="p">,</span> <span class="s1">'`'</span><span class="p">,</span> <span class="s1">'\['</span><span class="p">,</span> <span class="s1">'\]'</span><span class="p">,</span><span class="s1">'\$'</span><span class="p">,</span><span class="s1">'</div></div>
+
+<p>黑名单很粗糙，绕一下，却返回了404。奇怪，再回头看看，应该是除了黑名单外，还在网站上设置了WAF。</p>
+
+<p>利用PHP查询字符串解析特性，参数前加个空格绕过，获得flag。</p>
+
+<h2 id="备注-2">备注</h2>
+
+<ol>
+  <li>PHP会将查询字符串转换为$_GET等关联数组，这个过程中调用了parse_str()。</li>
+  <li>parse_str()会删除两端的空白符，并将一些字符换为下划线，如：”%20foo%20bar%00”=&gt;”foo_bar”。</li>
+</ol>
+
+<hr />
+
+<h1 id="强网杯-2019高明的黑客">[强网杯 2019]高明的黑客</h1>
+
+<h2 id="题目描述-4">题目描述</h2>
+
+<p>说网站被黑客入侵了，源码被打包成了压缩文件。那就下载来看看，有三千多个PHP文件，名字都看着是随机的。看看内容倒是有很多这样的代码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code>    <span class="k">if</span><span class="p">(</span><span class="s1">'_Vqq2pPks'</span> <span class="o">==</span> <span class="s1">'VnbX5_X5N'</span><span class="p">)</span>
+     <span class="k">eval</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'_Vqq2pPks'</span><span class="p">]</span> <span class="o">??</span> <span class="s1">' '</span><span class="p">);</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>基本上都是无效的。</p>
+
+<h2 id="解题思路-4">解题思路</h2>
+
+<p>应该是这些PHP文件中有可用的Shell，然后写个脚本测试一遍。</p>
+
+<hr />
+
+<h1 id="suctf-2019checkin">[SUCTF 2019]CheckIn</h1>
+
+<h2 id="题目描述-5">题目描述</h2>
+
+<p>一个文件上传界面，随便传一个文件，返回：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>exif_imagetype:not image!
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="解题思路-5">解题思路</h2>
+
+<p>继续测试，发现php之类的后缀都被禁了。尝试上传.htaccess文件，还是不行。那就试着上传.user.ini文件，成功了。不过上传evil.jpg文件时，说文件内容中包含了”&lt;?”，绕过一下，然后读文件。</p>
+
+<hr />
+
+<h1 id="极客大挑战-2019havefun">[极客大挑战 2019]Havefun</h1>
+
+<h2 id="题目描述-6">题目描述</h2>
+
+<p>一道莫名其妙的水题：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7</pre></td><td class="code"><pre class="highlight"><code><span class="c">&lt;!--
+$cat=$_GET['cat'];
+echo $cat;
+if($cat=='dog'){
+	echo 'Syc{cat_cat_cat_cat}';
+}
+--&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<hr />
+
+<p>#</p>
+,'</span><span class="err">\</span><span class="o">^</span><span class="s1">'];
+        foreach ($blacklist as $blackitem) {
+                if (preg_match('</span><span class="o">/</span><span class="s1">' . $blackitem . '</span><span class="o">/</span><span class="nx">m</span><span class="s1">', $str)) {
+                        die("what are you want to do?");
+                }
+        }
+        eval('</span><span class="k">echo</span> <span class="s1">'.$str.'</span><span class="p">;</span><span class="err">'</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>黑名单很粗糙，绕一下，却返回了404。奇怪，再回头看看，应该是除了黑名单外，还在网站上设置了WAF。</p>
+
+<p>利用PHP查询字符串解析特性，参数前加个空格绕过，获得flag。</p>
+
+<h2 id="备注-2">备注</h2>
+
+<ol>
+  <li>PHP会将查询字符串转换为$_GET等关联数组，这个过程中调用了parse_str()。</li>
+  <li>parse_str()会删除两端的空白符，并将一些字符换为下划线，如：”%20foo%20bar%00”=&gt;”foo_bar”。</li>
+</ol>
+
+<hr />
+
+<h1 id="强网杯-2019高明的黑客">[强网杯 2019]高明的黑客</h1>
+
+<h2 id="题目描述-4">题目描述</h2>
+
+<p>说网站被黑客入侵了，源码被打包成了压缩文件。那就下载来看看，有三千多个PHP文件，名字都看着是随机的。看看内容倒是有很多这样的代码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code>    <span class="k">if</span><span class="p">(</span><span class="s1">'_Vqq2pPks'</span> <span class="o">==</span> <span class="s1">'VnbX5_X5N'</span><span class="p">)</span>
+     <span class="k">eval</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'_Vqq2pPks'</span><span class="p">]</span> <span class="o">??</span> <span class="s1">' '</span><span class="p">);</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>基本上都是无效的。</p>
+
+<h2 id="解题思路-4">解题思路</h2>
+
+<p>应该是这些PHP文件中有可用的Shell，然后写个脚本测试一遍。</p>
+
+<hr />
+
+<h1 id="suctf-2019checkin">[SUCTF 2019]CheckIn</h1>
+
+<h2 id="题目描述-5">题目描述</h2>
+
+<p>一个文件上传界面，随便传一个文件，返回：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>exif_imagetype:not image!
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="解题思路-5">解题思路</h2>
+
+<p>继续测试，发现php之类的后缀都被禁了。尝试上传.htaccess文件，还是不行。那就试着上传.user.ini文件，成功了。不过上传evil.jpg文件时，说文件内容中包含了”&lt;?”，绕过一下，然后读文件。</p>
+
+<hr />
+
+<h1 id="极客大挑战-2019havefun">[极客大挑战 2019]Havefun</h1>
+
+<h2 id="题目描述-6">题目描述</h2>
+
+<p>一道莫名其妙的水题：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7</pre></td><td class="code"><pre class="highlight"><code><span class="c">&lt;!--
+$cat=$_GET['cat'];
+echo $cat;
+if($cat=='dog'){
+	echo 'Syc{cat_cat_cat_cat}';
+}
+--&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<hr />
+
+<p>#</p>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/BUUCTF" rel="tag"># BUUCTF</a>
+          
+            
+            <a href="/tag/#/Writeup" rel="tag"># Writeup</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/writeups/2020/02/29/V&NCTF-Web/" rel="next" title="V&N Web Writeup">
+                <i class="fa fa-chevron-left"></i> V&N Web Writeup
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/notes/2020/02/16/SQL-Injection/" rel="prev" title="SQL注入总结">
+                SQL注入总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#hctf-2018warmup"> <span class="nav-number">1</span> <span class="nav-text">[HCTF 2018]WarmUp</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述"> <span class="nav-number">1.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路"> <span class="nav-number">1.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注"> <span class="nav-number">1.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#护网杯-2018easy_tornado"> <span class="nav-number">2</span> <span class="nav-text">[护网杯 2018]easy_tornado</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-1"> <span class="nav-number">2.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-1"> <span class="nav-number">2.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-1"> <span class="nav-number">2.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#hctf-2018admin"> <span class="nav-number">3</span> <span class="nav-text">[HCTF 2018]admin</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-2"> <span class="nav-number">3.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-2"> <span class="nav-number">3.2</span> <span class="nav-text">解题思路</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-3"> <a class="nav-link" href="#unicode欺骗"> <span class="nav-number">3.2.1</span> <span class="nav-text">Unicode欺骗</span> </a> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#条件竞争"> <span class="nav-number">3.2.2</span> <span class="nav-text">条件竞争</span> </a> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#flask-session伪造"> <span class="nav-number">3.2.3</span> <span class="nav-text">Flask session伪造</span> </a> </li> </ol> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#roarctf-2019easy-calc"> <span class="nav-number">4</span> <span class="nav-text">[RoarCTF 2019]Easy Calc</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-3"> <span class="nav-number">4.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-3"> <span class="nav-number">4.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-2"> <span class="nav-number">4.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#强网杯-2019高明的黑客"> <span class="nav-number">5</span> <span class="nav-text">[强网杯 2019]高明的黑客</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-4"> <span class="nav-number">5.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-4"> <span class="nav-number">5.2</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#suctf-2019checkin"> <span class="nav-number">6</span> <span class="nav-text">[SUCTF 2019]CheckIn</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-5"> <span class="nav-number">6.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-5"> <span class="nav-number">6.2</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#极客大挑战-2019havefun"> <span class="nav-number">7</span> <span class="nav-text">[极客大挑战 2019]Havefun</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述-6"> <span class="nav-number">7.1</span> <span class="nav-text">题目描述</span> </a> </li> </ol> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

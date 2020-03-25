@@ -1,0 +1,1220 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Linux文件系统的架构 Linux根目录下的主要内容 以下是Linux系统主要目录及其内容： 目录 内容 /bin 存放系统常用的二进制可执行文件，即常用命令 /boot 内核与启动文件 /dev 各种设备文件 /etc 系统软件的启动和配置文件 /home 用户的主目录 /lib C编辑器的库 /media 可移动介质的安装点 /opt 额外安装的应用软件包存放位置 /proc 进程的映像 /root 超级用户root的主目录 /sbin 和系统操作有关的命令 /tmp 共用的临时文件存放点 /usr 非系统必需的应用程序 /var 系统专用的数据和配置文件 Linux /usr目录下的主要内容 以下是/usr目录下的主要内容： 目录 内容 /usr/bin 绝大部分的用户命令 /usr/include C/C++等程序语言的头文件 /usr/local 本地系统管理员自行安装的应用程序 /usr/sbin 非系统正常运行所需要的系统指令 /usr/share 共享文件 /usr/src 应用程序的源码 建立文件和目录 建立目录 使用mkdir命令一次建立一个或几个目录。如下命令在当前目录下建立foo和bar两个目录。 $ mkdir foo bar 也可以使用绝对路径来建立目录。 $ mkdir /foo/bar 使用该命令时若目录/foo不存在将会报错，使用参数-p可以完整地创建一个子目录。 $ mkdir -p /foo/bar 建立空文件 使用touch命令来建立空文件。如下命令在当前目录下建立一个名为foo的文件。 $ touch foo 使用该命令建立的文件不包含任何内容。也可以使用touch命令来更新一个文件的建立日期和时间，而不会修改文件内容。 移动、复制和删除 移动和重命名 使用mv命令来移动文件。如下命令可将hello文件移动到test目录下。 $ mv hello test/ 该命令将会默认覆盖掉目标目录下的同名文件，使用参数-i可发现这样的情况。 也可以使用-b参数，目标目录下的同名文件的文件名后将会被加上“~”。 $ mv -b hello test/ $ ls hello hello~ mv命令也可用于重命名文件。如下命令可将hello文件重命名为hello_bak。 $ mv hello hello_bak 复制文件和目录 使用cp命令来复制文件。如下命令可将hello文件复制到test目录中。 $ cp hello test/ cp命令的-i和-b参数与mv命令类似。产品命令在执行复制任务是默认跳过目录，使用-r参数完成对目录及其下文件的复制。 删除文件和目录 使用rm命令可一次删除一个或几个文件。如下命令将会删除当前目录下的所以php文件。 $ rm *.php 该目录直接删除文件，而不是放入类似“回收站”的临时目录，使用-i参数在删除每一个文件前询问。 使用-r参数将会递归地删除目录下所有的文件和子目录。 也可以使用rmdir命令来删除一个空的目录。 文件和目录的权限 查看文件和目录的属性 使用ls命令和-l参数以查看文件属性，包括权限。 $ ls -l -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello 我们关注第一个字段的第二个到第十个字符，在上例中是“rw-r–r–”，应该这样断句：rw-、r–、r–，分别表示所有者、组成员和其他用户说拥有的权限，rwx依次表示读取、写入、执行权限，若某个权限被禁用，使用“-”代替。 第三和第四个字段分别表示文件的属主和属组，上例中为glyuan用户和glyuan组。 改变文件所有权 使用chown命令来改变文件所有权。以下命令将改变hello文件的属主和属组分别为glyuan用户和root属组。 $ chown glyuan:root hello 使用-R参数可同时修改一个目录下所以文件和子目录的所有权。 也可以使用chgrp命令修改文件的属组。 $ chgrp root hello 改变文件权限 使用chmod命令修改文件权限，该命令使用“用户组+/-权限”的方式修改权限。u、g、o、a分别表示文件属主、文件属组、其他人和所有人。如下命令增加了属主对hello文件的执行权限。 $ chmod u+x hello 同理，如下命令将删除所有人对hello文件的执行权限。 $ chmod a-x hello 也可以使用“用户组=权限”的方式修改权限。如下命令为属主和属组设定了读写权限，而仅赋予其他用户读取权限。 $ chmod ug=rw,o=r hello 还可以使用“用户组1=用户组2“的方式为用户组1赋予与用户组2相同的权限。 chmod命令还支持八进制的文件权限表示方法，如下命令将hello文件的所有权限赋予属主，而只赋予属组和其他人执行权限。 $ chmod 711 hello 一下为八进制、二进制、文件权限的对应关系： 八进制 二进制 权限 0 000 — 1 001 –x 2 010 -w- 3 011 -wx 4 100 r– 5 101 r-x 6 110 rw- 7 111 rwx 查看文件类型 使用ls命令和-l参数以查看文件属性。 $ ls -l -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello 第一个字段的第一个字符表示文件类型。以下为Linux中的文件类型： 文件类型 符号 普通文件 - 目录 d 字符设备文件 c 块设备文件 d 本地域套接口 s 有名管道 p 符号链接 l 符号链接类似Windows中的快捷方式，使用ln命令和-s参数创建符号链接。如下命令将为target文件创建一个名为link的链接。 $ ln -s target link 输入输出重定向和管道 输出重定向 程序默认输出于标准输出，标准输出默认指向显示器。可以使用“&amp;gt;”符号将输出重定向到指定位置。如下命令会将ls命令的返回内容重定向到out文件。 $ ls &amp;gt; out 若out文件不存在，该命令将先创建out文件，若存在，该命令将删除原有内容重新写入。可使用“»”符号追加写入。 输入重定向 与标准输出类似，默认的标注输入指向键盘。可以使用“&amp;lt;”符号将输入重定向到指定位置。如下命令中，程序会从in文件中读取内容作为标准输入。 $ cat &amp;lt; in 管道 使用“ ”符号将一条命令的输出作为另一条命令输入。以下命令会在当前目录中查找包含字符foo的文件。 $ ls | grep foo">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文件目录管理">
+<meta property="og:url" content="http://localhost:4000/notes/2019/09/18/Linux-File/">
+<meta property="og:site_name" content="Glyuan's Blog">
+<meta property="og:description" content="Linux文件系统的架构 Linux根目录下的主要内容 以下是Linux系统主要目录及其内容： 目录 内容 /bin 存放系统常用的二进制可执行文件，即常用命令 /boot 内核与启动文件 /dev 各种设备文件 /etc 系统软件的启动和配置文件 /home 用户的主目录 /lib C编辑器的库 /media 可移动介质的安装点 /opt 额外安装的应用软件包存放位置 /proc 进程的映像 /root 超级用户root的主目录 /sbin 和系统操作有关的命令 /tmp 共用的临时文件存放点 /usr 非系统必需的应用程序 /var 系统专用的数据和配置文件 Linux /usr目录下的主要内容 以下是/usr目录下的主要内容： 目录 内容 /usr/bin 绝大部分的用户命令 /usr/include C/C++等程序语言的头文件 /usr/local 本地系统管理员自行安装的应用程序 /usr/sbin 非系统正常运行所需要的系统指令 /usr/share 共享文件 /usr/src 应用程序的源码 建立文件和目录 建立目录 使用mkdir命令一次建立一个或几个目录。如下命令在当前目录下建立foo和bar两个目录。 $ mkdir foo bar 也可以使用绝对路径来建立目录。 $ mkdir /foo/bar 使用该命令时若目录/foo不存在将会报错，使用参数-p可以完整地创建一个子目录。 $ mkdir -p /foo/bar 建立空文件 使用touch命令来建立空文件。如下命令在当前目录下建立一个名为foo的文件。 $ touch foo 使用该命令建立的文件不包含任何内容。也可以使用touch命令来更新一个文件的建立日期和时间，而不会修改文件内容。 移动、复制和删除 移动和重命名 使用mv命令来移动文件。如下命令可将hello文件移动到test目录下。 $ mv hello test/ 该命令将会默认覆盖掉目标目录下的同名文件，使用参数-i可发现这样的情况。 也可以使用-b参数，目标目录下的同名文件的文件名后将会被加上“~”。 $ mv -b hello test/ $ ls hello hello~ mv命令也可用于重命名文件。如下命令可将hello文件重命名为hello_bak。 $ mv hello hello_bak 复制文件和目录 使用cp命令来复制文件。如下命令可将hello文件复制到test目录中。 $ cp hello test/ cp命令的-i和-b参数与mv命令类似。产品命令在执行复制任务是默认跳过目录，使用-r参数完成对目录及其下文件的复制。 删除文件和目录 使用rm命令可一次删除一个或几个文件。如下命令将会删除当前目录下的所以php文件。 $ rm *.php 该目录直接删除文件，而不是放入类似“回收站”的临时目录，使用-i参数在删除每一个文件前询问。 使用-r参数将会递归地删除目录下所有的文件和子目录。 也可以使用rmdir命令来删除一个空的目录。 文件和目录的权限 查看文件和目录的属性 使用ls命令和-l参数以查看文件属性，包括权限。 $ ls -l -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello 我们关注第一个字段的第二个到第十个字符，在上例中是“rw-r–r–”，应该这样断句：rw-、r–、r–，分别表示所有者、组成员和其他用户说拥有的权限，rwx依次表示读取、写入、执行权限，若某个权限被禁用，使用“-”代替。 第三和第四个字段分别表示文件的属主和属组，上例中为glyuan用户和glyuan组。 改变文件所有权 使用chown命令来改变文件所有权。以下命令将改变hello文件的属主和属组分别为glyuan用户和root属组。 $ chown glyuan:root hello 使用-R参数可同时修改一个目录下所以文件和子目录的所有权。 也可以使用chgrp命令修改文件的属组。 $ chgrp root hello 改变文件权限 使用chmod命令修改文件权限，该命令使用“用户组+/-权限”的方式修改权限。u、g、o、a分别表示文件属主、文件属组、其他人和所有人。如下命令增加了属主对hello文件的执行权限。 $ chmod u+x hello 同理，如下命令将删除所有人对hello文件的执行权限。 $ chmod a-x hello 也可以使用“用户组=权限”的方式修改权限。如下命令为属主和属组设定了读写权限，而仅赋予其他用户读取权限。 $ chmod ug=rw,o=r hello 还可以使用“用户组1=用户组2“的方式为用户组1赋予与用户组2相同的权限。 chmod命令还支持八进制的文件权限表示方法，如下命令将hello文件的所有权限赋予属主，而只赋予属组和其他人执行权限。 $ chmod 711 hello 一下为八进制、二进制、文件权限的对应关系： 八进制 二进制 权限 0 000 — 1 001 –x 2 010 -w- 3 011 -wx 4 100 r– 5 101 r-x 6 110 rw- 7 111 rwx 查看文件类型 使用ls命令和-l参数以查看文件属性。 $ ls -l -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello 第一个字段的第一个字符表示文件类型。以下为Linux中的文件类型： 文件类型 符号 普通文件 - 目录 d 字符设备文件 c 块设备文件 d 本地域套接口 s 有名管道 p 符号链接 l 符号链接类似Windows中的快捷方式，使用ln命令和-s参数创建符号链接。如下命令将为target文件创建一个名为link的链接。 $ ln -s target link 输入输出重定向和管道 输出重定向 程序默认输出于标准输出，标准输出默认指向显示器。可以使用“&amp;gt;”符号将输出重定向到指定位置。如下命令会将ls命令的返回内容重定向到out文件。 $ ls &amp;gt; out 若out文件不存在，该命令将先创建out文件，若存在，该命令将删除原有内容重新写入。可使用“»”符号追加写入。 输入重定向 与标准输出类似，默认的标注输入指向键盘。可以使用“&amp;lt;”符号将输入重定向到指定位置。如下命令中，程序会从in文件中读取内容作为标准输入。 $ cat &amp;lt; in 管道 使用“ ”符号将一条命令的输出作为另一条命令输入。以下命令会在当前目录中查找包含字符foo的文件。 $ ls | grep foo">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux文件目录管理">
+<meta name="twitter:description" content="Linux文件系统的架构 Linux根目录下的主要内容 以下是Linux系统主要目录及其内容： 目录 内容 /bin 存放系统常用的二进制可执行文件，即常用命令 /boot 内核与启动文件 /dev 各种设备文件 /etc 系统软件的启动和配置文件 /home 用户的主目录 /lib C编辑器的库 /media 可移动介质的安装点 /opt 额外安装的应用软件包存放位置 /proc 进程的映像 /root 超级用户root的主目录 /sbin 和系统操作有关的命令 /tmp 共用的临时文件存放点 /usr 非系统必需的应用程序 /var 系统专用的数据和配置文件 Linux /usr目录下的主要内容 以下是/usr目录下的主要内容： 目录 内容 /usr/bin 绝大部分的用户命令 /usr/include C/C++等程序语言的头文件 /usr/local 本地系统管理员自行安装的应用程序 /usr/sbin 非系统正常运行所需要的系统指令 /usr/share 共享文件 /usr/src 应用程序的源码 建立文件和目录 建立目录 使用mkdir命令一次建立一个或几个目录。如下命令在当前目录下建立foo和bar两个目录。 $ mkdir foo bar 也可以使用绝对路径来建立目录。 $ mkdir /foo/bar 使用该命令时若目录/foo不存在将会报错，使用参数-p可以完整地创建一个子目录。 $ mkdir -p /foo/bar 建立空文件 使用touch命令来建立空文件。如下命令在当前目录下建立一个名为foo的文件。 $ touch foo 使用该命令建立的文件不包含任何内容。也可以使用touch命令来更新一个文件的建立日期和时间，而不会修改文件内容。 移动、复制和删除 移动和重命名 使用mv命令来移动文件。如下命令可将hello文件移动到test目录下。 $ mv hello test/ 该命令将会默认覆盖掉目标目录下的同名文件，使用参数-i可发现这样的情况。 也可以使用-b参数，目标目录下的同名文件的文件名后将会被加上“~”。 $ mv -b hello test/ $ ls hello hello~ mv命令也可用于重命名文件。如下命令可将hello文件重命名为hello_bak。 $ mv hello hello_bak 复制文件和目录 使用cp命令来复制文件。如下命令可将hello文件复制到test目录中。 $ cp hello test/ cp命令的-i和-b参数与mv命令类似。产品命令在执行复制任务是默认跳过目录，使用-r参数完成对目录及其下文件的复制。 删除文件和目录 使用rm命令可一次删除一个或几个文件。如下命令将会删除当前目录下的所以php文件。 $ rm *.php 该目录直接删除文件，而不是放入类似“回收站”的临时目录，使用-i参数在删除每一个文件前询问。 使用-r参数将会递归地删除目录下所有的文件和子目录。 也可以使用rmdir命令来删除一个空的目录。 文件和目录的权限 查看文件和目录的属性 使用ls命令和-l参数以查看文件属性，包括权限。 $ ls -l -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello 我们关注第一个字段的第二个到第十个字符，在上例中是“rw-r–r–”，应该这样断句：rw-、r–、r–，分别表示所有者、组成员和其他用户说拥有的权限，rwx依次表示读取、写入、执行权限，若某个权限被禁用，使用“-”代替。 第三和第四个字段分别表示文件的属主和属组，上例中为glyuan用户和glyuan组。 改变文件所有权 使用chown命令来改变文件所有权。以下命令将改变hello文件的属主和属组分别为glyuan用户和root属组。 $ chown glyuan:root hello 使用-R参数可同时修改一个目录下所以文件和子目录的所有权。 也可以使用chgrp命令修改文件的属组。 $ chgrp root hello 改变文件权限 使用chmod命令修改文件权限，该命令使用“用户组+/-权限”的方式修改权限。u、g、o、a分别表示文件属主、文件属组、其他人和所有人。如下命令增加了属主对hello文件的执行权限。 $ chmod u+x hello 同理，如下命令将删除所有人对hello文件的执行权限。 $ chmod a-x hello 也可以使用“用户组=权限”的方式修改权限。如下命令为属主和属组设定了读写权限，而仅赋予其他用户读取权限。 $ chmod ug=rw,o=r hello 还可以使用“用户组1=用户组2“的方式为用户组1赋予与用户组2相同的权限。 chmod命令还支持八进制的文件权限表示方法，如下命令将hello文件的所有权限赋予属主，而只赋予属组和其他人执行权限。 $ chmod 711 hello 一下为八进制、二进制、文件权限的对应关系： 八进制 二进制 权限 0 000 — 1 001 –x 2 010 -w- 3 011 -wx 4 100 r– 5 101 r-x 6 110 rw- 7 111 rwx 查看文件类型 使用ls命令和-l参数以查看文件属性。 $ ls -l -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello 第一个字段的第一个字符表示文件类型。以下为Linux中的文件类型： 文件类型 符号 普通文件 - 目录 d 字符设备文件 c 块设备文件 d 本地域套接口 s 有名管道 p 符号链接 l 符号链接类似Windows中的快捷方式，使用ln命令和-s参数创建符号链接。如下命令将为target文件创建一个名为link的链接。 $ ln -s target link 输入输出重定向和管道 输出重定向 程序默认输出于标准输出，标准输出默认指向显示器。可以使用“&amp;gt;”符号将输出重定向到指定位置。如下命令会将ls命令的返回内容重定向到out文件。 $ ls &amp;gt; out 若out文件不存在，该命令将先创建out文件，若存在，该命令将删除原有内容重新写入。可使用“»”符号追加写入。 输入重定向 与标准输出类似，默认的标注输入指向键盘。可以使用“&amp;lt;”符号将输入重定向到指定位置。如下命令中，程序会从in文件中读取内容作为标准输入。 $ cat &amp;lt; in 管道 使用“ ”符号将一条命令的输出作为另一条命令输入。以下命令会在当前目录中查找包含字符foo的文件。 $ ls | grep foo">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>Linux文件目录管理 | Glyuan's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Glyuan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/notes/2019/09/18/Linux-File/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Asinose">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Glyuan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            Linux文件目录管理
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-18T00:00:00+08:00">
+                2019-09-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Notes" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <h1 id="linux文件系统的架构">Linux文件系统的架构</h1>
+
+<h2 id="linux根目录下的主要内容">Linux根目录下的主要内容</h2>
+
+<p>以下是Linux系统主要目录及其内容：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>目录</th>
+      <th>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>/bin</td>
+      <td>存放系统常用的二进制可执行文件，即常用命令</td>
+    </tr>
+    <tr>
+      <td>/boot</td>
+      <td>内核与启动文件</td>
+    </tr>
+    <tr>
+      <td>/dev</td>
+      <td>各种设备文件</td>
+    </tr>
+    <tr>
+      <td>/etc</td>
+      <td>系统软件的启动和配置文件</td>
+    </tr>
+    <tr>
+      <td>/home</td>
+      <td>用户的主目录</td>
+    </tr>
+    <tr>
+      <td>/lib</td>
+      <td>C编辑器的库</td>
+    </tr>
+    <tr>
+      <td>/media</td>
+      <td>可移动介质的安装点</td>
+    </tr>
+    <tr>
+      <td>/opt</td>
+      <td>额外安装的应用软件包存放位置</td>
+    </tr>
+    <tr>
+      <td>/proc</td>
+      <td>进程的映像</td>
+    </tr>
+    <tr>
+      <td>/root</td>
+      <td>超级用户root的主目录</td>
+    </tr>
+    <tr>
+      <td>/sbin</td>
+      <td>和系统操作有关的命令</td>
+    </tr>
+    <tr>
+      <td>/tmp</td>
+      <td>共用的临时文件存放点</td>
+    </tr>
+    <tr>
+      <td>/usr</td>
+      <td>非系统必需的应用程序</td>
+    </tr>
+    <tr>
+      <td>/var</td>
+      <td>系统专用的数据和配置文件</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="linux-usr目录下的主要内容">Linux /usr目录下的主要内容</h2>
+
+<p>以下是/usr目录下的主要内容：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>目录</th>
+      <th>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>/usr/bin</td>
+      <td>绝大部分的用户命令</td>
+    </tr>
+    <tr>
+      <td>/usr/include</td>
+      <td>C/C++等程序语言的头文件</td>
+    </tr>
+    <tr>
+      <td>/usr/local</td>
+      <td>本地系统管理员自行安装的应用程序</td>
+    </tr>
+    <tr>
+      <td>/usr/sbin</td>
+      <td>非系统正常运行所需要的系统指令</td>
+    </tr>
+    <tr>
+      <td>/usr/share</td>
+      <td>共享文件</td>
+    </tr>
+    <tr>
+      <td>/usr/src</td>
+      <td>应用程序的源码</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="建立文件和目录">建立文件和目录</h1>
+
+<h2 id="建立目录">建立目录</h2>
+
+<p>使用mkdir命令一次建立一个或几个目录。如下命令在当前目录下建立foo和bar两个目录。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>mkdir foo bar
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>也可以使用绝对路径来建立目录。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>mkdir /foo/bar
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>使用该命令时若目录/foo不存在将会报错，使用参数-p可以完整地创建一个子目录。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>mkdir <span class="nt">-p</span> /foo/bar
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="建立空文件">建立空文件</h2>
+
+<p>使用touch命令来建立空文件。如下命令在当前目录下建立一个名为foo的文件。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>touch foo
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>使用该命令建立的文件不包含任何内容。也可以使用touch命令来更新一个文件的建立日期和时间，而不会修改文件内容。</p>
+
+<h1 id="移动复制和删除">移动、复制和删除</h1>
+
+<h2 id="移动和重命名">移动和重命名</h2>
+
+<p>使用mv命令来移动文件。如下命令可将hello文件移动到test目录下。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>mv hello <span class="nb">test</span>/
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>该命令将会默认覆盖掉目标目录下的同名文件，使用参数-i可发现这样的情况。</p>
+
+<p>也可以使用-b参数，目标目录下的同名文件的文件名后将会被加上“~”。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>mv <span class="nt">-b</span> hello <span class="nb">test</span>/
+<span class="nv">$ </span><span class="nb">ls
+</span>hello	hello~
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>mv命令也可用于重命名文件。如下命令可将hello文件重命名为hello_bak。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>mv hello hello_bak
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="复制文件和目录">复制文件和目录</h2>
+
+<p>使用cp命令来复制文件。如下命令可将hello文件复制到test目录中。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>cp hello <span class="nb">test</span>/
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>cp命令的-i和-b参数与mv命令类似。产品命令在执行复制任务是默认跳过目录，使用-r参数完成对目录及其下文件的复制。</p>
+
+<h2 id="删除文件和目录">删除文件和目录</h2>
+
+<p>使用rm命令可一次删除一个或几个文件。如下命令将会删除当前目录下的所以php文件。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>rm <span class="k">*</span>.php
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>该目录直接删除文件，而不是放入类似“回收站”的临时目录，使用-i参数在删除每一个文件前询问。</p>
+
+<p>使用-r参数将会递归地删除目录下所有的文件和子目录。</p>
+
+<p>也可以使用rmdir命令来删除一个空的目录。</p>
+
+<h1 id="文件和目录的权限">文件和目录的权限</h1>
+
+<h2 id="查看文件和目录的属性">查看文件和目录的属性</h2>
+
+<p>使用ls命令和-l参数以查看文件属性，包括权限。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-l</span>
+<span class="nt">-rw-r--r--</span> 1 glyuan glyuan 0 2019-9-18 19:42 Hello
+</code></pre></td></tr></tbody></table></td></tr></tbody></table></div></div>
+
+<p>我们关注第一个字段的第二个到第十个字符，在上例中是“rw-r–r–”，应该这样断句：rw-、r–、r–，分别表示所有者、组成员和其他用户说拥有的权限，rwx依次表示读取、写入、执行权限，若某个权限被禁用，使用“-”代替。</p>
+
+<p>第三和第四个字段分别表示文件的属主和属组，上例中为glyuan用户和glyuan组。</p>
+
+<h2 id="改变文件所有权">改变文件所有权</h2>
+
+<p>使用chown命令来改变文件所有权。以下命令将改变hello文件的属主和属组分别为glyuan用户和root属组。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>chown glyuan:root hello
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>使用-R参数可同时修改一个目录下所以文件和子目录的所有权。</p>
+
+<p>也可以使用chgrp命令修改文件的属组。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>chgrp root hello
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="改变文件权限">改变文件权限</h2>
+
+<p>使用chmod命令修改文件权限，该命令使用“用户组+/-权限”的方式修改权限。u、g、o、a分别表示文件属主、文件属组、其他人和所有人。如下命令增加了属主对hello文件的执行权限。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>chmod u+x hello
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>同理，如下命令将删除所有人对hello文件的执行权限。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>chmod a-x hello
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>也可以使用“用户组=权限”的方式修改权限。如下命令为属主和属组设定了读写权限，而仅赋予其他用户读取权限。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>chmod <span class="nv">ug</span><span class="o">=</span>rw,o<span class="o">=</span>r hello
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>还可以使用“用户组1=用户组2“的方式为用户组1赋予与用户组2相同的权限。</p>
+
+<p>chmod命令还支持八进制的文件权限表示方法，如下命令将hello文件的所有权限赋予属主，而只赋予属组和其他人执行权限。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>chmod 711 hello
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>一下为八进制、二进制、文件权限的对应关系：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>八进制</th>
+      <th>二进制</th>
+      <th>权限</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>000</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>001</td>
+      <td>–x</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>010</td>
+      <td>-w-</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>011</td>
+      <td>-wx</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>100</td>
+      <td>r–</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>101</td>
+      <td>r-x</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>110</td>
+      <td>rw-</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>111</td>
+      <td>rwx</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="查看文件类型">查看文件类型</h2>
+
+<p>使用ls命令和-l参数以查看文件属性。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-l</span>
+<span class="nt">-rw-r--r--</span> 1 glyuan glyuan 0 2019-9-18 19:42 Hello
+</code></pre></td></tr></tbody></table></td></tr></tbody></table></div></div>
+
+<p>第一个字段的第一个字符表示文件类型。以下为Linux中的文件类型：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>文件类型</th>
+      <th>符号</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>普通文件</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>目录</td>
+      <td>d</td>
+    </tr>
+    <tr>
+      <td>字符设备文件</td>
+      <td>c</td>
+    </tr>
+    <tr>
+      <td>块设备文件</td>
+      <td>d</td>
+    </tr>
+    <tr>
+      <td>本地域套接口</td>
+      <td>s</td>
+    </tr>
+    <tr>
+      <td>有名管道</td>
+      <td>p</td>
+    </tr>
+    <tr>
+      <td>符号链接</td>
+      <td>l</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>符号链接类似Windows中的快捷方式，使用ln命令和-s参数创建符号链接。如下命令将为target文件创建一个名为link的链接。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span>ln <span class="nt">-s</span> target link
+</code></pre></td></tr></tbody></table></div></div>
+
+<h1 id="输入输出重定向和管道">输入输出重定向和管道</h1>
+
+<h2 id="输出重定向">输出重定向</h2>
+
+<p>程序默认输出于标准输出，标准输出默认指向显示器。可以使用“&gt;”符号将输出重定向到指定位置。如下命令会将ls命令的返回内容重定向到out文件。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> <span class="o">&gt;</span> out
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>若out文件不存在，该命令将先创建out文件，若存在，该命令将删除原有内容重新写入。可使用“»”符号追加写入。</p>
+
+<h2 id="输入重定向">输入重定向</h2>
+
+<p>与标准输出类似，默认的标注输入指向键盘。可以使用“&lt;”符号将输入重定向到指定位置。如下命令中，程序会从in文件中读取内容作为标准输入。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat</span> &lt; <span class="k">in</span>
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="管道">管道</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>使用“</td>
+      <td>”符号将一条命令的输出作为另一条命令输入。以下命令会在当前目录中查找包含字符foo的文件。</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> | <span class="nb">grep </span>foo
+</code></pre></td></tr></tbody></table></div></div>
+
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/Linux" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/notes/2019/09/19/Linux-Package/" rel="next" title="Linux软件包管理">
+                <i class="fa fa-chevron-left"></i> Linux软件包管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Asinose" />
+          <p class="site-author-name" itemprop="name">Asinose</p>
+           
+              <p class="site-description motion-element" itemprop="description">flag{f14g_1s_n0t_h3r3}</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#linux文件系统的架构"> <span class="nav-number">1</span> <span class="nav-text">Linux文件系统的架构</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#linux根目录下的主要内容"> <span class="nav-number">1.1</span> <span class="nav-text">Linux根目录下的主要内容</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#linux-usr目录下的主要内容"> <span class="nav-number">1.2</span> <span class="nav-text">Linux /usr目录下的主要内容</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#建立文件和目录"> <span class="nav-number">2</span> <span class="nav-text">建立文件和目录</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#建立目录"> <span class="nav-number">2.1</span> <span class="nav-text">建立目录</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#建立空文件"> <span class="nav-number">2.2</span> <span class="nav-text">建立空文件</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#移动复制和删除"> <span class="nav-number">3</span> <span class="nav-text">移动、复制和删除</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#移动和重命名"> <span class="nav-number">3.1</span> <span class="nav-text">移动和重命名</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#复制文件和目录"> <span class="nav-number">3.2</span> <span class="nav-text">复制文件和目录</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#删除文件和目录"> <span class="nav-number">3.3</span> <span class="nav-text">删除文件和目录</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#文件和目录的权限"> <span class="nav-number">4</span> <span class="nav-text">文件和目录的权限</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#查看文件和目录的属性"> <span class="nav-number">4.1</span> <span class="nav-text">查看文件和目录的属性</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#改变文件所有权"> <span class="nav-number">4.2</span> <span class="nav-text">改变文件所有权</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#改变文件权限"> <span class="nav-number">4.3</span> <span class="nav-text">改变文件权限</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#查看文件类型"> <span class="nav-number">4.4</span> <span class="nav-text">查看文件类型</span> </a> </li> </ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#输入输出重定向和管道"> <span class="nav-number">5</span> <span class="nav-text">输入输出重定向和管道</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#输出重定向"> <span class="nav-number">5.1</span> <span class="nav-text">输出重定向</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#输入重定向"> <span class="nav-number">5.2</span> <span class="nav-text">输入重定向</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#管道"> <span class="nav-number">5.3</span> <span class="nav-text">管道</span> </a> </li> </ol> </li>
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy;  2019 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Asinose</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

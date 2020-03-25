@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-03-25T19:15:29+08:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">Glyuan’s Blog</title><subtitle>flag{f14g_1s_n0t_h3r3}</subtitle><author><name>Asinose</name></author><entry><title type="html">Bjdctf 2nd Web</title><link href="http://localhost:4000/2020/03/23/BJDCTF-2nd-Web/" rel="alternate" type="text/html" title="Bjdctf 2nd Web" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>http://localhost:4000/2020/03/23/BJDCTF-2nd-Web</id><content type="html" xml:base="http://localhost:4000/2020/03/23/BJDCTF-2nd-Web/">&lt;p&gt;上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-03-25T22:23:02+08:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">Glyuan’s Blog</title><subtitle>flag{f14g_1s_n0t_h3r3}</subtitle><author><name>Asinose</name></author><entry><title type="html">BJDCTF 2nd Web Writeup</title><link href="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/" rel="alternate" type="text/html" title="BJDCTF 2nd Web Writeup" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web</id><content type="html" xml:base="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/">&lt;p&gt;上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。&lt;/p&gt;
 
 &lt;!-- more --&gt;
 
@@ -86,7 +86,23 @@ POST：_method=__construct&amp;amp;filter[]=system&amp;amp;server[REQUEST_METHOD
 
 &lt;p&gt;源码删减：&lt;/p&gt;
 
-&lt;div class=&quot;language-php highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;error_reporting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;how can i give you source code? .swp?!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;br&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;isset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$_POST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'girl_friend'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -101,8 +117,7 @@ POST：_method=__construct&amp;amp;filter[]=system&amp;amp;server[REQUEST_METHOD
         &lt;span class=&quot;c1&quot;&gt;//duangShell~~~~
 &lt;/span&gt;        &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$girl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;拦截形同虚设，可以用”php -r”执行PHP代码。不过没有回显，需要将结果打到DNS上。&lt;/p&gt;
 
@@ -648,7 +663,7 @@ Forecast success rate 7.564358188440272%
 
 &lt;h2 id=&quot;备注-9&quot;&gt;备注&lt;/h2&gt;
 
-&lt;p&gt;被秒了，我被秒了。这道题触及到了我的知识盲区，Windows上的ASP。Emmm，mark一下..&lt;/p&gt;</content><author><name>Asinose</name></author><summary type="html">上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。</summary></entry><entry><title type="html">使用VSCode+Xdebug</title><link href="http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug/" rel="alternate" type="text/html" title="使用VSCode+Xdebug" /><published>2020-03-14T00:00:00+08:00</published><updated>2020-03-14T00:00:00+08:00</updated><id>http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug</id><content type="html" xml:base="http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug/">&lt;p&gt;关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间。&lt;/p&gt;
+&lt;p&gt;被秒了，我被秒了。这道题触及到了我的知识盲区，Windows上的ASP。Emmm，mark一下..&lt;/p&gt;</content><author><name>Asinose</name></author><category term="CTF" /><category term="writeup" /><summary type="html">上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。</summary></entry><entry><title type="html">使用VSCode+Xdebug</title><link href="http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug/" rel="alternate" type="text/html" title="使用VSCode+Xdebug" /><published>2020-03-14T00:00:00+08:00</published><updated>2020-03-14T00:00:00+08:00</updated><id>http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug</id><content type="html" xml:base="http://localhost:4000/notes/2020/03/14/PHP-VSCode-Xdebug/">&lt;p&gt;关于IDE的事情拖了很久，Debug一直也用的是print大法。正好上次比赛遇到了一个审计PHP代码的题目，代码量实在是太大了，所以看看现代IDE会不会有所帮助。令人遗憾的是仅仅配置相关环境就花掉了很多时间。&lt;/p&gt;
 
 &lt;!-- more --&gt;
 

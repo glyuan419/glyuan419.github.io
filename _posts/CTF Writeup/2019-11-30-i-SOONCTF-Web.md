@@ -20,7 +20,7 @@ excerpt_separator: ""
 
 然后尝试读取"index.php"的内容，如下：
 
-```php
+{% highlight php linenos %}
 <?php
 error_reporting(E_ALL || ~ E_NOTICE);
 header('content-type:text/html;charset=utf-8');
@@ -64,7 +64,7 @@ if (preg_match("/ls|bash|tac|nl|more|less|head|wget|tail|vi|cat|od|grep|sed|bzmo
 <body>
 </body>
 </html>
-```
+{% endhighlight %}
 
 看到主要是两个部分，命令执行的绕过和执行条件的检验。绕过的话，已经过滤了大部分的读文件命令，这里可以使用"php flag"命令来实现读取。执行条件可以通过md5碰撞来达成。
 

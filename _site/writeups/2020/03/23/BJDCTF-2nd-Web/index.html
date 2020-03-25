@@ -83,7 +83,7 @@
 <link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="" />
+  <meta name="keywords" content="CTF,writeup," />
 
 
 
@@ -110,17 +110,17 @@
 
 
 <meta name="description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
-<meta name="keywords" content="Jekyll, NexT">
+<meta name="keywords" content="CTF, writeup">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Bjdctf 2nd Web">
-<meta property="og:url" content="http://localhost:4000/2020/03/23/BJDCTF-2nd-Web/">
+<meta property="og:title" content="BJDCTF 2nd Web Writeup">
+<meta property="og:url" content="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/">
 <meta property="og:site_name" content="Glyuan's Blog">
 <meta property="og:description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/hackbar.png">
 <meta property="og:image" content="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/mendeleev.jpg">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Bjdctf 2nd Web">
+<meta name="twitter:title" content="BJDCTF 2nd Web Writeup">
 <meta name="twitter:description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
 <meta name="twitter:image" content="https://glyuan419.github.io/uploads/posts/2020-03-23-BJDCTF-2nd-Web/hackbar.png">
 
@@ -155,7 +155,7 @@
 
 
 
-  <title>Bjdctf 2nd Web | Glyuan's Blog</title>
+  <title>BJDCTF 2nd Web Writeup | Glyuan's Blog</title>
   
 
 
@@ -305,7 +305,7 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/2020/03/23/BJDCTF-2nd-Web/">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Asinose">
@@ -325,7 +325,7 @@
           <h1 class="post-title" itemprop="name headline">
           
           
-            Bjdctf 2nd Web
+            BJDCTF 2nd Web Writeup
           
         </h1>
         
@@ -349,6 +349,29 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/writeups" itemprop="url" rel="index">
+                    <span itemprop="name">writeups</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -483,14 +506,23 @@ POST：_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=cat /f
 
 <p>源码删减：</p>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16</pre></td><td class="code"><pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-<span class="k">echo</span> <span class="s2">"how can i give you source code? .swp?!"</span><span class="o">.</span><span class="s2">"&lt;br&gt;"</span><span class="p">;</span>
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">]))</span> <span class="p">{</span>
-    <span class="k">die</span><span class="p">(</span><span class="s2">"where is P3rh4ps's girl friend ???"</span><span class="p">);</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nv">$girl</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
 <span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 <span class="k">echo</span> <span class="s2">"how can i give you source code? .swp?!"</span><span class="o">.</span><span class="s2">"&lt;br&gt;"</span><span class="p">;</span>
 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">]))</span> <span class="p">{</span>
@@ -505,17 +537,7 @@ POST：_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=cat /f
         <span class="c1">//duangShell~~~~
 </span>        <span class="nb">exec</span><span class="p">(</span><span class="nv">$girl</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>gt;|\\/'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">die</span><span class="p">(</span><span class="s1">'just girl'</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/ls|phpinfo|cat|\%|\^|\~|base64|xxd|echo|\$/i'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">echo</span> <span class="s2">"&lt;img src='img/p3_need_beautiful_gf.png'&gt; &lt;!-- He is p3 --&gt;"</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="c1">//duangShell~~~~
-</span>        <span class="nb">exec</span><span class="p">(</span><span class="nv">$girl</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></tbody></table></div></div>
+<span class="p">}</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>拦截形同虚设，可以用”php -r”执行PHP代码。不过没有回显，需要将结果打到DNS上。</p>
 
@@ -1091,6 +1113,16 @@ Forecast success rate 7.564358188440272%
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/CTF" rel="tag"># CTF</a>
+          
+            
+            <a href="/tag/#/writeup" rel="tag"># writeup</a>
+          
+        </div>
+      
 
       
       
@@ -1203,7 +1235,7 @@ Forecast success rate 7.564358188440272%
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1214,7 +1246,7 @@ Forecast success rate 7.564358188440272%
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

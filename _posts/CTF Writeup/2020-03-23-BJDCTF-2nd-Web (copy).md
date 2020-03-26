@@ -41,7 +41,7 @@ if (!isset($_POST['girl_friend'])) {
         exec($girl);
     }
 }
-{% endhighlight %}
+{% highlight %}
 
 拦截形同虚设，可以用"php -r"执行PHP代码。不过没有回显，需要将结果打到DNS上。
 

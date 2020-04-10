@@ -32,6 +32,8 @@ excerpt_separator: ""
     student_1.age = 18
     ```
 
+----
+
 # 一些会用到的函数
 
 1. 返回对象的类
@@ -78,6 +80,8 @@ excerpt_separator: ""
     setattr(object, name, value)
     # 参数分别为对象名、属性名、属性值
     ```
+
+----
 
 # 特殊属性和方法
 

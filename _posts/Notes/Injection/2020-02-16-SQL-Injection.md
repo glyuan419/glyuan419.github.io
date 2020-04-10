@@ -151,11 +151,11 @@ SELECT exp(~(SELECT * FROM (SELECT database())a));
 
 ### 3、逻辑运算符
 
-！、&&、||、NOT、AND、OR、XOR
+！、&&、\|\|、NOT、AND、OR、XOR
 
 ### 4、位运算符
 
-&、|、^、！、～、<<、>>
+&、\|、^、！、～、<<、>>
 
 ## 三、基于时间的盲注
 

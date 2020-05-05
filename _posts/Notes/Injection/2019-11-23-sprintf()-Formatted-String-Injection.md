@@ -9,8 +9,6 @@ description:
 excerpt_separator: ""
 ---
 
-{% raw %}
-
 # sprintf()函数
 
 和其它语言的格式化字符串函数类似，sprintf()的语法为：
@@ -47,11 +45,11 @@ select * from user where username=admin
 
 不过需要主要的是如果当前字符串中`%`符号的数目大于sprintf()函数实际提供的参数，就会引起报错：
 
-```php
+{% highlight php linenos %}
 <?php
     echo sprintf("select * from user where username='admin%\' or 1=1#' and password='%s'\n" , "pass");
 ?>
-```
+{% endhighlight %}
 
 运行结果：
 
@@ -77,11 +75,11 @@ select * from user where username='admin' and password='pass'
 
 所以用`%1$`代替`%`可以规避之前的报错：
 
-```php
+{% highlight php linenos %}
 <?php
     echo sprintf("select * from user where username='admin%1\$\' or 1=1#' and password='%s'\n" , "pass");
 ?>
-```
+{% endhighlight %}
 
 运行结果：
 
@@ -107,5 +105,3 @@ select * from user where username='admin' Or 1=1#' and password='pass'
 ```
 select * from user where username='admin' or 1=1#' and password='39'
 ```
-
-{% endraw %}

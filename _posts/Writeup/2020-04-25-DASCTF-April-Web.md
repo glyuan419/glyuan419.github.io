@@ -1,9 +1,11 @@
 ---
 layout: post
-title: 
-data: 
-categories: 
+title: DASCTF April Web Writeup
+data: 2020-04-25
+categories: Writeups
 tags: 
+ - CTF
+ - Writeup
 description: 
 excerpt_separator: ""
 ---

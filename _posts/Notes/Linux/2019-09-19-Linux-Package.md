@@ -30,7 +30,7 @@ YUM：Yellow dog Updater, Modified的缩写，仅支持RPM格式。
 使用dpkg命令和-i(--install)选项来安装DEB软件包。以下命令将安装foo.deb软件包。
 
 ```bash
-$ dpkg -i foo.deb
+dpkg -i foo.deb
 ```
 
 -i选项将自动删除系统上原有的旧版本。
@@ -42,13 +42,13 @@ $ dpkg -i foo.deb
 使用dpkg命令和-l选项来查看已安装的软件包，可以结合grep命令查找特定的软件包。如下命令将查找系统中的PHP版本信息。
 
 ```bash
-$ dpkg -l | grep php
+dpkg -l | grep php
 ```
 
 也可以使用-S(--search)选项相关软件包内容的安装位置。如下命令将查看系统PHP软件包所有文件的位置。
 
 ```bash
-$ dpkg -S php
+dpkg -S php
 ```
 
 ## 卸载软件包
@@ -56,7 +56,7 @@ $ dpkg -S php
 使用dpkg命令和-r(--remove)选项来卸载软件包。如下命令将卸载foo软件包。
 
 ```bash
-$ dpkg -r foo
+dpkg -r foo
 ```
 
 所卸载的软件包可能包含其它软件所需要的依赖，请谨慎使用。也可以使用高级软件包工具。
@@ -68,7 +68,7 @@ $ dpkg -r foo
 使用rpm命令和-i选项来安装软件包。rpm提供了-v和-h选项，前者用于显示该命令正在进行的工作，后者将使用一系列的“#”符号来表示安装进度。如下命令将安装foo.rpm软件包，并显示安装内容和进度。
 
 ```bash
-$ rpm -i -v -h foo.rpm
+rpm -i -v -h foo.rpm
 ```
 
 rpm命令也提供了--force选项，与dpkg命令的--force-选项类似。
@@ -78,7 +78,7 @@ rpm命令也提供了--force选项，与dpkg命令的--force-选项类似。
 使用rpm命令和-U选项来升级软件包。如下命令会将foo软件升级到2.0版本。
 
 ```bash
-$ rpm -U foo-2.0.rpm
+rpm -U foo-2.0.rpm
 ```
 
 ## 查看已安装的软件包
@@ -86,7 +86,7 @@ $ rpm -U foo-2.0.rpm
 使用rpm命令和-q选项来查看软件包信息，用户应指定软件包的名字而非安装文件的名字。以下命令将列出foo软件的具体版本信息。
 
 ```bash
-$ rpm -q foo
+rpm -q foo
 foo-2.0
 ```
 
@@ -97,7 +97,7 @@ foo-2.0
 使用rpm命令和-e选项来卸载软件包。以下命令将卸载foo软件包。
 
 ```bash
-$ rpm -e foo
+rpm -e foo
 ```
 
 在相互依赖关系的问题上rpm命令与dpkg命令类似，不过rpm命令会及时停止卸载，可以使用--nodeps继续完成卸载。
@@ -111,8 +111,8 @@ $ rpm -e foo
 使用apt-get命令来下载软件包，不过在下载前需要对软件包信息进行更新。如下命令将下载最新的foo软件包。
 
 ```bash
-$ apt-get update
-$ apt-get foo
+apt-get update
+apt-get foo
 ```
 
 以下是apt-get的常用命令：
@@ -142,7 +142,7 @@ $ apt-get foo
 使用apt-cache search命令可根据软件包名字的一部分来从软件包列表中检索已安装和可安装的软件包。如下命令将检索带“foo”字样的软件包。
 
 ```bash
-$ apt-cache search foo
+apt-cache search foo
 ```
 
 使用apt-cache depends命令可列出特定软件包的依赖关系。
@@ -162,7 +162,7 @@ Ubuntu上提供了“新立得软件包管理器”，可以使用图形化的AP
 通过官方渠道下载到相应的软件源代码。下载到的文件一般以“.tar.bz2”或“.tar.gz”这样的压缩格式打包，可以使用tar zxvf命令解压。如下命令将解压foo.tar.gz压缩包。
 
 ```bash
-$ tar zxvf foo.tar.gz
+tar zxvf foo.tar.gz
 ```
 
 ## 正确配置软件
@@ -172,7 +172,7 @@ Linux上所有软件都使用configure脚本来配置以源代码形式发布的
 configure脚本一般都提供--prefix选项，用于指定软件安装的位置。如下命令指定将软件安装到/foo目录下。
 
 ```bash
-$ ./configure --prefix=/foo
+./configure --prefix=/foo
 ```
 
 不同的软件提供了不同的configure脚本选项，可以通过查看软件的安装文档了解。它们一般被命名为README或INSTALL。

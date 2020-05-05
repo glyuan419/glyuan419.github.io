@@ -52,19 +52,19 @@ excerpt_separator: ""
 使用mkdir命令一次建立一个或几个目录。如下命令在当前目录下建立foo和bar两个目录。
 
 ```bash
-$ mkdir foo bar
+mkdir foo bar
 ```
 
 也可以使用绝对路径来建立目录。
 
 ```bash
-$ mkdir /foo/bar
+mkdir /foo/bar
 ```
 
 使用该命令时若目录/foo不存在将会报错，使用参数-p可以完整地创建一个子目录。
 
 ```bash
-$ mkdir -p /foo/bar
+mkdir -p /foo/bar
 ```
 
 ## 建立空文件
@@ -72,7 +72,7 @@ $ mkdir -p /foo/bar
 使用touch命令来建立空文件。如下命令在当前目录下建立一个名为foo的文件。
 
 ```bash
-$ touch foo
+touch foo
 ```
 
 使用该命令建立的文件不包含任何内容。也可以使用touch命令来更新一个文件的建立日期和时间，而不会修改文件内容。
@@ -84,7 +84,7 @@ $ touch foo
 使用mv命令来移动文件。如下命令可将hello文件移动到test目录下。
 
 ```bash
-$ mv hello test/
+mv hello test/
 ```
 
 该命令将会默认覆盖掉目标目录下的同名文件，使用参数-i可发现这样的情况。
@@ -92,15 +92,14 @@ $ mv hello test/
 也可以使用-b参数，目标目录下的同名文件的文件名后将会被加上“~”。
 
 ```bash
-$ mv -b hello test/
-$ ls
-hello	hello~
+mv -b hello test/
+ls
 ```
 
 mv命令也可用于重命名文件。如下命令可将hello文件重命名为hello_bak。
 
 ```bash
-$ mv hello hello_bak
+mv hello hello_bak
 ```
 
 ## 复制文件和目录
@@ -108,7 +107,7 @@ $ mv hello hello_bak
 使用cp命令来复制文件。如下命令可将hello文件复制到test目录中。
 
 ```bash
-$ cp hello test/
+cp hello test/
 ```
 
 cp命令的-i和-b参数与mv命令类似。产品命令在执行复制任务是默认跳过目录，使用-r参数完成对目录及其下文件的复制。
@@ -118,7 +117,7 @@ cp命令的-i和-b参数与mv命令类似。产品命令在执行复制任务是
 使用rm命令可一次删除一个或几个文件。如下命令将会删除当前目录下的所以php文件。
 
 ```bash
-$ rm *.php
+rm *.php
 ```
 
 该目录直接删除文件，而不是放入类似“回收站”的临时目录，使用-i参数在删除每一个文件前询问。
@@ -134,7 +133,7 @@ $ rm *.php
 使用ls命令和-l参数以查看文件属性，包括权限。
 
 ```bash
-$ ls -l
+ls -l
 -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello
 ```
 
@@ -147,7 +146,7 @@ $ ls -l
 使用chown命令来改变文件所有权。以下命令将改变hello文件的属主和属组分别为glyuan用户和root属组。
 
 ```bash
-$ chown glyuan:root hello
+chown glyuan:root hello
 ```
 
 使用-R参数可同时修改一个目录下所以文件和子目录的所有权。
@@ -155,7 +154,7 @@ $ chown glyuan:root hello
 也可以使用chgrp命令修改文件的属组。
 
 ```bash
-$ chgrp root hello
+chgrp root hello
 ```
 
 ## 改变文件权限
@@ -163,19 +162,19 @@ $ chgrp root hello
 使用chmod命令修改文件权限，该命令使用“用户组+/-权限”的方式修改权限。u、g、o、a分别表示文件属主、文件属组、其他人和所有人。如下命令增加了属主对hello文件的执行权限。
 
 ```bash
-$ chmod u+x hello
+chmod u+x hello
 ```
 
 同理，如下命令将删除所有人对hello文件的执行权限。
 
 ```bash
-$ chmod a-x hello
+chmod a-x hello
 ```
 
 也可以使用“用户组=权限”的方式修改权限。如下命令为属主和属组设定了读写权限，而仅赋予其他用户读取权限。
 
 ```bash
-$ chmod ug=rw,o=r hello
+chmod ug=rw,o=r hello
 ```
 
 还可以使用“用户组1=用户组2“的方式为用户组1赋予与用户组2相同的权限。
@@ -183,7 +182,7 @@ $ chmod ug=rw,o=r hello
 chmod命令还支持八进制的文件权限表示方法，如下命令将hello文件的所有权限赋予属主，而只赋予属组和其他人执行权限。
 
 ```bash
-$ chmod 711 hello
+chmod 711 hello
 ```
 
 一下为八进制、二进制、文件权限的对应关系：
@@ -204,7 +203,7 @@ $ chmod 711 hello
 使用ls命令和-l参数以查看文件属性。
 
 ```bash
-$ ls -l
+ls -l
 -rw-r--r-- 1 glyuan glyuan 0 2019-9-18 19:42 Hello
 ```
 
@@ -223,7 +222,7 @@ $ ls -l
 符号链接类似Windows中的快捷方式，使用ln命令和-s参数创建符号链接。如下命令将为target文件创建一个名为link的链接。
 
 ```bash
-$ ln -s target link
+ln -s target link
 ```
 
 # 输入输出重定向和管道
@@ -233,7 +232,7 @@ $ ln -s target link
 程序默认输出于标准输出，标准输出默认指向显示器。可以使用“>”符号将输出重定向到指定位置。如下命令会将ls命令的返回内容重定向到out文件。
 
 ```bash
-$ ls > out
+ls > out
 ```
 
 若out文件不存在，该命令将先创建out文件，若存在，该命令将删除原有内容重新写入。可使用“>>”符号追加写入。
@@ -243,7 +242,7 @@ $ ls > out
 与标准输出类似，默认的标注输入指向键盘。可以使用“<”符号将输入重定向到指定位置。如下命令中，程序会从in文件中读取内容作为标准输入。
 
 ```bash
-$ cat < in
+cat < in
 ```
 
 ## 管道
@@ -251,10 +250,5 @@ $ cat < in
 使用"\|"符号将一条命令的输出作为另一条命令输入。以下命令会在当前目录中查找包含字符foo的文件。
 
 ```bash
-$ ls | grep foo
+ls \| grep foo
 ```
-
-
-
-
-

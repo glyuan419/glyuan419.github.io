@@ -61,7 +61,7 @@ Linux下所有的设备都被当作文件来操作，每个设备都被映射为
 通过mount命令可以挂载文件系统。如下命令会将sda3硬盘分区挂载到/foo目录下。
 
 ```bash
-$ mount /dev/sda3 /foo
+mount /dev/sda3 /foo
 ```
 
 mount会自动检测设备上的文件系统，并以相应的类型进行挂载。可以使用-r或-w选择，分别指定以只读或是读写模式挂载设备，-w是默认选项。
@@ -71,7 +71,7 @@ mount会自动检测设备上的文件系统，并以相应的类型进行挂载
 使用umount命令来卸载文件系统。如下命令将会卸载/dev/sda3上的文件系统。
 
 ```bash
-$ umount /dev/sda3
+umount /dev/sda3
 ```
 
 文件系统只有在没有被使用的情况下才可以被卸载，使用-r参数，可以在设备正忙时以只读方式重新挂载文件系统。
@@ -91,13 +91,13 @@ $ umount /dev/sda3
 使用gzip命令来压缩文件。以下命令会将foo文件压缩为foo.gz文件。
 
 ```bash
-$ gzip foo
+gzip foo
 ```
 
 使用gunzip命令来解压文件。以下命令会将foo.gz文件解压为foo文件。
 
 ```bash
-$ gunzip foo.gz
+gunzip foo.gz
 ```
 解压时仅支持.gz、.Z、-gz、.z和-z这样的扩展名。
 
@@ -108,8 +108,8 @@ $ gunzip foo.gz
 bzip2提供了更高的压缩率。文件压缩的语法与gzip相同，它也包含了与gzip相同的-t和-v选项。解压使用-d选项或使用bunzip2命令。以下两条命令均可解压foo.bz2文件为foo文件。
 
 ```bash
-$ bzip2 -d foo.bz2
-$ bunzip foo.bz2
+bzip2 -d foo.bz2
+bunzip foo.bz2
 ```
 
 如果压缩文件不以.bz2、.bz、.tbz2、.tbz或.bzip2结尾，解压得到的文件将增加“.out”作为扩展名。
@@ -121,7 +121,7 @@ $ bunzip foo.bz2
 使用tar命令来打包文件。以下命令会将当前目录下的foo子目录打包为bar.tar文件。
 
 ```bash
-$ tar -c -f bar.tar foo
+tar -c -f bar.tar foo
 ```
 
 以下是tar命令常用的选项：

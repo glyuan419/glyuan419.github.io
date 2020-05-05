@@ -9,6 +9,8 @@ description:
 excerpt_separator: ""
 ---
 
+{% raw %}
+
 # sprintf()函数
 
 和其它语言的格式化字符串函数类似，sprintf()的语法为：
@@ -106,3 +108,4 @@ select * from user where username='admin' Or 1=1#' and password='pass'
 select * from user where username='admin' or 1=1#' and password='39'
 ```
 
+{% endraw %}

@@ -85,7 +85,7 @@ O:1:"A":2:{s:8:"username";s:3:"foo";s:8:"password";O:1:"B":1:{s:1:"b";O:1:"C":1:
 
 需要吞掉24个字符，于是提交的序列化字符串为：
 
-{% highlight linenos %}
+{% highlight php linenos %}
 O:1:"A":2:{s:8:"username";s:48:"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";s:8:"password";s:74:";";s:8:"password";O:1:"B":1:{s:1:"b";O:1:"C":1:{s:1:"c";s:8:"flag.php";}}}";}
 {% endhighlight%}
 

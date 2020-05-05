@@ -23,7 +23,7 @@ sqlmap自带的tamper脚本在'usr/share/sqlmap/tamper'目录下。也可以根�
 
 以下是一个tamper脚本的基本构成：
 
-```python
+{% highlight python linenos %}
 #!/usr/bin/env python
 
 """
@@ -47,7 +47,7 @@ def tamper(payload, **kwargs):
     """
 
     return payload.replace('\'', "%00%27") if payload else payload
-```
+{% endhighlight %}
 
 主要有三个部分，'\_\_priority\_\_'、'dependencies()'和'tamper()'。
 

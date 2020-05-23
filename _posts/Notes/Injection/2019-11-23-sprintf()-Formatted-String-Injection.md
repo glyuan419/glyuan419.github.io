@@ -105,3 +105,4 @@ select * from user where username='admin' Or 1=1#' and password='pass'
 ```
 select * from user where username='admin' or 1=1#' and password='39'
 ```
+

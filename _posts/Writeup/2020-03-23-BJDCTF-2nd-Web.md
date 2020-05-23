@@ -1,6 +1,6 @@
 ---
 layout: post
-title: BJD 2nd Web Writeup
+title: BJDCTF 2nd Web Writeup
 data: 2020-03-23
 categories: Writeups
 tags: 

@@ -84,7 +84,7 @@ php -r '$flag=file_get_contents("/flag");if (ord($flag[0])==66) {sleep(1);}'
 
 题目是这样子的：
 
-![1](https://glyuan419.github.io/uploads/posts/2020-05-22-BJDCTF-3rd-Web/Multiplayer Sports01.png)
+![1](https://glyuan419.github.io/uploads/posts/2020-05-22-BJDCTF-3rd-Web/Multiplayer_Sports01.png)
 
 ## 解题思路
 
@@ -120,10 +120,10 @@ select * from user order by id ^ 0
 
 用admin登录后多了两个功能，getFlag和Request。点击getFlag。他让我爬，爬爬爬。再看看Request：
 
-![2](https://glyuan419.github.io/uploads/posts/2020-05-22-BJDCTF-3rd-Web/Multiplayer Sports02.png)
+![2](https://glyuan419.github.io/uploads/posts/2020-05-22-BJDCTF-3rd-Web/Multiplayer_Sports02.png)
 
 url输入www.baidu.com，有报错：
 
-![3](https://glyuan419.github.io/uploads/posts/2020-05-22-BJDCTF-3rd-Web/Multiplayer Sports03.png)
+![3](https://glyuan419.github.io/uploads/posts/2020-05-22-BJDCTF-3rd-Web/Multiplayer_Sports03.png)
 
 golong？
